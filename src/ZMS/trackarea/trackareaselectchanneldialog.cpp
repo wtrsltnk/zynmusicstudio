@@ -63,8 +63,8 @@ void TrackAreaSelectChannelDialog::OnRemoveChannel()
 void TrackAreaSelectChannelDialog::ShowChannels()
 {
     this->ui->lstParts->clear();
-    for (std::vector<Channel *>::iterator i = Master::getInstance().channels.begin();
-         i != Master::getInstance().channels.end(); ++i)
+    for (std::vector<Channel *>::iterator i = Master::getInstance().Channels().begin();
+         i != Master::getInstance().Channels().end(); ++i)
     {
         Channel* part = *i;
         QListWidgetItem* item = new QListWidgetItem(this->ui->lstParts);

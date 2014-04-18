@@ -32,8 +32,10 @@
 #include "Dump.h"
 #include "XMLwrapper.h"
 
+#include "Channel.h"
 #include "../Params/Controller.h"
 #include "../Nio/IMaster.h"
+#include "../Nio/EngineMgr.h"
 
 struct vuData {
     vuData(void);
@@ -47,10 +49,8 @@ struct vuData {
  *  process them with system/insertion effects and mix them */
 class Master : public IMaster
 {
-public:
-    /** Constructor TODO make private*/
     Master();
-    /** Destructor*/
+public:
     ~Master();
 
     static Master &getInstance();
@@ -65,7 +65,6 @@ public:
 
     void defaults();
 
-
     /**loads all settings from a XML file
      * @return 0 for ok or -1 if there is an error*/
     int loadXML(const char *filename);
@@ -73,11 +72,8 @@ public:
 
     void getfromXML(XMLwrapper *xml);
 
-    /**get all data to a newly allocated array (used for VST)
-     * @return the datasize*/
-    int getalldata(char **data);
-    /**put all data from the *data array to zynaddsubfx parameters (used for VST)*/
-    void putalldata(char *data, int size);
+    /**Audio Output*/
+    virtual void AudioOut(float *outl, float *outr);
 
     //Midi IN
     virtual void NoteOn(char chan, char note, char velocity);
@@ -93,16 +89,10 @@ public:
 
     void vuUpdate(const float *outl, const float *outr);
 
-    /**Audio Output*/
-    virtual void AudioOut(float *outl, float *outr);
-
-    class Channel* addChannel();
-    void removeChannel(class Channel* channel);
-
-    std::vector<class Channel *> channels;
-    int channelIndex(class Channel* channel);
-
-    //parameters
+    std::vector<Channel*>& Channels() { return this->channels; }
+    Channel* addChannel();
+    void removeChannel(Channel* channel);
+    int channelIndex(Channel* channel);
 
     unsigned char Pvolume;
     unsigned char Pkeyshift;
@@ -111,37 +101,25 @@ public:
     void setPvolume(char Pvolume_);
     void setPkeyshift(char Pkeyshift_);
 
-    //part that's apply the insertion effect; -1 to disable, -2 for master out
-    void* Pinsparts[NUM_INS_EFX];
-
-
     //peaks for VU-meter
     void vuresetpeaks();
     //get VU-meter data
     vuData getVuData();
 
     Controller ctl;
-    bool       swaplr; //if L and R are swapped
-
-    //other objects
     Microtonal microtonal;
     Bank       bank;
 
     class FFTwrapper * fft;
 
+    EngineMgr* engineManager;
     virtual void Lock() { pthread_mutex_lock(&this->mutex); }
     virtual void Unlock() { pthread_mutex_unlock(&this->mutex); }
 private:
-    bool   nullRun;
+    std::vector<Channel *> channels;
     vuData vu;
     float  volume;
     int    keyshift;
-
-    //information relevent to generating plugin audio samples
-    float *bufl;
-    float *bufr;
-    off_t  off;
-    size_t smps;
 
     pthread_mutex_t mutex;
     pthread_mutex_t vumutex;

@@ -46,8 +46,8 @@ void ChannelStripContainer::UpdateChannels()
         }
     }
 
-    for (std::vector<Channel*>::iterator i = Master::getInstance().channels.begin();
-         i != Master::getInstance().channels.end(); ++i)
+    for (std::vector<Channel*>::iterator i = Master::getInstance().Channels().begin();
+         i != Master::getInstance().Channels().end(); ++i)
     {
         ChannelStripWidget* widget = this->GetWidgetByChannel(*i);
         if (widget == 0)

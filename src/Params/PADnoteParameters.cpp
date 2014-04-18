@@ -333,14 +333,14 @@ float PADnoteParameters::getNhr(int n)
         case 1:
             thresh = (int)(par2 * par2 * 100.0f) + 1;
             if(n < thresh)
-                result = n;
+                result = float(n);
             else
                 result = 1.0f + n0 + (n0 - thresh + 1.0f) * par1 * 8.0f;
             break;
         case 2:
             thresh = (int)(par2 * par2 * 100.0f) + 1;
             if(n < thresh)
-                result = n;
+                result = float(n);
             else
                 result = 1.0f + n0 - (n0 - thresh + 1.0f) * par1 * 0.90f;
             break;
@@ -365,7 +365,7 @@ float PADnoteParameters::getNhr(int n)
             result = n0 * powf(1.0f + par1 * powf(n0 * 0.8f, tmp), tmp) + 1.0f;
             break;
         default:
-            result = n;
+            result = float(n);
             break;
     }
 
@@ -534,13 +534,13 @@ void PADnoteParameters::generatespectrum_otherModes(float *spectrum,
             amp *= resonance->getfreqresponse(realfreq);
         int cfreq = (int) (realfreq / (synth->samplerate_f * 0.5f) * size);
 
-        spectrum[cfreq] = amp + 1e-9;
+        spectrum[cfreq] = amp + 1e-9f;
     }
 
     if(Pmode != 1) {
         int old = 0;
         for(int k = 1; k < size; ++k)
-            if((spectrum[k] > 1e-10) || (k == (size - 1))) {
+            if((spectrum[k] > 1e-10f) || (k == (size - 1))) {
                 int   delta  = k - old;
                 float val1   = spectrum[old];
                 float val2   = spectrum[k];
@@ -569,7 +569,7 @@ void PADnoteParameters::applyparameters(bool lockmutex)
 
     float bwadjust = getprofile(profile, profilesize);
 //    for (int i=0;i<profilesize;i++) profile[i]*=profile[i];
-    float basefreq = 65.406f * powf(2.0f, Pquality.basenote / 2);
+    float basefreq = 65.406f * powf(2.0f, float(Pquality.basenote / 2));
     if(Pquality.basenote % 2 == 1)
         basefreq *= 1.5f;
 
@@ -676,7 +676,7 @@ void PADnoteParameters::export2wav(std::string basefilename)
         if(sample[k].smp == NULL)
             continue;
         char tmpstr[20];
-        snprintf(tmpstr, 20, "_%02d", k + 1);
+        _snprintf_s(tmpstr, 20, "_%02d", k + 1);
         std::string filename = basefilename + std::string(tmpstr) + ".wav";
         WavFile     wav(filename, synth->samplerate, 1);
         if(wav.good()) {
@@ -813,7 +813,7 @@ void PADnoteParameters::getfromXML(XMLwrapper *xml)
                                       Php.amp.par1);
         Php.amp.par2 = xml->getpar127("amplitude_multiplier_par2",
                                       Php.amp.par2);
-        Php.autoscale = xml->getparbool("autoscale", Php.autoscale);
+        Php.autoscale = (xml->getparbool("autoscale", Php.autoscale) == 1);
         Php.onehalf   = xml->getpar127("one_half", Php.onehalf);
         xml->exitbranch();
     }

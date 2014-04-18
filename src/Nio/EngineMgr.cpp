@@ -3,8 +3,6 @@
 #include <iostream>
 #include "InMgr.h"
 #include "OutMgr.h"
-#include "AudioOut.h"
-#include "MidiIn.h"
 #include "NulEngine.h"
 #if OSS
 #include "OssEngine.h"
@@ -23,14 +21,8 @@
 
 using namespace std;
 
-EngineMgr &EngineMgr::getInstance()
-{
-    static EngineMgr instance;
-    return instance;
-}
-
-EngineMgr::EngineMgr()
-    : _master(0),
+EngineMgr::EngineMgr(IMaster* master)
+    : _master(master),
       _inputManager(new InMgr(this)),
       _outputManager(new OutMgr(this))
 {
@@ -116,8 +108,7 @@ bool EngineMgr::start()
     else {
         expected = false;
         cerr << "ERROR: The default audio output failed to open!" << endl;
-        this->_outputManager->currentOut =
-            dynamic_cast<AudioOut *>(this->getEngine("NULL"));
+        this->_outputManager->currentOut = this->getEngine("NULL");
         this->_outputManager->currentOut->setAudioEnabled(true);
     }
 
@@ -128,7 +119,7 @@ bool EngineMgr::start()
     else { //recover
         expected = false;
         cerr << "ERROR: The default MIDI input failed to open!" << endl;
-        this->_inputManager->currentIn = dynamic_cast<MidiIn *>(this->getEngine("NULL"));
+        this->_inputManager->currentIn = this->getEngine("NULL");
         this->_inputManager->currentIn->setMidiEnabled(true);
     }
 
@@ -145,8 +136,8 @@ void EngineMgr::stop()
 
 bool EngineMgr::setDefaultInputEngine(string name)
 {
-    MidiIn *chosen;
-    if((chosen = dynamic_cast<MidiIn *>(this->getEngine(name)))) {    //got the input
+    Engine* chosen;
+    if((chosen = this->getEngine(name)) && chosen->IsMidiIn()) {    //got the input
         _defaultIn = chosen;
         return true;
     }
@@ -161,8 +152,8 @@ bool EngineMgr::setDefaultInputEngine(string name)
 
 bool EngineMgr::setDefaultOutputEngine(string name)
 {
-    AudioOut *chosen;
-    if((chosen = dynamic_cast<AudioOut *>(this->getEngine(name)))) {    //got the output
+    Engine* chosen;
+    if((chosen = this->getEngine(name)) && chosen->IsAudioOut()) {    //got the output
         _defaultOut = chosen;
         return true;
     }

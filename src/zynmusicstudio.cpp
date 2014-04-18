@@ -36,7 +36,6 @@
 #include "Misc/Master.h"
 #include "Misc/Channel.h"
 #include "Misc/Util.h"
-#include "Nio/EngineMgr.h"
 
 using namespace std;
 
@@ -67,14 +66,10 @@ void initprogram(void)
     for(int i = 0; i < synth->buffersize; ++i)
         denormalkillbuf[i] = float((RND - 0.5) * 1e-16);
 
-    Master::getInstance().swaplr = config.cfg.SwapStereo;
-
     signal(SIGINT, sigterm_exit);
     signal(SIGTERM, sigterm_exit);
 
-    EngineMgr::getInstance().preferedSampleRate(synth->samplerate);
-
-    EngineMgr::getInstance().SetMaster(&Master::getInstance());
+    EngineMgr::preferedSampleRate(synth->samplerate);
 }
 
 /*
@@ -86,7 +81,7 @@ int exitprogram()
     Master::getInstance().Lock();
     Master::getInstance().Unlock();
 
-    EngineMgr::getInstance().stop();
+    Master::getInstance().engineManager->stop();
 
     delete []denormalkillbuf;
     Master::deleteInstance();
@@ -101,7 +96,7 @@ int main(int argc, char *argv[])
     initprogram();
 
     //Run the Nio system
-    if (EngineMgr::getInstance().start())
+    if (Master::getInstance().engineManager->start())
         app.exec();
 
     return exitprogram();

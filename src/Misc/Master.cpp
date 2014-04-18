@@ -52,11 +52,7 @@ static Master* masterInstance = NULL;
 
 Master::Master()
 {
-    swaplr = 0;
-    off  = 0;
-    smps = 0;
-    bufl = new float[synth->buffersize];
-    bufr = new float[synth->buffersize];
+    this->engineManager = new EngineMgr(this);
 
     pthread_mutex_init(&mutex, NULL);
     pthread_mutex_init(&vumutex, NULL);
@@ -65,18 +61,6 @@ Master::Master()
     shutup = 0;
 
     defaults();
-}
-
-void Master::defaults()
-{
-    volume = 1.0f;
-    setPvolume(80);
-    setPkeyshift(64);
-
-    this->addChannel();
-
-    microtonal.defaults();
-    ShutUp();
 }
 
 Master &Master::getInstance()
@@ -89,9 +73,6 @@ Master &Master::getInstance()
 
 Master::~Master()
 {
-    delete []bufl;
-    delete []bufr;
-
     while (this->channels.empty() == false)
     {
         Channel* part = this->channels.back();
@@ -114,6 +95,18 @@ void Master::deleteInstance()
     }
 }
 
+void Master::defaults()
+{
+    volume = 1.0f;
+    setPvolume(80);
+    setPkeyshift(64);
+
+    this->addChannel();
+
+    microtonal.defaults();
+    ShutUp();
+}
+
 /*
  * Note On Messages (velocity=0 for NoteOff)
  */
@@ -122,7 +115,6 @@ void Master::NoteOn(char chan, char note, char velocity)
     if(velocity) {
         for(int npart = 0; npart < this->channels.size(); ++npart)
             if(chan == channels[npart]->Prcvchn) {
-//                fakepeakpart[npart] = velocity * 2;
                 if(channels[npart]->Penabled)
                     channels[npart]->NoteOn(note, velocity, keyshift);
             }
@@ -151,7 +143,6 @@ void Master::PolyphonicAftertouch(char chan, char note, char velocity)
             if(chan == channels[npart]->Prcvchn)
                 if(channels[npart]->Penabled)
                     channels[npart]->PolyphonicAftertouch(note, velocity, keyshift);
-
     }
     else
         this->NoteOff(chan, note);
@@ -165,22 +156,6 @@ void Master::SetController(char chan, int type, int par)
     if((type == C_dataentryhi) || (type == C_dataentrylo)
        || (type == C_nrpnhi) || (type == C_nrpnlo)) { //Process RPN and NRPN by the Master (ignore the chan)
         ctl.setparameternumber(type, par);
-
-//        int parhi = -1, parlo = -1, valhi = -1, vallo = -1;
-//        if(ctl.getnrpn(&parhi, &parlo, &valhi, &vallo) == 0) //this is NRPN
-            //fprintf(stderr,"rcv. NRPN: %d %d %d %d\n",parhi,parlo,valhi,vallo);
-//            switch(parhi) {
-//                case 0x04: //System Effects
-//                    if(parlo < NUM_SYS_EFX)
-//                        sysefx[parlo]->seteffectpar_nolock(valhi, vallo);
-//                    ;
-//                    break;
-//                case 0x08: //Insertion Effects
-//                    if(parlo < NUM_INS_EFX)
-//                        insefx[parlo]->seteffectpar_nolock(valhi, vallo);
-//                    ;
-//                    break;
-//            }
     }
     else
     if(type == C_bankselectmsb) {      // Change current bank
@@ -217,8 +192,8 @@ void Master::SetProgram(char chan, unsigned int pgm)
 void Master::vuUpdate(const float *outl, const float *outr)
 {
     //Peak computation (for vumeters)
-    vu.outpeakl = 1e-12;
-    vu.outpeakr = 1e-12;
+    vu.outpeakl = 1e-12f;
+    vu.outpeakr = 1e-12f;
     for(int i = 0; i < synth->buffersize; ++i) {
         if(fabs(outl[i]) > vu.outpeakl)
             vu.outpeakl = fabs(outl[i]);
@@ -233,8 +208,8 @@ void Master::vuUpdate(const float *outl, const float *outr)
         vu.maxoutpeakr = vu.outpeakr;
 
     //RMS Peak computation (for vumeters)
-    vu.rmspeakl = 1e-12;
-    vu.rmspeakr = 1e-12;
+    vu.rmspeakl = 1e-12f;
+    vu.rmspeakr = 1e-12f;
     for(int i = 0; i < synth->buffersize; ++i) {
         vu.rmspeakl += outl[i] * outl[i];
         vu.rmspeakr += outr[i] * outr[i];
@@ -287,10 +262,6 @@ int Master::channelIndex(class Channel* part)
  */
 void Master::AudioOut(float *outl, float *outr)
 {
-    //Swaps the Left channel with Right Channel
-    if(swaplr)
-        swap(outl, outr);
-
     //clean up the output samples (should not be needed?)
     memset(outl, 0, synth->bufferbytes);
     memset(outr, 0, synth->bufferbytes);
@@ -415,10 +386,10 @@ void Master::ShutUp()
 void Master::vuresetpeaks()
 {
     pthread_mutex_lock(&vumutex);
-    vu.outpeakl    = 1e-9;
-    vu.outpeakr    = 1e-9;
-    vu.maxoutpeakl = 1e-9;
-    vu.maxoutpeakr = 1e-9;
+    vu.outpeakl    = 1e-9f;
+    vu.outpeakr    = 1e-9f;
+    vu.maxoutpeakl = 1e-9f;
+    vu.maxoutpeakr = 1e-9f;
     vu.clipped     = 0;
     pthread_mutex_unlock(&vumutex);
 }
@@ -448,49 +419,11 @@ void Master::add2XML(XMLwrapper *xml)
     microtonal.add2XML(xml);
     xml->endbranch();
 
-    for(int npart = 0; npart < NUM_MIDI_PARTS; ++npart) {
+    for(int npart = 0; npart < this->channels.size(); ++npart) {
         xml->beginbranch("PART", npart);
         channels[npart]->add2XML(xml);
         xml->endbranch();
     }
-}
-
-
-int Master::getalldata(char **data)
-{
-    XMLwrapper *xml = new XMLwrapper();
-
-    xml->beginbranch("MASTER");
-
-    pthread_mutex_lock(&mutex);
-    add2XML(xml);
-    pthread_mutex_unlock(&mutex);
-
-    xml->endbranch();
-
-    *data = xml->getXMLdata();
-    delete (xml);
-    return strlen(*data) + 1;
-}
-
-void Master::putalldata(char *data, int /*size*/)
-{
-    XMLwrapper *xml = new XMLwrapper();
-    if(!xml->putXMLdata(data)) {
-        delete (xml);
-        return;
-    }
-
-    if(xml->enterbranch("MASTER") == 0)
-        return;
-
-    pthread_mutex_lock(&mutex);
-    getfromXML(xml);
-    pthread_mutex_unlock(&mutex);
-
-    xml->exitbranch();
-
-    delete (xml);
 }
 
 int Master::saveXML(const char *filename)
@@ -505,8 +438,6 @@ int Master::saveXML(const char *filename)
     delete (xml);
     return result;
 }
-
-
 
 int Master::loadXML(const char *filename)
 {
@@ -533,7 +464,7 @@ void Master::getfromXML(XMLwrapper *xml)
 
 
     channels[0]->Penabled = 0;
-    for(int npart = 0; npart < NUM_MIDI_PARTS; ++npart) {
+    for(int npart = 0; npart < this->channels.size(); ++npart) {
         if(xml->enterbranch("PART", npart) == 0)
             continue;
         channels[npart]->getfromXML(xml);

@@ -1,6 +1,4 @@
 #include "mixermaster.h"
-#include "./Nio/MidiIn.h"
-#include "./Nio/AudioOut.h"
 
 using namespace std;
 

@@ -14,10 +14,9 @@ class AudioOut;
 /**Container/Owner of the long lived Engines*/
 class EngineMgr
 {
-    EngineMgr();
 public:
-    static EngineMgr &getInstance();
-    ~EngineMgr();
+    EngineMgr(IMaster* master);
+    virtual ~EngineMgr();
 
     /**Execute a tick*/
     const Stereo<float *> tick(unsigned int frameSize);
@@ -40,10 +39,9 @@ public:
     bool setDefaultOutputEngine(std::string name);
 
     //Get the prefered sample rate from jack (if running)
-    void preferedSampleRate(unsigned &rate);
+    static void preferedSampleRate(unsigned &rate);
 
     IMaster* GetMaster() { return this->_master; }
-    void SetMaster(IMaster* master) { this->_master = master; }
 
     OutMgr* Output() { return this->_outputManager; }
     InMgr* Input() { return this->_inputManager; }

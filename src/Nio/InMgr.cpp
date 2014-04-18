@@ -1,5 +1,4 @@
 #include "InMgr.h"
-#include "MidiIn.h"
 #include "EngineMgr.h"
 #include <iostream>
 

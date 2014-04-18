@@ -50,7 +50,7 @@ class Channel
          * @param mutex_ Pointer to the master pthread_mutex_t*/
         Channel(Microtonal *microtonal_, FFTwrapper *fft_, pthread_mutex_t *mutex_);
         /**Destructor*/
-        ~Channel();
+        virtual ~Channel();
 
         // Midi commands implemented
         void NoteOn(unsigned char note,

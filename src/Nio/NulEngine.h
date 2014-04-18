@@ -30,8 +30,7 @@
 #endif
 #include <pthread.h>
 #include "../globals.h"
-#include "AudioOut.h"
-#include "MidiIn.h"
+#include "Engine.h"
 
 class NulEngine : public Engine
 {

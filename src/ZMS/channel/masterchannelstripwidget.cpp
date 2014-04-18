@@ -6,8 +6,6 @@
 #include "../Nio/InMgr.h"
 #include "../Nio/OutMgr.h"
 #include "../Nio/EngineMgr.h"
-#include "../Nio/MidiIn.h"
-#include "../Nio/AudioOut.h"
 #include <QTimer>
 #include <QPainter>
 #include <QMenu>
@@ -20,9 +18,9 @@ MasterChannelStripWidget::MasterChannelStripWidget(QWidget *parent) :
 
     this->ui->sysmaster->setValue(Master::getInstance().Pvolume);
 
-    this->ui->btnMidi->setText(EngineMgr::getInstance().Input()->getSource().c_str());
+    this->ui->btnMidi->setText(Master::getInstance().engineManager->Input()->getSource().c_str());
     connect(this->ui->btnMidi, SIGNAL(clicked()), this, SLOT(OnShowMidiDevices()));
-    this->ui->btnAudio->setText(EngineMgr::getInstance().Output()->getSink().c_str());
+    this->ui->btnAudio->setText(Master::getInstance().engineManager->Output()->getSink().c_str());
     connect(this->ui->btnAudio, SIGNAL(clicked()), this, SLOT(OnShowAudioDevices()));
 
     this->ui->sysvuL->installEventFilter(this);
@@ -142,7 +140,7 @@ void MasterChannelStripWidget::OnVuTimer()
 void MasterChannelStripWidget::OnShowMidiDevices()
 {
     QMenu m;
-    std::list<Engine *>& en = EngineMgr::getInstance().Engines();
+    std::list<Engine *>& en = Master::getInstance().engineManager->Engines();
     for (std::list<Engine *>::iterator i = en.begin(); i != en.end(); ++i)
     {
         Engine* e = dynamic_cast<Engine*>(*i);
@@ -159,14 +157,14 @@ void MasterChannelStripWidget::OnShowMidiDevices()
 void MasterChannelStripWidget::OnSelectMidiDevice()
 {
     QString sel = ((QAction*)sender())->text();
-    if (EngineMgr::getInstance().Input()->setSource(sel.toStdString()))
+    if (Master::getInstance().engineManager->Input()->setSource(sel.toStdString()))
         this->ui->btnMidi->setText(sel);
 }
 
 void MasterChannelStripWidget::OnShowAudioDevices()
 {
     QMenu m;
-    std::list<Engine *>& en = EngineMgr::getInstance().Engines();
+    std::list<Engine *>& en = Master::getInstance().engineManager->Engines();
     for (std::list<Engine *>::iterator i = en.begin(); i != en.end(); ++i)
     {
         Engine* e = dynamic_cast<Engine*>(*i);
@@ -183,7 +181,7 @@ void MasterChannelStripWidget::OnShowAudioDevices()
 void MasterChannelStripWidget::OnSelectAudioDevice()
 {
     QString sel = ((QAction*)sender())->text();
-    if (EngineMgr::getInstance().Output()->setSink(sel.toStdString()))
+    if (Master::getInstance().engineManager->Output()->setSink(sel.toStdString()))
         this->ui->btnAudio->setText(sel);
 }
 
