@@ -16,7 +16,7 @@ public:
     InMgr(EngineMgr* enginemgr);
     ~InMgr();
 
-    void PutEvent(MidiEvent ev);
+    void PutEvent(Midi::Event ev);
 
     /**Flush the Midi Queue*/
     void flush();
@@ -27,7 +27,7 @@ public:
 
     friend class EngineMgr;
 private:
-    SafeQueue<MidiEvent> queue;
+    SafeQueue<Midi::Event> queue;
     sem_t work;
     Engine* currentIn;
 

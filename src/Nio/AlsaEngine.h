@@ -39,13 +39,13 @@ class AlsaEngine : public Engine
         virtual bool IsMidiIn() { return true; }
         virtual bool IsAudioOut() { return true; }
 
-        bool Start();
-        void Stop();
+        virtual bool Start();
+        virtual void Stop();
 
-        void setAudioEn(bool nval);
-        bool getAudioEn() const;
-        void setMidiEn(bool nval);
-        bool getMidiEn() const;
+        virtual void setAudioEnabled(bool nval);
+        virtual bool isAudioEnabled() const;
+        virtual void setMidiEnabled(bool nval);
+        virtual bool isMidiEnabled() const;
 
     protected:
         void *AudioThread();

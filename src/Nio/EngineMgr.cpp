@@ -31,24 +31,24 @@ EngineMgr::EngineMgr(IMaster* master)
     //conditional compiling mess (but contained)
     _engines.push_back(defaultEng);
 #if OSS
-    engines.push_back(new OssEngine(this));
+    this->_engines.push_back(new OssEngine(this));
 #endif
 #if ALSA
-    engines.push_back(new AlsaEngine(this));
+    this->_engines.push_back(new AlsaEngine(this));
 #endif
 #if JACK
-    _engines.push_back(new JackEngine(this));
+    this->_engines.push_back(new JackEngine(this));
 #endif
 #if PORTAUDIO
-    _engines.push_back(new PaEngine(this));
+    this->_engines.push_back(new PaEngine(this));
 #endif
-    _engines.push_back(new RtEngine(this));
+    this->_engines.push_back(new RtEngine(this));
 
-    _defaultOut = defaultEng;
-    _defaultIn = defaultEng;
+    this->_defaultOut = defaultEng;
+    this->_defaultIn = defaultEng;
 
-    setDefaultOutputEngine("NULL");
-    setDefaultInputEngine("NULL");
+    this->setDefaultOutputEngine("NULL");
+    this->setDefaultInputEngine("NULL");
 }
 
 EngineMgr::~EngineMgr()

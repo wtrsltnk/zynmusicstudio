@@ -14,7 +14,7 @@ public:
     TrackAreaClip(TrackAreaWidget* trackarea, SequencerClip* clip);
 
     void Update(int index);
-    void UpdateFromRect(QRectF& rect);
+    void UpdateFromRect(const QRectF& rect);
 
     void Select();
     void Deselect();

@@ -12,7 +12,7 @@ public:
     PianoRollNoteItem(PianoRollWidget* piano, SequencerNote* note);
 
     void Update();
-    void UpdateFromRect(QRectF& rect);
+    void UpdateFromRect(const QRectF& rect);
     SequencerNote* GetNote() { return this->note; }
     void Select();
     void Deselect();

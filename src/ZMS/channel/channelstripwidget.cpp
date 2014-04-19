@@ -21,10 +21,6 @@ ChannelStripWidget::ChannelStripWidget(QWidget *parent) :
     connect(this->ui->btnClose, SIGNAL(clicked()), this, SLOT(OnCloseClicked()));
     connect(this->ui->btnEdit, SIGNAL(clicked()), this, SLOT(OnEditClicked()));
     connect(this->ui->effectstrip, SIGNAL(OnMinimumHeightChanged(int)), this, SLOT(OnMinimumHeightEffectStripChanged(int)));
-
-    QList<EffectMgr*> effects;
-    effects << new EffectMgr(true, 0);
-    this->ui->effectstrip->OnUpdateEffectButtons(effects);
 }
 
 ChannelStripWidget::~ChannelStripWidget()

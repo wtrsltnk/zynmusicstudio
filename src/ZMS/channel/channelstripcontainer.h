@@ -28,7 +28,7 @@ private:
     int _lastMax;
 
     friend class MainWindow;
-    MainWindow* _mainParent;
+    class MainWindow* _mainParent;
 };
 
 #endif // CHANNELSTRIPCONTAINER_H

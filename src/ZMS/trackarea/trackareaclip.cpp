@@ -43,7 +43,7 @@ void TrackAreaClip::Update(int index)
 
 }
 
-void TrackAreaClip::UpdateFromRect(QRectF& rect)
+void TrackAreaClip::UpdateFromRect(const QRectF& rect)
 {
     this->_clip->SetStart(rect.x() / this->_trackarea->LocalViewScale().horizontal());
     int trackindex = rect.y() / this->_trackarea->LocalViewScale().vertical();

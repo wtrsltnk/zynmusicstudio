@@ -25,14 +25,14 @@ using namespace std;
 
 #include "../Misc/Util.h"
 #include "../Misc/Config.h"
-#include "InMgr.h"
+#include "EngineMgr.h"
 #include "AlsaEngine.h"
 
 AlsaEngine::AlsaEngine(EngineMgr* mgr)
     : Engine(mgr)
 {
     audio.buffer = new short[synth->buffersize * 2];
-    name = "ALSA";
+    this->_name = "ALSA";
     audio.handle = NULL;
 
     midi.handle  = NULL;
@@ -64,14 +64,14 @@ bool AlsaEngine::Start()
 
 void AlsaEngine::Stop()
 {
-    if(getMidiEn())
-        setMidiEn(false);
-    if(getAudioEn())
-        setAudioEn(false);
+    if(this->isMidiEnabled())
+        this->setMidiEnabled(false);
+    if(this->isAudioEnabled())
+        this->setAudioEnabled(false);
     snd_config_update_free_global();
 }
 
-void AlsaEngine::setMidiEn(bool nval)
+void AlsaEngine::setMidiEnabled(bool nval)
 {
     if(nval)
         openMidi();
@@ -79,12 +79,12 @@ void AlsaEngine::setMidiEn(bool nval)
         stopMidi();
 }
 
-bool AlsaEngine::getMidiEn() const
+bool AlsaEngine::isMidiEnabled() const
 {
     return midi.handle;
 }
 
-void AlsaEngine::setAudioEn(bool nval)
+void AlsaEngine::setAudioEnabled(bool nval)
 {
     if(nval)
         openAudio();
@@ -92,7 +92,7 @@ void AlsaEngine::setAudioEn(bool nval)
         stopAudio();
 }
 
-bool AlsaEngine::getAudioEn() const
+bool AlsaEngine::isAudioEnabled() const
 {
     return audio.handle;
 }
@@ -106,73 +106,73 @@ void *AlsaEngine::_MidiThread(void *arg)
 void *AlsaEngine::MidiThread(void)
 {
     snd_seq_event_t *event;
-    MidiEvent ev;
+    Midi::Event ev;
     set_realtime();
     while(snd_seq_event_input(midi.handle, &event) > 0) {
         //ensure ev is empty
         ev.channel = 0;
         ev.num     = 0;
         ev.value   = 0;
-        ev.type    = 0;
+        ev.type    = Midi::M_NONE;
 
         if(!event)
             continue;
         switch(event->type) {
             case SND_SEQ_EVENT_NOTEON:
                 if(event->data.note.note) {
-                    ev.type    = M_NOTE;
+                    ev.type    = Midi::M_NOTE;
                     ev.channel = event->data.note.channel;
                     ev.num     = event->data.note.note;
                     ev.value   = event->data.note.velocity;
-                    InMgr::getInstance().putEvent(ev);
+                    this->_engineMgr->Input()->PutEvent(ev);
                 }
                 break;
 
             case SND_SEQ_EVENT_NOTEOFF:
-                ev.type    = M_NOTE;
+                ev.type    = Midi::M_NOTE;
                 ev.channel = event->data.note.channel;
                 ev.num     = event->data.note.note;
                 ev.value   = 0;
-                InMgr::getInstance().putEvent(ev);
+                this->_engineMgr->Input()->PutEvent(ev);
                 break;
 
             case SND_SEQ_EVENT_KEYPRESS:
-                ev.type    = M_PRESSURE;
+                ev.type    = Midi::M_PRESSURE;
                 ev.channel = event->data.note.channel;
                 ev.num     = event->data.note.note;
                 ev.value   = event->data.note.velocity;
-                InMgr::getInstance().putEvent(ev);
+                this->_engineMgr->Input()->PutEvent(ev);
                 break;
 
             case SND_SEQ_EVENT_PITCHBEND:
-                ev.type    = M_CONTROLLER;
+                ev.type    = Midi::M_CONTROLLER;
                 ev.channel = event->data.control.channel;
                 ev.num     = C_pitchwheel;
                 ev.value   = event->data.control.value;
-                InMgr::getInstance().putEvent(ev);
+                this->_engineMgr->Input()->PutEvent(ev);
                 break;
 
             case SND_SEQ_EVENT_CONTROLLER:
-                ev.type    = M_CONTROLLER;
+                ev.type    = Midi::M_CONTROLLER;
                 ev.channel = event->data.control.channel;
                 ev.num     = event->data.control.param;
                 ev.value   = event->data.control.value;
-                InMgr::getInstance().putEvent(ev);
+                this->_engineMgr->Input()->PutEvent(ev);
                 break;
 
             case SND_SEQ_EVENT_PGMCHANGE:
-                ev.type    = M_PGMCHANGE;
+                ev.type    = Midi::M_PGMCHANGE;
                 ev.channel = event->data.control.channel;
                 ev.num     = event->data.control.value;
-                InMgr::getInstance().putEvent(ev);
+                this->_engineMgr->Input()->PutEvent(ev);
                 break;
 
             case SND_SEQ_EVENT_RESET: // reset to power-on state
-                ev.type    = M_CONTROLLER;
+                ev.type    = Midi::M_CONTROLLER;
                 ev.channel = event->data.control.channel;
                 ev.num     = C_resetallcontrollers;
                 ev.value   = 0;
-                InMgr::getInstance().putEvent(ev);
+                this->_engineMgr->Input()->PutEvent(ev);
                 break;
 
             case SND_SEQ_EVENT_PORT_SUBSCRIBED: // ports connected
@@ -202,7 +202,7 @@ void *AlsaEngine::MidiThread(void)
 
 bool AlsaEngine::openMidi()
 {
-    if(getMidiEn())
+    if(this->isMidiEnabled())
         return true;
 
     int alsaport;
@@ -232,7 +232,7 @@ bool AlsaEngine::openMidi()
 
 void AlsaEngine::stopMidi()
 {
-    if(!getMidiEn())
+    if(!this->isMidiEnabled())
         return;
 
     snd_seq_t *handle = midi.handle;
@@ -261,7 +261,7 @@ short *AlsaEngine::interleave(const Stereo<float *> &smps)
 
 bool AlsaEngine::openAudio()
 {
-    if(getAudioEn())
+    if(this->isAudioEnabled())
         return true;
 
     int rc = 0;
@@ -335,7 +335,7 @@ bool AlsaEngine::openAudio()
 
 void AlsaEngine::stopAudio()
 {
-    if(!getAudioEn())
+    if(!this->isAudioEnabled())
         return;
 
     snd_pcm_t *handle = audio.handle;

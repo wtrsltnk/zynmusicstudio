@@ -41,7 +41,7 @@ void PianoRollNoteItem::Update()
                     this->pianoroll->LocalViewScale().vertical());
 }
 
-void PianoRollNoteItem::UpdateFromRect(QRectF& rect)
+void PianoRollNoteItem::UpdateFromRect(const QRectF& rect)
 {
     this->note->SetStart(double(rect.x()) / double(this->pianoroll->LocalViewScale().horizontal()));
     this->note->SetNote(rect.y() / this->pianoroll->LocalViewScale().vertical());

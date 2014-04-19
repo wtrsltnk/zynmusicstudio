@@ -126,9 +126,9 @@ include_directories(${ZMS_INCLUDE_DIRS})
 add_executable(zynmusicstudio zynmusicstudio.cpp)
 
 target_link_libraries(zynmusicstudio
-	zynaddsubfx_core
 	zynaddsubfx_nio
-	zynmusicstudio_zms
+        zynaddsubfx_core
+        zynmusicstudio_zms
 	${NIO_LIBRARIES}
 	)
 ### END : ZynMusicStudio code (ZMS)

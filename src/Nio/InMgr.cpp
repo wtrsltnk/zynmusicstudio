@@ -17,7 +17,7 @@ InMgr::~InMgr()
     sem_destroy(&this->work);
 }
 
-void InMgr::PutEvent(MidiEvent ev)
+void InMgr::PutEvent(Midi::Event ev)
 {
     if(this->queue.push(ev)) //check for error
         cerr << "ERROR: Midi Ringbuffer is FULL" << endl;
@@ -29,26 +29,26 @@ void InMgr::flush()
 {
     this->_enginemgr->GetMaster()->Lock();
 
-    MidiEvent ev;
+    Midi::Event ev;
     while(!sem_trywait(&this->work)) {
         this->queue.pop(ev);
 
         switch(ev.type) {
-            case M_NOTE:
+            case Midi::M_NOTE:
                 if(ev.value)
                     this->_enginemgr->GetMaster()->NoteOn(ev.channel, ev.num, ev.value);
                 else
                     this->_enginemgr->GetMaster()->NoteOff(ev.channel, ev.num);
                 break;
 
-            case M_CONTROLLER:
+            case Midi::M_CONTROLLER:
                 this->_enginemgr->GetMaster()->SetController(ev.channel, ev.num, ev.value);
                 break;
 
-            case M_PGMCHANGE:
+            case Midi::M_PGMCHANGE:
                 this->_enginemgr->GetMaster()->SetProgram(ev.channel, ev.num);
                 break;
-            case M_PRESSURE:
+            case Midi::M_PRESSURE:
                 this->_enginemgr->GetMaster()->PolyphonicAftertouch(ev.channel, ev.num, ev.value);
                 break;
         }

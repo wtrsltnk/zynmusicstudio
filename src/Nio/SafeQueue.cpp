@@ -3,7 +3,7 @@ template<class T>
 SafeQueue<T>::SafeQueue(size_t maxlen)
     :writePtr(0), readPtr(0), bufSize(maxlen)
 {
-    sem_init(&w_space, PTHREAD_PROCESS_PRIVATE, unsigned int(maxlen - 1));
+    sem_init(&w_space, PTHREAD_PROCESS_PRIVATE, (unsigned int)maxlen - 1);
     sem_init(&r_space, PTHREAD_PROCESS_PRIVATE, 0);
     buffer = new T[maxlen];
 }

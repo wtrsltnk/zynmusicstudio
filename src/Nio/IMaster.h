@@ -1,22 +1,25 @@
 #ifndef IMASTER_H
 #define IMASTER_H
 
-enum MidiType {
-    M_NONE = 0,
-    M_NOTE = 1,
-    M_CONTROLLER = 2,
-    M_PGMCHANGE  = 3,
-    M_PRESSURE   = 4
-};
+namespace Midi
+{
+    enum Type {
+        M_NONE = 0,
+        M_NOTE = 1,
+        M_CONTROLLER = 2,
+        M_PGMCHANGE  = 3,
+        M_PRESSURE   = 4
+    };
 
-struct MidiEvent {
-    MidiEvent::MidiEvent() : channel(0), type(M_NONE), num(0), value(0) { }
+    struct Event {
+        Event() : channel(0), type(M_NONE), num(0), value(0) { }
 
-    int channel; //the midi channel for the event
-    MidiType type;
-    int num;     //note, controller or program number
-    int value;   //velocity or controller value
-};
+        int channel; //the midi channel for the event
+        Type type;
+        int num;     //note, controller or program number
+        int value;   //velocity or controller value
+    };
+}
 
 class IMaster
 {

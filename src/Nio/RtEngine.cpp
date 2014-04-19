@@ -67,46 +67,46 @@ void RtEngine::callback(double timeStamp, std::vector<unsigned char> *message, v
 {
     RtEngine* engine = (RtEngine*)userData;
 
-    MidiEvent     ev;
+    Midi::Event ev;
     unsigned char chan = message->at(0) & 0x0f;
     switch(message->at(0) & 0xf0) {
         case 0x80: //Note Off
-            ev.type    = M_NOTE;
+            ev.type    = Midi::M_NOTE;
             ev.channel = chan;
             ev.num     = message->at(1);
             ev.value   = 0;
             engine->_engineMgr->Input()->PutEvent(ev);
             break;
         case 0x90: //Note On
-            ev.type    = M_NOTE;
+            ev.type    = Midi::M_NOTE;
             ev.channel = chan;
             ev.num     = message->at(1);
             ev.value   = message->at(2);
             engine->_engineMgr->Input()->PutEvent(ev);
             break;
         case 0xA0: /* pressure, aftertouch */
-            ev.type    = M_PRESSURE;
+            ev.type    = Midi::M_PRESSURE;
             ev.channel = chan;
             ev.num     = message->at(1);
             ev.value   = message->at(2);
             engine->_engineMgr->Input()->PutEvent(ev);
             break;
         case 0xb0: //Controller
-            ev.type    = M_CONTROLLER;
+            ev.type    = Midi::M_CONTROLLER;
             ev.channel = chan;
             ev.num     = message->at(1);
             ev.value   = message->at(2);
             engine->_engineMgr->Input()->PutEvent(ev);
             break;
         case 0xc0: //Program Change
-            ev.type    = M_PGMCHANGE;
+            ev.type    = Midi::M_PGMCHANGE;
             ev.channel = chan;
             ev.num     = message->at(1);
             ev.value   = 0;
             engine->_engineMgr->Input()->PutEvent(ev);
             break;
         case 0xe0: //Pitch Wheel
-            ev.type    = M_CONTROLLER;
+            ev.type    = Midi::M_CONTROLLER;
             ev.channel = chan;
             ev.num     = C_pitchwheel;
             ev.value   = (message->at(1) + message->at(2) * (int) 128) - 8192;

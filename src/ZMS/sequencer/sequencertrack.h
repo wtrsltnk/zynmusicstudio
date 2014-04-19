@@ -3,7 +3,7 @@
 
 #include <QList>
 #include "sequencerclip.h"
-#include "../Misc/Instrument.h"
+#include "../../Misc/Instrument.h"
 
 class SequencerSong;
 

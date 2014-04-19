@@ -52,7 +52,7 @@ private:
     QGraphicsItemGroup* _tracks;
 
     friend class MainWindow;
-    MainWindow* _mainParent;
+    class MainWindow* _mainParent;
 };
 
 #endif // TRACKAREA_H

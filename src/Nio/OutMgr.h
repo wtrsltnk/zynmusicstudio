@@ -36,7 +36,7 @@ public:
     friend class EngineMgr;
 private:
     void addSamples(float *l, float *r);
-    unsigned int  storedSmps() const { return unsigned int(priBuffCurrent.l - priBuf.l); }
+    unsigned int  storedSmps() const { return (unsigned int)(priBuffCurrent.l - priBuf.l); }
     void removeStaleSamples();
 
     Engine* currentOut; /**<The current output driver*/

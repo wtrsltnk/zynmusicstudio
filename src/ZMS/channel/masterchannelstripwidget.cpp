@@ -32,10 +32,6 @@ MasterChannelStripWidget::MasterChannelStripWidget(QWidget *parent) :
 
     connect(this->ui->sysmaster, SIGNAL(valueChanged(int)), this, SLOT(OnMasterGainChanged(int)));
     connect(this->ui->effectStrip, SIGNAL(OnMinimumHeightChanged(int)), this, SLOT(OnMinimumHeightEffectStripChanged(int)));
-
-    QList<EffectMgr*> effects;
-    effects << new EffectMgr(true, 0);
-    this->ui->effectStrip->OnUpdateEffectButtons(effects);
 }
 
 MasterChannelStripWidget::~MasterChannelStripWidget()

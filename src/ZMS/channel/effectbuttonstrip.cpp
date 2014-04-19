@@ -52,7 +52,7 @@ void EffectButtonStrip::OnUpdateEffectButtons(QList<EffectMgr*>& effects)
             this->ui->buttonlayout->insertWidget(this->ui->buttonlayout->count() - 2, btn);
             connect(btn, SIGNAL(clicked()), this, SLOT(OnEffectClicked()));
         }
-        btn->setText((*i)->getEffectName());
+        btn->setText(QString((*i)->getEffectName()));
     }
 
     this->UpdateMinHeight();

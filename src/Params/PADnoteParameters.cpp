@@ -676,7 +676,7 @@ void PADnoteParameters::export2wav(std::string basefilename)
         if(sample[k].smp == NULL)
             continue;
         char tmpstr[20];
-        _snprintf_s(tmpstr, 20, "_%02d", k + 1);
+        snprintf(tmpstr, 20, "_%02d", k + 1);
         std::string filename = basefilename + std::string(tmpstr) + ".wav";
         WavFile     wav(filename, synth->samplerate, 1);
         if(wav.good()) {
