@@ -342,28 +342,28 @@ void JackEngine::handleMidi(unsigned long frames)
 
     while(jack_midi_event_get(&jack_midi_event, midi_buf,
                               event_index++) == 0) {
-        MidiEvent ev;
+        Midi::Event ev;
         midi_data  = jack_midi_event.buffer;
         type       = midi_data[0] & 0xF0;
         ev.channel = midi_data[0] & 0x0F;
 
         switch(type) {
             case 0x80: /* note-off */
-                ev.type  = M_NOTE;
+                ev.type  = Midi::M_NOTE;
                 ev.num   = midi_data[1];
                 ev.value = 0;
                 this->_engineMgr->Input()->PutEvent(ev);
                 break;
 
             case 0x90: /* note-on */
-                ev.type  = M_NOTE;
+                ev.type  = Midi::M_NOTE;
                 ev.num   = midi_data[1];
                 ev.value = midi_data[2];
                 this->_engineMgr->Input()->PutEvent(ev);
                 break;
 
             case 0xA0: /* pressure, aftertouch */
-                ev.type  = M_PRESSURE;
+                ev.type  = Midi::M_PRESSURE;
                 ev.num   = midi_data[1];
                 ev.value = midi_data[2];
                 this->_engineMgr->Input()->PutEvent(ev);
@@ -371,7 +371,7 @@ void JackEngine::handleMidi(unsigned long frames)
 
             case 0xB0: /* controller */
             printf("controller %d %d\n", midi_data[1], midi_data[2]);
-                ev.type  = M_CONTROLLER;
+                ev.type  = Midi::M_CONTROLLER;
                 ev.num   = midi_data[1];
                 ev.value = midi_data[2];
                 this->_engineMgr->Input()->PutEvent(ev);
@@ -379,14 +379,14 @@ void JackEngine::handleMidi(unsigned long frames)
 
             case 0xC0: /* program change */
             printf("program change %d\n", midi_data[1]);
-                ev.type  = M_PGMCHANGE;
+                ev.type  = Midi::M_PGMCHANGE;
                 ev.num   = midi_data[1];
                 ev.value = 0;
                 this->_engineMgr->Input()->PutEvent(ev);
                 break;
 
             case 0xE0: /* pitch bend */
-                ev.type  = M_CONTROLLER;
+                ev.type  = Midi::M_CONTROLLER;
                 ev.num   = C_pitchwheel;
                 ev.value = ((midi_data[2] << 7) | midi_data[1]) - 8192;
                 this->_engineMgr->Input()->PutEvent(ev);
