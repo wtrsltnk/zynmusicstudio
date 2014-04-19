@@ -1,7 +1,6 @@
 #include "masterchannelstripwidget.h"
 #include "ui_masterchannelstripwidget.h"
 #include "../Misc/Master.h"
-#include "../Misc/Channel.h"
 #include "../Effects/EffectMgr.h"
 #include "../Nio/InMgr.h"
 #include "../Nio/OutMgr.h"

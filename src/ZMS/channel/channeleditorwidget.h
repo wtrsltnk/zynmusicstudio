@@ -2,7 +2,7 @@
 #define CHANNELEDITORWIDGET_H
 
 #include <QWidget>
-#include "../Misc/Channel.h"
+#include "../Misc/Instrument.h"
 
 namespace Ui {
 class ChannelEditorWidget;
@@ -16,11 +16,11 @@ public:
     explicit ChannelEditorWidget(QWidget *parent = 0);
     ~ChannelEditorWidget();
 
-    Channel* ChannelObject() { return this->_channel; }
-    void SetChannel(Channel* channel);
+    Instrument* ChannelObject() { return this->_channel; }
+    void SetChannel(Instrument* channel);
 
 protected slots:
-    void OnChannelUpdated(Channel* channel);
+    void OnChannelUpdated(Instrument* channel);
     void OnAddSynthEnabledChanged(bool state);
     void OnSubSynthEnabledChanged(bool state);
     void OnPadSynthEnabledChanged(bool state);
@@ -30,7 +30,7 @@ protected:
 
 private:
     Ui::ChannelEditorWidget *ui;
-    Channel* _channel;
+    Instrument* _channel;
 };
 
 #endif // CHANNELEDITORWIDGET_H

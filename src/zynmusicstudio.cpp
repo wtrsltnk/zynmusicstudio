@@ -34,7 +34,6 @@
 
 #include "ZMS/zynapplication.h"
 #include "Misc/Master.h"
-#include "Misc/Channel.h"
 #include "Misc/Util.h"
 
 using namespace std;

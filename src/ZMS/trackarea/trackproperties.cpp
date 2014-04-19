@@ -28,7 +28,7 @@ TrackProperties::TrackProperties(SequencerTrack* track) :
 
     this->ui->label->installEventFilter(this);
 
-    connect(&Sequencer::Inst(), SIGNAL(ChannelIsUpdated(Channel*)), this, SLOT(OnChannelUpdated(Channel*)));
+    connect(&Sequencer::Inst(), SIGNAL(ChannelIsUpdated(Instrument*)), this, SLOT(OnChannelUpdated(Instrument*)));
 }
 
 TrackProperties::~TrackProperties()
@@ -105,7 +105,7 @@ void TrackProperties::OnChangeChannel()
         this->ActivateChannel(this->_track->GetChannel());
     }
 }
-void TrackProperties::OnChannelUpdated(Channel* channel)
+void TrackProperties::OnChannelUpdated(Instrument* channel)
 {
     if (channel == this->_track->GetChannel())
     {

@@ -2,9 +2,9 @@ set(zynaddsubfx_misc_SRCS
     Misc/Bank.cpp
     Misc/Config.cpp
     Misc/Dump.cpp
+    Misc/Instrument.cpp
     Misc/Master.cpp
     Misc/Microtonal.cpp
-    Misc/Channel.cpp
     Misc/Util.cpp
     Misc/XMLwrapper.cpp
     Misc/WavFile.cpp

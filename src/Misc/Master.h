@@ -32,7 +32,6 @@
 #include "Dump.h"
 #include "XMLwrapper.h"
 
-#include "Channel.h"
 #include "../Params/Controller.h"
 #include "../Nio/IMaster.h"
 #include "../Nio/EngineMgr.h"
@@ -89,10 +88,10 @@ public:
 
     void vuUpdate(const float *outl, const float *outr);
 
-    std::vector<Channel*>& Channels() { return this->channels; }
-    Channel* addChannel();
-    void removeChannel(Channel* channel);
-    int channelIndex(Channel* channel);
+    std::vector<Instrument*>& Channels() { return this->channels; }
+    Instrument* addChannel();
+    void removeChannel(Instrument* channel);
+    int channelIndex(Instrument* channel);
 
     unsigned char Pvolume;
     unsigned char Pkeyshift;
@@ -116,7 +115,7 @@ public:
     virtual void Lock() { pthread_mutex_lock(&this->mutex); }
     virtual void Unlock() { pthread_mutex_unlock(&this->mutex); }
 private:
-    std::vector<Channel *> channels;
+    std::vector<Instrument *> channels;
     vuData vu;
     float  volume;
     int    keyshift;

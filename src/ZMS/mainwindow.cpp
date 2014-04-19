@@ -79,7 +79,7 @@ void MainWindow::ClipIsActivated(TrackAreaClip* clip)
     this->ui->pianoroll->ClipSelectionChanged(selection);
 }
 
-void MainWindow::OnChannelIsActivated(Channel* channel)
+void MainWindow::OnChannelIsActivated(Instrument* channel)
 {
     this->ui->channelDock->show();
     this->ui->channeleditor->SetChannel(channel);

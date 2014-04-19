@@ -11,7 +11,7 @@ ChannelEditorWidget::ChannelEditorWidget(QWidget *parent) :
 
     this->ui->label->installEventFilter(this);
 
-    connect(&Sequencer::Inst(), SIGNAL(ChannelIsUpdated(Channel*)), this, SLOT(OnChannelUpdated(Channel*)));
+    connect(&Sequencer::Inst(), SIGNAL(ChannelIsUpdated(Instrument*)), this, SLOT(OnChannelUpdated(Instrument*)));
 
     connect(this->ui->chkEnableAdd, SIGNAL(toggled(bool)), this, SLOT(OnAddSynthEnabledChanged(bool)));
     connect(this->ui->chkEnableSub, SIGNAL(toggled(bool)), this, SLOT(OnSubSynthEnabledChanged(bool)));
@@ -41,7 +41,7 @@ bool ChannelEditorWidget::eventFilter(QObject *o, QEvent *e)
     return false;
 }
 
-void ChannelEditorWidget::OnChannelUpdated(Channel* channel)
+void ChannelEditorWidget::OnChannelUpdated(Instrument* channel)
 {
     if (this->_channel == channel)
     {
@@ -70,7 +70,7 @@ void ChannelEditorWidget::OnPadSynthEnabledChanged(bool state)
     this->_channel->kit[0].Ppadenabled = (state ? 1 : 0);
 }
 
-void ChannelEditorWidget::SetChannel(Channel *channel)
+void ChannelEditorWidget::SetChannel(Instrument *channel)
 {
     this->_channel = channel;
     if (this->_channel != 0)

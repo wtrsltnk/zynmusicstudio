@@ -20,8 +20,8 @@
 
 */
 
-#ifndef CHANNEL_H
-#define CHANNEL_H
+#ifndef INSTRUMENT_H
+#define INSTRUMENT_H
 
 #define MAX_INFO_TEXT_SIZE 1000
 
@@ -41,16 +41,16 @@ class XMLWrapper;
 class FFTwrapper;
 
 /** Part implementation*/
-class Channel
+class Instrument
 {
     public:
         /**Constructor
          * @param microtonal_ Pointer to the microtonal object
          * @param fft_ Pointer to the FFTwrapper
          * @param mutex_ Pointer to the master pthread_mutex_t*/
-        Channel(Microtonal *microtonal_, FFTwrapper *fft_, pthread_mutex_t *mutex_);
+        Instrument(Microtonal *microtonal_, FFTwrapper *fft_, pthread_mutex_t *mutex_);
         /**Destructor*/
-        virtual ~Channel();
+        virtual ~Instrument();
 
         // Midi commands implemented
         void NoteOn(unsigned char note,

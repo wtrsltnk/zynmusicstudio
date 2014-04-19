@@ -3,7 +3,7 @@
 
 #include <QList>
 #include "sequencerclip.h"
-#include "../Misc/Channel.h"
+#include "../Misc/Instrument.h"
 
 class SequencerSong;
 
@@ -22,8 +22,8 @@ public:
     const QString& Title() const { return this->_title; }
     void SetTitle(const QString& title) { this->_title = title; }
 
-    Channel* GetChannel() { return this->_channel; }
-    void SetChannel(Channel* channel) { this->_channel = channel; }
+    Instrument* GetChannel() { return this->_channel; }
+    void SetChannel(Instrument* channel) { this->_channel = channel; }
 
     void SendNotes(long start, long end);
 
@@ -31,7 +31,7 @@ private:
     SequencerSong* _song;
     QList<SequencerClip*> _clips;
     QString _title;
-    Channel* _channel;
+    Instrument* _channel;
 };
 
 #endif // SEQUENCERTRACK_H

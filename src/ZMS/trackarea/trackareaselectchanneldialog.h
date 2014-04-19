@@ -3,7 +3,7 @@
 
 #include <QDialog>
 #include <QListWidgetItem>
-#include "../Misc/Channel.h"
+#include "../Misc/Instrument.h"
 
 namespace Ui {
 class TrackAreaSelectChannelDialog;
@@ -17,8 +17,8 @@ public:
     explicit TrackAreaSelectChannelDialog(QWidget *parent = 0);
     ~TrackAreaSelectChannelDialog();
 
-    void SetSelectedChannel(Channel* channel) { this->_selectedChannel= channel; this->ShowChannels(); }
-    Channel* SelectedChannel() { return this->_selectedChannel; }
+    void SetSelectedChannel(Instrument* channel) { this->_selectedChannel= channel; this->ShowChannels(); }
+    Instrument* SelectedChannel() { return this->_selectedChannel; }
 
 protected slots:
     void OnAccepted();
@@ -27,7 +27,7 @@ protected slots:
 
 private:
     Ui::TrackAreaSelectChannelDialog *ui;
-    Channel* _selectedChannel;
+    Instrument* _selectedChannel;
 
     void ShowChannels();
 

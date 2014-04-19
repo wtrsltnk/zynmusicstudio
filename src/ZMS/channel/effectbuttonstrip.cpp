@@ -64,7 +64,6 @@ void EffectButtonStrip::UpdateMinHeight()
     min += 5 - (min % 5);
     this->setMinimumHeight(min * this->ui->btnAdd->height());
     this->setMaximumHeight(min * this->ui->btnAdd->height());
-    this->OnMinimumHeightChanged(min * this->ui->btnAdd->height());
 }
 
 EffectButton* EffectButtonStrip::GetButtonByEffect(EffectMgr* effect)

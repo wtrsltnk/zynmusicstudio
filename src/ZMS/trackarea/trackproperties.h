@@ -19,7 +19,7 @@ public:
     SequencerTrack* GetTrack() { return this->_track; }
 
 signals:
-    void ActivateChannel(Channel* channel);
+    void ActivateChannel(Instrument* channel);
 
 public slots:
     void UpdateWidget();
@@ -32,7 +32,7 @@ protected:
 protected slots:
     void OnCloseClicked();
     void OnChangeChannel();
-    void OnChannelUpdated(Channel* channel);
+    void OnChannelUpdated(Instrument* channel);
 
 private:
     Ui::TrackProperties *ui;

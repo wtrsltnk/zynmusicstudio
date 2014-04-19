@@ -34,6 +34,7 @@ set(zynmusicstudio_zms_SRCS
     channel/effectbuttonstrip.cpp
 
     mixer/mixermaster.cpp
+    mixer/mixerchannel.cpp
     )
 set(zynmusicstudio_zms_HEADERS
     mainwindow.h
@@ -70,6 +71,7 @@ set(zynmusicstudio_zms_HEADERS
     channel/effectbuttonstrip.h
 
     mixer/mixermaster.h
+    mixer/mixerchannel.h
     )
 set(zynmusicstudio_zms_FORMS
     mainwindow.ui

@@ -22,7 +22,7 @@
 */
 
 #include "Master.h"
-#include "Channel.h"
+#include "Instrument.h"
 
 #include "../Params/LFOParams.h"
 #include "../Effects/EffectMgr.h"
@@ -75,7 +75,7 @@ Master::~Master()
 {
     while (this->channels.empty() == false)
     {
-        Channel* part = this->channels.back();
+        Instrument* part = this->channels.back();
         this->channels.pop_back();
         delete part;
     }
@@ -218,10 +218,10 @@ void Master::vuUpdate(const float *outl, const float *outr)
     vu.rmspeakr = sqrt(vu.rmspeakr / synth->buffersize_f);
 }
 
-Channel* Master::addChannel()
+Instrument* Master::addChannel()
 {
     pthread_mutex_lock(&(mutex));
-    Channel* part = new Channel(&microtonal, fft, &mutex);
+    Instrument* part = new Instrument(&microtonal, fft, &mutex);
 
     part->defaults();
     part->Penabled = 1;
@@ -232,11 +232,11 @@ Channel* Master::addChannel()
     return part;
 }
 
-void Master::removeChannel(Channel* part)
+void Master::removeChannel(Instrument* part)
 {
     pthread_mutex_lock(&mutex);
 
-    for (std::vector<Channel*>::iterator i = this->channels.begin(); i != this->channels.end(); ++i)
+    for (std::vector<Instrument*>::iterator i = this->channels.begin(); i != this->channels.end(); ++i)
     {
         if (*i == part)
         {
@@ -249,7 +249,7 @@ void Master::removeChannel(Channel* part)
     pthread_mutex_unlock(&mutex);
 }
 
-int Master::channelIndex(class Channel* part)
+int Master::channelIndex(class Instrument* part)
 {
     for (int i = 0; i < this->channels.size(); i++)
         if (part == this->channels[i])

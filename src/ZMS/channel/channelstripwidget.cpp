@@ -50,7 +50,7 @@ bool ChannelStripWidget::eventFilter(QObject* o, QEvent* e)
     return false;
 }
 
-void ChannelStripWidget::OnChannelChanged(Channel* channel)
+void ChannelStripWidget::OnChannelChanged(Instrument* channel)
 {
     if (channel == this->_channel)
     {

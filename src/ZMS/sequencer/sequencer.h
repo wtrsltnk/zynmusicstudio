@@ -47,7 +47,7 @@ public slots:
 signals:
     void CurrentSongIsUpdated();
     void SelectedTrackChanged(SequencerTrack* track);
-    void ChannelIsUpdated(Channel* channel);
+    void ChannelIsUpdated(Instrument* channel);
 
 private:
     TimeSignature _timeSignature;

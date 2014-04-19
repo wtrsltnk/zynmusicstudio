@@ -16,7 +16,7 @@ public:
     explicit ChannelStripContainer(QWidget *parent = 0);
     ~ChannelStripContainer();
 
-    ChannelStripWidget* GetWidgetByChannel(Channel* channel);
+    ChannelStripWidget* GetWidgetByChannel(Instrument* channel);
 
 public slots:
     void UpdateChannels();

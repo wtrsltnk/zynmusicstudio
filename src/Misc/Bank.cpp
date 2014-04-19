@@ -42,7 +42,7 @@
 
 #include "Config.h"
 #include "Util.h"
-#include "Channel.h"
+#include "Instrument.h"
 
 #define INSTRUMENT_EXTENSION ".xml"
 
@@ -146,7 +146,7 @@ void Bank::clearslot(unsigned int ninstrument)
 /*
  * Save the instrument to a slot
  */
-void Bank::savetoslot(unsigned int ninstrument, Channel *part)
+void Bank::savetoslot(unsigned int ninstrument, Instrument *part)
 {
     clearslot(ninstrument);
 
@@ -175,7 +175,7 @@ void Bank::savetoslot(unsigned int ninstrument, Channel *part)
 /*
  * Loads the instrument from the bank
  */
-void Bank::loadfromslot(unsigned int ninstrument, Channel *part)
+void Bank::loadfromslot(unsigned int ninstrument, Instrument *part)
 {
     if(emptyslot(ninstrument))
         return;

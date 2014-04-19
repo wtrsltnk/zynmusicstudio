@@ -46,22 +46,22 @@ void ChannelStripContainer::UpdateChannels()
         }
     }
 
-    for (std::vector<Channel*>::iterator i = Master::getInstance().Channels().begin();
+    for (std::vector<Instrument*>::iterator i = Master::getInstance().Channels().begin();
          i != Master::getInstance().Channels().end(); ++i)
     {
         ChannelStripWidget* widget = this->GetWidgetByChannel(*i);
         if (widget == 0)
         {
             widget = new ChannelStripWidget();
-            connect(&Sequencer::Inst(), SIGNAL(ChannelIsUpdated(Channel*)), widget, SLOT(OnChannelChanged(Channel*)));
-            connect(widget, SIGNAL(ActivateChannel(Channel*)), this->_mainParent, SLOT(OnChannelIsActivated(Channel*)));
+            connect(&Sequencer::Inst(), SIGNAL(ChannelIsUpdated(Instrument*)), widget, SLOT(OnChannelChanged(Instrument*)));
+            connect(widget, SIGNAL(ActivateChannel(Instrument*)), this->_mainParent, SLOT(OnChannelIsActivated(Instrument*)));
             layout->insertWidget(layout->count() - 1, widget, 0, Qt::AlignLeft);
         }
         widget->SetChannel(*i);
     }
 }
 
-ChannelStripWidget* ChannelStripContainer::GetWidgetByChannel(Channel* channel)
+ChannelStripWidget* ChannelStripContainer::GetWidgetByChannel(Instrument* channel)
 {
     QVBoxLayout* layout = (QVBoxLayout*)this->ui->channelsContent->layout();
 

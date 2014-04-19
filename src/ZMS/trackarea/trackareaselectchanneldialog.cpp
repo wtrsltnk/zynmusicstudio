@@ -29,7 +29,7 @@ void TrackAreaSelectChannelDialog::OnAccepted()
         QListWidgetItem* item = this->ui->lstParts->selectedItems().at(0);
         if (item != 0)
         {
-            Channel* channel = (Channel*)item->data(23).value<void*>();
+            Instrument* channel = (Instrument*)item->data(23).value<void*>();
             if (channel != 0)
                 this->_selectedChannel = channel;
         }
@@ -50,7 +50,7 @@ void TrackAreaSelectChannelDialog::OnRemoveChannel()
         QListWidgetItem* item = this->ui->lstParts->selectedItems().at(0);
         if (item != 0)
         {
-            Channel* channel = (Channel*)item->data(23).value<void*>();
+            Instrument* channel = (Instrument*)item->data(23).value<void*>();
             if (channel != 0)
             {
                 Master::getInstance().removeChannel(channel);
@@ -63,10 +63,10 @@ void TrackAreaSelectChannelDialog::OnRemoveChannel()
 void TrackAreaSelectChannelDialog::ShowChannels()
 {
     this->ui->lstParts->clear();
-    for (std::vector<Channel *>::iterator i = Master::getInstance().Channels().begin();
+    for (std::vector<Instrument *>::iterator i = Master::getInstance().Channels().begin();
          i != Master::getInstance().Channels().end(); ++i)
     {
-        Channel* part = *i;
+        Instrument* part = *i;
         QListWidgetItem* item = new QListWidgetItem(this->ui->lstParts);
         item->setText(part->Pname.c_str());
         item->setData(23, QVariant::fromValue((void*)part));

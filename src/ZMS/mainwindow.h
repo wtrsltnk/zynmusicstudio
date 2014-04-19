@@ -31,7 +31,7 @@ class MainWindow;
 }
 
 class TrackAreaClip;
-class Channel;
+class Instrument;
 class ChannelStripWidget;
 
 class MainWindow : public QMainWindow
@@ -47,7 +47,7 @@ protected slots:
     void OnPause();
     void OnStop();
     void ClipIsActivated(TrackAreaClip* clip);
-    void OnChannelIsActivated(Channel* channel);
+    void OnChannelIsActivated(Instrument* channel);
 
 private:
     Ui::MainWindow *ui;
