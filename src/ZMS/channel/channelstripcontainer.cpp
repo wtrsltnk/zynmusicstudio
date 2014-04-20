@@ -37,7 +37,7 @@ void ChannelStripContainer::UpdateChannels()
         ChannelStripWidget* widget = dynamic_cast<ChannelStripWidget*>(layout->itemAt(i)->widget());
         if (widget != 0)
         {
-            if (Master::getInstance().channelIndex(widget->GetChannel()) == -1)
+            if (Master::getInstance().instrumentIndex(widget->GetChannel()) == -1)
             {
                 layout->removeWidget(widget);
                 delete widget;
@@ -46,8 +46,8 @@ void ChannelStripContainer::UpdateChannels()
         }
     }
 
-    for (std::vector<Instrument*>::iterator i = Master::getInstance().Channels().begin();
-         i != Master::getInstance().Channels().end(); ++i)
+    for (std::vector<Instrument*>::iterator i = Master::getInstance().Instruments().begin();
+         i != Master::getInstance().Instruments().end(); ++i)
     {
         ChannelStripWidget* widget = this->GetWidgetByChannel(*i);
         if (widget == 0)
@@ -77,7 +77,7 @@ ChannelStripWidget* ChannelStripContainer::GetWidgetByChannel(Instrument* channe
 
 void ChannelStripContainer::AddChannel()
 {
-    Master::getInstance().addChannel();
+    Master::getInstance().addInstrument();
     Sequencer::Inst().CurrentSongIsUpdated();
 }
 

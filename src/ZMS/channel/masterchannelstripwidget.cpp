@@ -31,7 +31,6 @@ MasterChannelStripWidget::MasterChannelStripWidget(QWidget *parent) :
     connect(this->_vutimer, SIGNAL(timeout()), this, SLOT(OnVuTimer()));
 
     connect(this->ui->sysmaster, SIGNAL(valueChanged(int)), this, SLOT(OnMasterGainChanged(int)));
-    connect(this->ui->effectStrip, SIGNAL(OnMinimumHeightChanged(int)), this, SLOT(OnMinimumHeightEffectStripChanged(int)));
 }
 
 MasterChannelStripWidget::~MasterChannelStripWidget()
@@ -178,9 +177,4 @@ void MasterChannelStripWidget::OnSelectAudioDevice()
     QString sel = ((QAction*)sender())->text();
     if (Master::getInstance().engineManager->Output()->setSink(sel.toStdString()))
         this->ui->btnAudio->setText(sel);
-}
-
-void MasterChannelStripWidget::OnMinimumHeightEffectStripChanged(int height)
-{
-    this->setMinimumHeight(350 + height);
 }

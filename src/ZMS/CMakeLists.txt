@@ -35,6 +35,9 @@ set(zynmusicstudio_zms_SRCS
 
     mixer/mixermaster.cpp
     mixer/mixerchannel.cpp
+    mixer/mixerbus.cpp
+    mixer/mixersenddestination.cpp
+    mixer/mixersendsource.cpp
     )
 set(zynmusicstudio_zms_HEADERS
     mainwindow.h
@@ -72,6 +75,9 @@ set(zynmusicstudio_zms_HEADERS
 
     mixer/mixermaster.h
     mixer/mixerchannel.h
+    mixer/mixerbus.h
+    mixer/mixersenddestination.h
+    mixer/mixersendsource.h
     )
 set(zynmusicstudio_zms_FORMS
     mainwindow.ui

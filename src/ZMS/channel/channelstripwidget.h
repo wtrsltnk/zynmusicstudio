@@ -28,7 +28,6 @@ public slots:
     void OnPanDialChanged(int value);
     void OnCloseClicked();
     void OnEditClicked();
-    void OnMinimumHeightEffectStripChanged(int height);
 
 private:
     Ui::ChannelStripWidget *ui;

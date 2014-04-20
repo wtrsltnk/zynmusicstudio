@@ -915,7 +915,7 @@ void Instrument::RunNote(unsigned int k)
 /*
  * Compute Part samples and store them in the partoutl[] and partoutr[]
  */
-void Instrument::ComputePartSmps()
+void Instrument::ComputeSamples()
 {
     for(int i = 0; i < synth->buffersize; ++i) {
         partoutl[i] = 0.0f;

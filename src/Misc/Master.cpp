@@ -73,10 +73,10 @@ Master &Master::getInstance()
 
 Master::~Master()
 {
-    while (this->channels.empty() == false)
+    while (this->instruments.empty() == false)
     {
-        Instrument* part = this->channels.back();
-        this->channels.pop_back();
+        Instrument* part = this->instruments.back();
+        this->instruments.pop_back();
         delete part;
     }
 
@@ -101,7 +101,7 @@ void Master::defaults()
     setPvolume(80);
     setPkeyshift(64);
 
-    this->addChannel();
+    this->addInstrument();
 
     microtonal.defaults();
     ShutUp();
@@ -113,10 +113,10 @@ void Master::defaults()
 void Master::NoteOn(char chan, char note, char velocity)
 {
     if(velocity) {
-        for(int npart = 0; npart < this->channels.size(); ++npart)
-            if(chan == channels[npart]->Prcvchn) {
-                if(channels[npart]->Penabled)
-                    channels[npart]->NoteOn(note, velocity, keyshift);
+        for(std::vector<Instrument*>::iterator i = this->instruments.begin(); i != this->instruments.end(); ++i)
+            if(chan == (*i)->Prcvchn) {
+                if((*i)->Penabled)
+                    (*i)->NoteOn(note, velocity, keyshift);
             }
     }
     else
@@ -128,9 +128,9 @@ void Master::NoteOn(char chan, char note, char velocity)
  */
 void Master::NoteOff(char chan, char note)
 {
-    for(int npart = 0; npart < this->channels.size(); ++npart)
-        if((chan == channels[npart]->Prcvchn) && channels[npart]->Penabled)
-            channels[npart]->NoteOff(note);
+    for(std::vector<Instrument*>::iterator i = this->instruments.begin(); i != this->instruments.end(); ++i)
+        if((chan == (*i)->Prcvchn) && (*i)->Penabled)
+            (*i)->NoteOff(note);
 }
 
 /*
@@ -139,10 +139,10 @@ void Master::NoteOff(char chan, char note)
 void Master::PolyphonicAftertouch(char chan, char note, char velocity)
 {
     if(velocity) {
-        for(int npart = 0; npart < this->channels.size(); ++npart)
-            if(chan == channels[npart]->Prcvchn)
-                if(channels[npart]->Penabled)
-                    channels[npart]->PolyphonicAftertouch(note, velocity, keyshift);
+        for(std::vector<Instrument*>::iterator i = this->instruments.begin(); i != this->instruments.end(); ++i)
+            if(chan == (*i)->Prcvchn)
+                if((*i)->Penabled)
+                    (*i)->PolyphonicAftertouch(note, velocity, keyshift);
     }
     else
         this->NoteOff(chan, note);
@@ -164,9 +164,9 @@ void Master::SetController(char chan, int type, int par)
             bank.loadbank(bank.banks[par].dir);
     }
     else {  //other controllers
-        for(int npart = 0; npart < this->channels.size(); ++npart) //Send the controller to all part assigned to the channel
-            if((chan == channels[npart]->Prcvchn) && (channels[npart]->Penabled != 0))
-                channels[npart]->SetController(type, par);
+        for(std::vector<Instrument*>::iterator i = this->instruments.begin(); i != this->instruments.end(); ++i)
+            if((chan == (*i)->Prcvchn) && ((*i)->Penabled != 0))
+                (*i)->SetController(type, par);
         ;
     }
 }
@@ -176,15 +176,15 @@ void Master::SetProgram(char chan, unsigned int pgm)
     if(config.cfg.IgnoreProgramChange)
         return;
 
-    for(int npart = 0; npart < this->channels.size(); ++npart)
-        if(chan == channels[npart]->Prcvchn) {
-            bank.loadfromslot(pgm, channels[npart]);
+    for(std::vector<Instrument*>::iterator i = this->instruments.begin(); i != this->instruments.end(); ++i)
+        if(chan == (*i)->Prcvchn) {
+            bank.loadfromslot(pgm, (*i));
 
             //Hack to get pad note parameters to update
             //this is not real time safe and makes assumptions about the calling
             //convention of this function...
             pthread_mutex_unlock(&mutex);
-            channels[npart]->applyparameters();
+            (*i)->applyparameters();
             pthread_mutex_lock(&mutex);
         }
 }
@@ -218,30 +218,30 @@ void Master::vuUpdate(const float *outl, const float *outr)
     vu.rmspeakr = sqrt(vu.rmspeakr / synth->buffersize_f);
 }
 
-Instrument* Master::addChannel()
+Instrument* Master::addInstrument()
 {
     pthread_mutex_lock(&(mutex));
-    Instrument* part = new Instrument(&microtonal, fft, &mutex);
+    Instrument* instrument = new Instrument(&microtonal, fft, &mutex);
 
-    part->defaults();
-    part->Penabled = 1;
-    part->Prcvchn = 0;
-    this->channels.push_back(part);
+    instrument->defaults();
+    instrument->Penabled = 1;
+    instrument->Prcvchn = 0;
+    this->instruments.push_back(instrument);
     pthread_mutex_unlock(&(mutex));
 
-    return part;
+    return instrument;
 }
 
-void Master::removeChannel(Instrument* part)
+void Master::removeInstrument(Instrument* instrument)
 {
     pthread_mutex_lock(&mutex);
 
-    for (std::vector<Instrument*>::iterator i = this->channels.begin(); i != this->channels.end(); ++i)
+    for (std::vector<Instrument*>::iterator i = this->instruments.begin(); i != this->instruments.end(); ++i)
     {
-        if (*i == part)
+        if (*i == instrument)
         {
-            this->channels.erase(i);
-            delete part;
+            this->instruments.erase(i);
+            delete instrument;
             break;
         }
     }
@@ -249,10 +249,10 @@ void Master::removeChannel(Instrument* part)
     pthread_mutex_unlock(&mutex);
 }
 
-int Master::channelIndex(class Instrument* part)
+int Master::instrumentIndex(class Instrument* instrument)
 {
-    for (int i = 0; i < this->channels.size(); i++)
-        if (part == this->channels[i])
+    for (int i = 0; i < int(this->instruments.size()); i++)
+        if (instrument == this->instruments[i])
             return i;
     return -1;
 }
@@ -271,23 +271,24 @@ void Master::AudioOut(float *outl, float *outr)
         return;
 
     //Compute part samples and store them part[npart]->partoutl,partoutr
-    for(int npart = 0; npart < this->channels.size(); ++npart) {
-        if(channels[npart]->Penabled != 0 && !pthread_mutex_trylock(&channels[npart]->load_mutex)) {
-            channels[npart]->ComputePartSmps();
-            pthread_mutex_unlock(&channels[npart]->load_mutex);
+    for(std::vector<Instrument*>::iterator i = this->instruments.begin(); i != this->instruments.end(); ++i) {
+        Instrument* instrument = *i;
+        if(instrument->Penabled != 0 && !pthread_mutex_trylock(&instrument->load_mutex)) {
+            instrument->ComputeSamples();
+            pthread_mutex_unlock(&instrument->load_mutex);
         }
     }
 
     //Apply the part volumes and pannings (after insertion effects)
-    for(int npart = 0; npart < this->channels.size(); ++npart) {
-        if(channels[npart]->Penabled == 0)
+    for(std::vector<Instrument*>::iterator i = this->instruments.begin(); i != this->instruments.end(); ++i) {
+        if((*i)->Penabled == 0)
             continue;
 
-        Stereo<float> newvol(channels[npart]->volume),
-        oldvol(channels[npart]->oldvolumel,
-               channels[npart]->oldvolumer);
+        Stereo<float> newvol((*i)->volume),
+        oldvol((*i)->oldvolumel,
+               (*i)->oldvolumer);
 
-        float pan = channels[npart]->panning;
+        float pan = (*i)->panning;
         if(pan < 0.5f)
             newvol.l *= pan * 2.0f;
         else
@@ -296,31 +297,31 @@ void Master::AudioOut(float *outl, float *outr)
         //the volume or the panning has changed and needs interpolation
         if(ABOVE_AMPLITUDE_THRESHOLD(oldvol.l, newvol.l)
            || ABOVE_AMPLITUDE_THRESHOLD(oldvol.r, newvol.r)) {
-            for(int i = 0; i < synth->buffersize; ++i) {
+            for(int j = 0; j < synth->buffersize; ++j) {
                 Stereo<float> vol(INTERPOLATE_AMPLITUDE(oldvol.l, newvol.l,
-                                                        i, synth->buffersize),
+                                                        j, synth->buffersize),
                                   INTERPOLATE_AMPLITUDE(oldvol.r, newvol.r,
-                                                        i, synth->buffersize));
-                channels[npart]->partoutl[i] *= vol.l;
-                channels[npart]->partoutr[i] *= vol.r;
+                                                        j, synth->buffersize));
+                (*i)->partoutl[j] *= vol.l;
+                (*i)->partoutr[j] *= vol.r;
             }
-            channels[npart]->oldvolumel = newvol.l;
-            channels[npart]->oldvolumer = newvol.r;
+            (*i)->oldvolumel = newvol.l;
+            (*i)->oldvolumer = newvol.r;
         }
         else
-            for(int i = 0; i < synth->buffersize; ++i) { //the volume did not changed
-                channels[npart]->partoutl[i] *= newvol.l;
-                channels[npart]->partoutr[i] *= newvol.r;
+            for(int j = 0; j < synth->buffersize; ++j) { //the volume did not changed
+                (*i)->partoutl[j] *= newvol.l;
+                (*i)->partoutr[j] *= newvol.r;
             }
     }
 
 
     //Mix all parts
-    for(int npart = 0; npart < this->channels.size(); ++npart)
-        if(channels[npart]->Penabled)   //only mix active parts
-            for(int i = 0; i < synth->buffersize; ++i) { //the volume did not changed
-                outl[i] += channels[npart]->partoutl[i];
-                outr[i] += channels[npart]->partoutr[i];
+    for(std::vector<Instrument*>::iterator i = this->instruments.begin(); i != this->instruments.end(); ++i)
+        if((*i)->Penabled)   //only mix active parts
+            for(int j = 0; j < synth->buffersize; ++j) { //the volume did not changed
+                outl[j] += (*i)->partoutl[j];
+                outr[j] += (*i)->partoutr[j];
             }
 
     //Master Volume
@@ -371,9 +372,8 @@ void Master::setPkeyshift(char Pkeyshift_)
  */
 void Master::ShutUp()
 {
-    for(int npart = 0; npart < this->channels.size(); ++npart) {
-        channels[npart]->cleanup();
-//        fakepeakpart[npart] = 0;
+    for(std::vector<Instrument*>::iterator i = this->instruments.begin(); i != this->instruments.end(); ++i) {
+        (*i)->cleanup();
     }
     vuresetpeaks();
     shutup = 0;
@@ -405,8 +405,8 @@ vuData Master::getVuData()
 
 void Master::applyparameters(bool lockmutex)
 {
-    for(int npart = 0; npart < this->channels.size(); ++npart)
-        channels[npart]->applyparameters(lockmutex);
+    for(std::vector<Instrument*>::iterator i = this->instruments.begin(); i != this->instruments.end(); ++i)
+        (*i)->applyparameters(lockmutex);
 }
 
 void Master::add2XML(XMLwrapper *xml)
@@ -419,9 +419,9 @@ void Master::add2XML(XMLwrapper *xml)
     microtonal.add2XML(xml);
     xml->endbranch();
 
-    for(int npart = 0; npart < this->channels.size(); ++npart) {
+    for(int npart = 0; npart < int(this->instruments.size()); ++npart) {
         xml->beginbranch("PART", npart);
-        channels[npart]->add2XML(xml);
+        this->instruments[npart]->add2XML(xml);
         xml->endbranch();
     }
 }
@@ -463,11 +463,12 @@ void Master::getfromXML(XMLwrapper *xml)
     ctl.NRPN.receive = xml->getparbool("nrpn_receive", ctl.NRPN.receive);
 
 
-    channels[0]->Penabled = 0;
-    for(int npart = 0; npart < this->channels.size(); ++npart) {
+    instruments[0]->Penabled = 0;
+    int npart = 0;
+    for(std::vector<Instrument*>::iterator i = this->instruments.begin(); i != this->instruments.end(); ++i, ++npart) {
         if(xml->enterbranch("PART", npart) == 0)
             continue;
-        channels[npart]->getfromXML(xml);
+        (*i)->getfromXML(xml);
         xml->exitbranch();
     }
 

@@ -36,7 +36,6 @@ public:
 
 signals:
     void AddEffectButtonClicked();
-    void OnMinimumHeightChanged(int height);
 
 public slots:
     void OnUpdateEffectButtons(QList<EffectMgr*>& effects);

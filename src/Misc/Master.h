@@ -88,10 +88,10 @@ public:
 
     void vuUpdate(const float *outl, const float *outr);
 
-    std::vector<Instrument*>& Channels() { return this->channels; }
-    Instrument* addChannel();
-    void removeChannel(Instrument* channel);
-    int channelIndex(Instrument* channel);
+    std::vector<Instrument*>& Instruments() { return this->instruments; }
+    Instrument* addInstrument();
+    void removeInstrument(Instrument* channel);
+    int instrumentIndex(Instrument* channel);
 
     unsigned char Pvolume;
     unsigned char Pkeyshift;
@@ -115,7 +115,7 @@ public:
     virtual void Lock() { pthread_mutex_lock(&this->mutex); }
     virtual void Unlock() { pthread_mutex_unlock(&this->mutex); }
 private:
-    std::vector<Instrument *> channels;
+    std::vector<Instrument *> instruments;
     vuData vu;
     float  volume;
     int    keyshift;

@@ -66,7 +66,7 @@ class Instrument
         void RelaseAllKeys(); //this is called on AllNotesOff controller
 
         /* The synthesizer part output */
-        void ComputePartSmps(); //Part output
+        void ComputeSamples(); //Part output
 
         //instrumentonly: 0 - save all, 1 - save only instrumnet, 2 - save only instrument without the name(used in bank)
 

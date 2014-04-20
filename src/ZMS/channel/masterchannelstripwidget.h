@@ -22,7 +22,6 @@ protected slots:
     void OnSelectMidiDevice();
     void OnShowAudioDevices();
     void OnSelectAudioDevice();
-    void OnMinimumHeightEffectStripChanged(int height);
 
 private:
     Ui::MasterChannelStripWidget *ui;

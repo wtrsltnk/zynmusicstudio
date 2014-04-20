@@ -20,7 +20,6 @@ ChannelStripWidget::ChannelStripWidget(QWidget *parent) :
     connect(this->ui->pan, SIGNAL(valueChanged(int)), this, SLOT(OnPanDialChanged(int)));
     connect(this->ui->btnClose, SIGNAL(clicked()), this, SLOT(OnCloseClicked()));
     connect(this->ui->btnEdit, SIGNAL(clicked()), this, SLOT(OnEditClicked()));
-    connect(this->ui->effectstrip, SIGNAL(OnMinimumHeightChanged(int)), this, SLOT(OnMinimumHeightEffectStripChanged(int)));
 }
 
 ChannelStripWidget::~ChannelStripWidget()
@@ -75,7 +74,7 @@ void ChannelStripWidget::OnCloseClicked()
     dlg.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     if (dlg.exec() == QMessageBox::Yes)
     {
-        Master::getInstance().removeChannel(this->_channel);
+        Master::getInstance().removeInstrument(this->_channel);
         Sequencer::Inst().CurrentSongIsUpdated();
     }
 }
@@ -83,9 +82,4 @@ void ChannelStripWidget::OnCloseClicked()
 void ChannelStripWidget::OnEditClicked()
 {
     this->ActivateChannel(this->_channel);
-}
-
-void ChannelStripWidget::OnMinimumHeightEffectStripChanged(int height)
-{
-    this->setMinimumHeight(400 + height);
 }

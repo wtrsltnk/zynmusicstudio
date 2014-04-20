@@ -2,7 +2,6 @@
 #define MIXERMASTER_H
 
 #include <QObject>
-#include <set>
 #include "./Nio/EngineMgr.h"
 #include "./Nio/InMgr.h"
 #include "./Nio/OutMgr.h"

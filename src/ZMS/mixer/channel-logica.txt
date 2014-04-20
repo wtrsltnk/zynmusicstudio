@@ -1,0 +1,3 @@
+- een channel-output-out mag alleen naar de master-in stromen
+- een bus-out mag alleen naar een channel-in stromen
+- een channel-send-out mag alleen naar een bus-in stromen

@@ -1,7 +1,7 @@
 #include "mixerchannel.h"
 
 MixerChannel::MixerChannel(QObject *parent) :
-    QObject(parent)
+    QObject(parent), MixerSendSource(), MixerSendDestination()
 { }
 
 Instrument* MixerChannel::GetInstrument()

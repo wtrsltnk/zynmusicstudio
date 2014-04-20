@@ -38,7 +38,7 @@ void TrackAreaSelectChannelDialog::OnAccepted()
 
 void TrackAreaSelectChannelDialog::OnAddChannel()
 {
-    Master::getInstance().addChannel();
+    Master::getInstance().addInstrument();
     Sequencer::Inst().CurrentSongIsUpdated();
     this->ShowChannels();
 }
@@ -53,7 +53,7 @@ void TrackAreaSelectChannelDialog::OnRemoveChannel()
             Instrument* channel = (Instrument*)item->data(23).value<void*>();
             if (channel != 0)
             {
-                Master::getInstance().removeChannel(channel);
+                Master::getInstance().removeInstrument(channel);
                 this->ShowChannels();
             }
         }
@@ -63,8 +63,8 @@ void TrackAreaSelectChannelDialog::OnRemoveChannel()
 void TrackAreaSelectChannelDialog::ShowChannels()
 {
     this->ui->lstParts->clear();
-    for (std::vector<Instrument *>::iterator i = Master::getInstance().Channels().begin();
-         i != Master::getInstance().Channels().end(); ++i)
+    for (std::vector<Instrument *>::iterator i = Master::getInstance().Instruments().begin();
+         i != Master::getInstance().Instruments().end(); ++i)
     {
         Instrument* part = *i;
         QListWidgetItem* item = new QListWidgetItem(this->ui->lstParts);
