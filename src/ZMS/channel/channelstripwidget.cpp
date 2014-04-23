@@ -1,7 +1,7 @@
 #include "channelstripwidget.h"
 #include "ui_channelstripwidget.h"
-#include <sequencer/sequencer.h>
-#include <../Misc/Master.h>
+#include "sequencer/sequencer.h"
+#include "mixer/mixer.h"
 #include <QInputDialog>
 #include <QMessageBox>
 #include <iostream>
@@ -17,7 +17,6 @@ ChannelStripWidget::ChannelStripWidget(QWidget *parent) :
     this->ui->lblName->installEventFilter(this);
 
     connect(this->ui->volume, SIGNAL(valueChanged(int)), this, SLOT(OnVolumeSliderChanged(int)));
-    connect(this->ui->pan, SIGNAL(valueChanged(int)), this, SLOT(OnPanDialChanged(int)));
     connect(this->ui->btnClose, SIGNAL(clicked()), this, SLOT(OnCloseClicked()));
     connect(this->ui->btnEdit, SIGNAL(clicked()), this, SLOT(OnEditClicked()));
 }
@@ -25,6 +24,11 @@ ChannelStripWidget::ChannelStripWidget(QWidget *parent) :
 ChannelStripWidget::~ChannelStripWidget()
 {
     delete ui;
+}
+
+void ChannelStripWidget::SetChannelColor(const QColor& color)
+{
+    this->ui->lblName->setStyleSheet(QString("QLabel{background-color:rgb(%0,%1,%2);}").arg(color.red()).arg(color.green()).arg(color.blue()));
 }
 
 bool ChannelStripWidget::eventFilter(QObject* o, QEvent* e)
@@ -37,32 +41,38 @@ bool ChannelStripWidget::eventFilter(QObject* o, QEvent* e)
         dlg.setTextValue(this->ui->lblName->text());
         if (dlg.exec() == QDialog::Accepted)
         {
-            this->_channel->Pname = dlg.textValue().toStdString();
-            Sequencer::Inst().ChannelIsUpdated(this->_channel);
+            this->_channel->SetName(dlg.textValue());
         }
         return true;
     }
     return false;
 }
 
-void ChannelStripWidget::OnChannelChanged(Instrument* channel)
+void ChannelStripWidget::SetChannel(MixerChannel *channel)
+{
+    this->_channel = channel;
+    if (this->_channel != 0)
+    {
+        this->ui->volume->setValue(this->_channel->GetVolume());
+        this->ui->lblName->setText(this->_channel->GetName());
+        this->SetChannelColor(this->_channel->GetColor());
+        connect(this->_channel, SIGNAL(NameChanged(QString)), this->ui->lblName, SLOT(setText(QString)));
+    }
+}
+
+void ChannelStripWidget::OnChannelUpdated(MixerChannel* channel)
 {
     if (channel == this->_channel)
     {
-        this->ui->volume->setValue(this->_channel->Pvolume);
-        this->ui->pan->setValue(this->_channel->Ppanning);
-        this->ui->lblName->setText(this->_channel->Pname.c_str());
+        this->ui->volume->setValue(this->_channel->GetVolume());
+        this->ui->lblName->setText(this->_channel->GetName());
+        this->SetChannelColor(this->_channel->GetColor());
     }
 }
 
 void ChannelStripWidget::OnVolumeSliderChanged(int value)
 {
-    this->_channel->setPvolume(value);
-}
-
-void ChannelStripWidget::OnPanDialChanged(int value)
-{
-    this->_channel->setPpanning(value);
+    this->_channel->SetVolume(value);
 }
 
 void ChannelStripWidget::OnCloseClicked()
@@ -74,12 +84,12 @@ void ChannelStripWidget::OnCloseClicked()
     dlg.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     if (dlg.exec() == QMessageBox::Yes)
     {
-        Master::getInstance().removeInstrument(this->_channel);
+        Mixer::Instance().RemoveChannel(this->_channel);
         Sequencer::Inst().CurrentSongIsUpdated();
     }
 }
 
 void ChannelStripWidget::OnEditClicked()
 {
-    this->ActivateChannel(this->_channel);
+    emit ActivateChannel(this->_channel);
 }

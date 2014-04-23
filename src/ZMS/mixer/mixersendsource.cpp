@@ -1,17 +1,19 @@
 #include "mixersendsource.h"
-#include "mixersenddestination.h"
+#include "mixersendsink.h"
 
 MixerSendSource::MixerSendSource()
-    : _destination(0)
 { }
 
-void MixerSendSource::SetDestination(MixerSendDestination* destination)
+void MixerSendSource::AddDestination(MixerSendSink* destination)
 {
-    if (destination == (MixerSendDestination*)this)
-        return;
-
-    if (this->_destination != 0) this->_destination->SetSource(0);
-    this->_destination = destination;
-    if (this->_destination != 0 && this->_destination->Source() != this) this->_destination->SetSource(this);
+    if (this->_destinations.contains(destination) == false)
+        this->_destinations.push_back(destination);
+    destination->AddSource(this);
 }
 
+void MixerSendSource::RemoveDestination(MixerSendSink* destination)
+{
+    if (this->_destinations.contains(destination))
+        this->_destinations.removeOne(destination);
+    destination->RemoveSource(this);
+}

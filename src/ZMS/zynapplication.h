@@ -28,6 +28,7 @@ class ZynApplication : public QApplication
 {
 public:
     explicit ZynApplication(int argc, char *argv[]);
+    virtual ~ZynApplication();
 
     virtual int exec();
 

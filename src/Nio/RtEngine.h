@@ -22,13 +22,13 @@
 #ifndef RTENGINE_H
 #define RTENGINE_H
 
-#include "Engine.h"
+#include "NioEngine.h"
 #include "RtMidi.h"
 
-class RtEngine:public Engine
+class RtEngine:public NioEngine
 {
 public:
-    RtEngine(EngineMgr* mgr);
+    RtEngine(NioEngineManager* mgr);
     virtual ~RtEngine();
 
     virtual bool IsMidiIn() { return true; }

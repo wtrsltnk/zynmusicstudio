@@ -2,12 +2,12 @@ add_definitions(-DOUT_DEFAULT="NULL")
 add_definitions(-DIN_DEFAULT="NULL")
 
 set(zynaddsubfx_nio_SRCS
+    NioInputManager.cpp
+    NioOutputManager.cpp
+    NioEngineManager.cpp
+    NioEngine.cpp
     WavEngine.cpp
     NulEngine.cpp
-    OutMgr.cpp
-    InMgr.cpp
-    Engine.cpp
-    EngineMgr.cpp
     RtEngine.cpp
     RtMidi.cpp
     )

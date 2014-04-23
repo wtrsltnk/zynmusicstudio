@@ -33,11 +33,15 @@ set(zynmusicstudio_zms_SRCS
     channel/padsyntheditorwidget.cpp
     channel/effectbuttonstrip.cpp
 
+    mixer/mixer.cpp
+    mixer/mixersource.cpp
+    mixer/mixerbuffer.cpp
+    mixer/mixersink.cpp
     mixer/mixermaster.cpp
     mixer/mixerchannel.cpp
     mixer/mixerbus.cpp
-    mixer/mixersenddestination.cpp
     mixer/mixersendsource.cpp
+    mixer/mixersendsink.cpp
     )
 set(zynmusicstudio_zms_HEADERS
     mainwindow.h
@@ -73,11 +77,15 @@ set(zynmusicstudio_zms_HEADERS
     channel/padsyntheditorwidget.h
     channel/effectbuttonstrip.h
 
+    mixer/mixer.h
+    mixer/mixersource.h
+    mixer/mixersink.h
+    mixer/mixerbuffer.h
     mixer/mixermaster.h
     mixer/mixerchannel.h
     mixer/mixerbus.h
-    mixer/mixersenddestination.h
     mixer/mixersendsource.h
+    mixer/mixersendsink.h
     )
 set(zynmusicstudio_zms_FORMS
     mainwindow.ui

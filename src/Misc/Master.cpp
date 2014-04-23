@@ -52,7 +52,7 @@ static Master* masterInstance = NULL;
 
 Master::Master()
 {
-    this->engineManager = new EngineMgr(this);
+    this->engineManager = new NioEngineManager(this);
 
     pthread_mutex_init(&mutex, NULL);
     pthread_mutex_init(&vumutex, NULL);

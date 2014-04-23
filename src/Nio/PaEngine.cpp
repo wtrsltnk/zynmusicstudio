@@ -25,8 +25,8 @@
 
 using namespace std;
 
-PaEngine::PaEngine(EngineMgr* mgr)
-    : Engine(mgr), stream(NULL)
+PaEngine::PaEngine(NioEngineManager* mgr)
+    : NioEngine(mgr), stream(NULL)
 {
     _name = "PA";
 }

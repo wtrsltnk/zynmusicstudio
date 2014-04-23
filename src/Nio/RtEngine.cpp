@@ -20,11 +20,11 @@
 
 */
 #include "RtEngine.h"
-#include "InMgr.h"
-#include "EngineMgr.h"
+#include "NioInputManager.h"
+#include "NioEngineManager.h"
 
-RtEngine::RtEngine(EngineMgr* mgr)
-    : Engine(mgr), midiin(0)
+RtEngine::RtEngine(NioEngineManager* mgr)
+    : NioEngine(mgr), midiin(0)
 {
     this->_name = "RT";
 }

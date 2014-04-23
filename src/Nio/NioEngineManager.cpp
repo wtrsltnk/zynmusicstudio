@@ -1,8 +1,9 @@
-#include "EngineMgr.h"
+#include "NioEngineManager.h"
+#include "NioInputManager.h"
+#include "NioOutputManager.h"
 #include <algorithm>
 #include <iostream>
-#include "InMgr.h"
-#include "OutMgr.h"
+
 #include "NulEngine.h"
 #if OSS
 #include "OssEngine.h"
@@ -17,16 +18,15 @@
 #include "PaEngine.h"
 #endif
 #include "RtEngine.h"
-#include "../Misc/Master.h"
 
 using namespace std;
 
-EngineMgr::EngineMgr(IMaster* master)
+NioEngineManager::NioEngineManager(IMaster* master)
     : _master(master),
-      _inputManager(new InMgr(this)),
-      _outputManager(new OutMgr(this))
+      _inputManager(new NioInputManager(this)),
+      _outputManager(new NioOutputManager(this))
 {
-    Engine *defaultEng = new NulEngine(this);
+    NioEngine *defaultEng = new NulEngine(this);
 
     //conditional compiling mess (but contained)
     _engines.push_back(defaultEng);
@@ -51,9 +51,9 @@ EngineMgr::EngineMgr(IMaster* master)
     this->setDefaultInputEngine("NULL");
 }
 
-EngineMgr::~EngineMgr()
+NioEngineManager::~NioEngineManager()
 {
-    for(list<Engine *>::iterator itr = _engines.begin();
+    for(list<NioEngine *>::iterator itr = _engines.begin();
         itr != _engines.end(); ++itr)
         delete *itr;
 }
@@ -69,24 +69,24 @@ EngineMgr::~EngineMgr()
  * 8) Lets return those samples to the primary and secondary outputs
  * 9) Lets wait for another tick
  */
-const Stereo<float *> EngineMgr::tick(unsigned int frameSize)
+const Stereo<float *> NioEngineManager::tick(unsigned int frameSize)
 {
-    this->_inputManager->flush();
+    this->_inputManager->Tick();
 
-    return this->_outputManager->tick(frameSize);
+    return this->_outputManager->Tick(frameSize);
 }
 
-Engine *EngineMgr::getEngine(string name)
+NioEngine *NioEngineManager::getEngine(string name)
 {
     transform(name.begin(), name.end(), name.begin(), ::toupper);
-    for(list<Engine *>::iterator itr = _engines.begin();
+    for(list<NioEngine *>::iterator itr = _engines.begin();
         itr != _engines.end(); ++itr)
         if((*itr)->Name() == name)
             return *itr;
     return NULL;
 }
 
-bool EngineMgr::start()
+bool NioEngineManager::start()
 {
     bool expected = true;
     if(!(_defaultOut && _defaultIn)) {
@@ -127,16 +127,16 @@ bool EngineMgr::start()
     return expected;
 }
 
-void EngineMgr::stop()
+void NioEngineManager::stop()
 {
-    for(list<Engine *>::iterator itr = _engines.begin();
+    for(list<NioEngine *>::iterator itr = _engines.begin();
         itr != _engines.end(); ++itr)
         (*itr)->Stop();
 }
 
-bool EngineMgr::setDefaultInputEngine(string name)
+bool NioEngineManager::setDefaultInputEngine(string name)
 {
-    Engine* chosen;
+    NioEngine* chosen;
     if((chosen = this->getEngine(name)) && chosen->IsMidiIn()) {    //got the input
         _defaultIn = chosen;
         return true;
@@ -150,9 +150,9 @@ bool EngineMgr::setDefaultInputEngine(string name)
     return false;
 }
 
-bool EngineMgr::setDefaultOutputEngine(string name)
+bool NioEngineManager::setDefaultOutputEngine(string name)
 {
-    Engine* chosen;
+    NioEngine* chosen;
     if((chosen = this->getEngine(name)) && chosen->IsAudioOut()) {    //got the output
         _defaultOut = chosen;
         return true;
@@ -166,7 +166,7 @@ bool EngineMgr::setDefaultOutputEngine(string name)
 
 #if JACK
 #include <jack/jack.h>
-void EngineMgr::preferedSampleRate(unsigned &rate)
+void NioEngineManager::preferedSampleRate(unsigned &rate)
 {
     jack_client_t *client = jack_client_open("temp-client",
                                              JackNoStartServer, 0);

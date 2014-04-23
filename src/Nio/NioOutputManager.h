@@ -1,22 +1,22 @@
-#ifndef OUTMGR_H
-#define OUTMGR_H
+#ifndef _NIOOUTPUTMANAGER_H_
+#define _NIOOUTPUTMANAGER_H_
 
 #include "../Misc/Stereo.h"
 #include <list>
 #include <string>
 #include <semaphore.h>
 
-class Engine;
-class EngineMgr;
-class OutMgr
+class NioEngine;
+class NioEngineManager;
+class NioOutputManager
 {
-    EngineMgr* enginemgr;
+    NioEngineManager* enginemgr;
 public:
-    OutMgr(EngineMgr* mgr);
-    virtual ~OutMgr();
+    NioOutputManager(NioEngineManager* mgr);
+    virtual ~NioOutputManager();
 
     /**Execute a tick*/
-    const Stereo<float *> tick(unsigned int frameSize);
+    const Stereo<float *> Tick(unsigned int frameSize);
 
     /**Request a new set of samples
      * @param n number of requested samples (defaults to 1)
@@ -27,19 +27,19 @@ public:
      * @param name case unsensitive name of driver
      * @return pointer to Audio Out or NULL
      */
-    Engine *getOutputEngine(std::string name);
+    NioEngine *GetOutputEngine(std::string name);
 
-    bool setSink(std::string name);
-    std::string getSink() const;
+    bool SetSink(std::string name);
+    std::string GetSink() const;
 
     class WavEngine * wave;     /**<The Wave Recorder*/
-    friend class EngineMgr;
+    friend class NioEngineManager;
 private:
     void addSamples(float *l, float *r);
     unsigned int  storedSmps() const { return (unsigned int)(priBuffCurrent.l - priBuf.l); }
     void removeStaleSamples();
 
-    Engine* currentOut; /**<The current output driver*/
+    NioEngine* currentOut; /**<The current output driver*/
 
     sem_t requested;
 
@@ -53,4 +53,4 @@ private:
     int stales;
 };
 
-#endif
+#endif // _NIOOUTPUTMANAGER_H_

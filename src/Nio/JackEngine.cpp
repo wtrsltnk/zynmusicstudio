@@ -25,16 +25,14 @@
 #include <cassert>
 #include <cstring>
 
-#include "EngineMgr.h"
+#include "NioEngineManager.h"
 
 #include "JackEngine.h"
 
 using namespace std;
 
-char *instance_name = "zynmusicstudio";
-
-JackEngine::JackEngine(EngineMgr* mgr)
-    :Engine(mgr), jackClient(NULL)
+JackEngine::JackEngine(NioEngineManager* mgr)
+    :NioEngine(mgr), jackClient(NULL)
 {
     this->_name = "JACK";
     audio.jackSamplerate = 0;
@@ -43,37 +41,17 @@ JackEngine::JackEngine(EngineMgr* mgr)
         audio.ports[i]     = NULL;
         audio.portBuffs[i] = NULL;
     }
-    midi.import = NULL;
+    midi.inport = NULL;
 }
 
 bool JackEngine::connectServer(string server)
 {
-    bool autostart_jack = true;
     if(jackClient)
         return true;
 
-    string clientname = "zynaddsubfx";
     jack_status_t jackstatus;
-    bool use_server_name = server.size() && server.compare("default") != 0;
-    jack_options_t jopts = (jack_options_t)
-                           (((!instance_name
-                              && use_server_name) ? JackServerName :
-                             JackNullOption)
-                            | ((autostart_jack) ? JackNullOption :
-                               JackNoStartServer));
 
-    if(instance_name)
-        jackClient = jack_client_open(instance_name, jopts, &jackstatus);
-    else {
-        if(use_server_name)
-            jackClient = jack_client_open(
-                clientname.c_str(), jopts, &jackstatus,
-                server.c_str());
-        else
-            jackClient = jack_client_open(
-                clientname.c_str(), jopts, &jackstatus);
-    }
-
+    this->jackClient = jack_client_open(JACK_CLIENT_NAME, JackNullOption, &jackstatus);
 
     if(NULL != jackClient)
         return true;
@@ -143,7 +121,7 @@ void JackEngine::setMidiEnabled(bool nval)
 
 bool JackEngine::isMidiEnabled() const
 {
-    return (this->midi.import != 0);
+    return (this->midi.inport != 0);
 }
 
 void JackEngine::setAudioEnabled(bool nval)
@@ -168,40 +146,25 @@ bool JackEngine::openAudio()
         if(!connectJack())
             return false;
 
-
     const char *portnames[] = { "out_1", "out_2" };
     for(int port = 0; port < 2; ++port)
-        audio.ports[port] = jack_port_register(
-            jackClient,
-            portnames[port],
-            JACK_DEFAULT_AUDIO_TYPE,
-            JackPortIsOutput
-            | JackPortIsTerminal,
-            0);
+        audio.ports[port] = jack_port_register(jackClient, portnames[port], JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput | JackPortIsTerminal, 0);
+
     if((NULL != audio.ports[0]) && (NULL != audio.ports[1])) {
         audio.jackSamplerate = jack_get_sample_rate(jackClient);
         audio.jackNframes    = jack_get_buffer_size(jackClient);
-        unsigned int samplerate = audio.jackSamplerate;
         bufferSize = audio.jackNframes;
 
-
         //Attempt to autoConnect when specified
-        const char **outPorts = jack_get_ports(
-            jackClient,
-            NULL,
-            NULL,
-            JackPortIsPhysical
-            | JackPortIsInput);
+        const char **outPorts = jack_get_ports(jackClient, NULL, NULL, JackPortIsPhysical | JackPortIsInput);
         if(outPorts != NULL) {
             //Verify that stereo is available
             assert(outPorts[0]);
             assert(outPorts[1]);
 
             //Connect to physical outputs
-            jack_connect(jackClient, jack_port_name(
-                             audio.ports[0]), outPorts[0]);
-            jack_connect(jackClient, jack_port_name(
-                             audio.ports[1]), outPorts[1]);
+            jack_connect(jackClient, jack_port_name(audio.ports[0]), outPorts[0]);
+            jack_connect(jackClient, jack_port_name(audio.ports[1]), outPorts[1]);
         }
         else
             cerr << "Warning, No outputs to autoconnect to" << endl;
@@ -232,16 +195,35 @@ bool JackEngine::openMidi()
         if(!connectJack())
             return false;
 
-    midi.import = jack_port_register(jackClient, "midi_input",
+    this->midi.inport = jack_port_register(jackClient, "midi_input",
                                      JACK_DEFAULT_MIDI_TYPE,
                                      JackPortIsInput | JackPortIsTerminal, 0);
-    return (this->midi.import != 0);
+    if (this->midi.inport != 0)
+    {
+        const char **inPorts = jack_get_ports(jackClient, NULL, NULL, JackPortIsOutput);
+        if(inPorts != NULL) {
+            int i = 0;
+            while (inPorts[i] != 0) {
+                cout << "Trying to autoconnect to " << inPorts[i] << "...";
+                if (jack_connect(jackClient, inPorts[i++], jack_port_name(this->midi.inport)) == 0)
+                {
+                    cout << "connected!" << endl;
+                    break;
+                }
+                cout << "failed." << endl;
+            }
+        }
+        else
+            cerr << "Warning, No outputs to autoconnect to" << endl;
+        return true;
+    }
+    return false;
 }
 
 void JackEngine::stopMidi()
 {
-    jack_port_t *port = midi.import;
-    midi.import = NULL;
+    jack_port_t *port = midi.inport;
+    midi.inport = NULL;
     if(port)
         jack_port_unregister(jackClient, port);
 
@@ -299,6 +281,7 @@ bool JackEngine::processAudio(jack_nframes_t nframes)
     //Assumes size of smp.l == nframes
     memcpy(audio.portBuffs[0], smp.l, bufferSize * sizeof(float));
     memcpy(audio.portBuffs[1], smp.r, bufferSize * sizeof(float));
+
     return true;
 }
 
@@ -332,9 +315,9 @@ int JackEngine::bufferSizeCallback(jack_nframes_t nframes)
 
 void JackEngine::handleMidi(unsigned long frames)
 {
-    if(!midi.import)
+    if(!midi.inport)
         return;
-    void *midi_buf = jack_port_get_buffer(midi.import, frames);
+    void *midi_buf = jack_port_get_buffer(midi.inport, frames);
     jack_midi_event_t jack_midi_event;
     jack_nframes_t    event_index = 0;
     unsigned char    *midi_data;

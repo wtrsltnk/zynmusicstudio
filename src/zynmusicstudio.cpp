@@ -68,7 +68,7 @@ void initprogram(void)
     signal(SIGINT, sigterm_exit);
     signal(SIGTERM, sigterm_exit);
 
-    EngineMgr::preferedSampleRate(synth->samplerate);
+    NioEngineManager::preferedSampleRate(synth->samplerate);
 }
 
 /*
@@ -76,27 +76,18 @@ void initprogram(void)
  */
 int exitprogram()
 {
-    //ensure that everything has stopped with the mutex wait
-    Master::getInstance().Lock();
-    Master::getInstance().Unlock();
-
-    Master::getInstance().engineManager->stop();
-
     delete []denormalkillbuf;
-    Master::deleteInstance();
 
     return 0;
 }
 
 int main(int argc, char *argv[])
 {
-    ZynApplication app(argc, argv);
-
     initprogram();
 
-    //Run the Nio system
-    if (Master::getInstance().engineManager->start())
-        app.exec();
+    ZynApplication app(argc, argv);
+
+    app.exec();
 
     return exitprogram();
 }

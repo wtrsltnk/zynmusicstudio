@@ -34,7 +34,7 @@
 
 #include "../Params/Controller.h"
 #include "../Nio/IMaster.h"
-#include "../Nio/EngineMgr.h"
+#include "../Nio/NioEngineManager.h"
 
 struct vuData {
     vuData(void);
@@ -111,7 +111,7 @@ public:
 
     class FFTwrapper * fft;
 
-    EngineMgr* engineManager;
+    NioEngineManager* engineManager;
     virtual void Lock() { pthread_mutex_lock(&this->mutex); }
     virtual void Unlock() { pthread_mutex_unlock(&this->mutex); }
 private:

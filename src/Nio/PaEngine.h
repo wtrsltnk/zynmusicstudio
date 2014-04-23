@@ -25,12 +25,12 @@
 #include <portaudio.h>
 
 #include "../globals.h"
-#include "Engine.h"
+#include "NioEngine.h"
 
-class PaEngine:public Engine
+class PaEngine:public NioEngine
 {
 public:
-    PaEngine(EngineMgr* mgr);
+    PaEngine(NioEngineManager* mgr);
     ~PaEngine();
 
     virtual bool IsMidiIn() { return false; }

@@ -26,14 +26,16 @@
 #include <jack/jack.h>
 #include <pthread.h>
 
-#include "Engine.h"
+#include "NioEngine.h"
 
 typedef jack_default_audio_sample_t jsample_t;
 
-class JackEngine : public Engine
+#define JACK_CLIENT_NAME "zynmusicstudio"
+
+class JackEngine : public NioEngine
 {
     public:
-        JackEngine(EngineMgr* mgr);
+        JackEngine(NioEngineManager* mgr);
         virtual ~JackEngine() { }
 
         virtual bool IsMidiIn() { return true; }
@@ -81,7 +83,7 @@ class JackEngine : public Engine
             jsample_t   *portBuffs[2];
         } audio;
         struct midi {
-            jack_port_t *import;
+            jack_port_t *inport;
         } midi;
 
         void handleMidi(unsigned long frames);

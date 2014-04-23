@@ -23,17 +23,17 @@
 #ifndef WAVENGINE_H
 #define WAVENGINE_H
 
-#include "Engine.h"
+#include "NioEngine.h"
 #include <string>
 #include <pthread.h>
 #include <semaphore.h>
 #include "SafeQueue.h"
 
 class WavFile;
-class WavEngine : public Engine
+class WavEngine : public NioEngine
 {
 public:
-    WavEngine(EngineMgr* mgr);
+    WavEngine(NioEngineManager* mgr);
     virtual ~WavEngine();
 
     virtual bool IsMidiIn() { return false; }

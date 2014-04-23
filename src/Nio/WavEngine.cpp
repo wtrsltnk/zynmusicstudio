@@ -25,8 +25,8 @@
 
 using namespace std;
 
-WavEngine::WavEngine(EngineMgr* mgr)
-    : Engine(mgr), file(NULL), buffer(synth->samplerate * 4), pThread(NULL)
+WavEngine::WavEngine(NioEngineManager* mgr)
+    : NioEngine(mgr), file(NULL), buffer(synth->samplerate * 4), pThread(NULL)
 {
     sem_init(&work, PTHREAD_PROCESS_PRIVATE, 0);
 }

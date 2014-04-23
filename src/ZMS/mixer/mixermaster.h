@@ -2,21 +2,28 @@
 #define MIXERMASTER_H
 
 #include <QObject>
-#include "./Nio/EngineMgr.h"
-#include "./Nio/InMgr.h"
-#include "./Nio/OutMgr.h"
+#include "mixersink.h"
+#include "mixerbuffer.h"
+#include "../../Nio/NioEngineManager.h"
 
-class MixerMaster : public QObject
+class MixerMaster : public QObject, public MixerSink
 {
     Q_OBJECT
 public:
     explicit MixerMaster(QObject *parent = 0);
 
+    void AudioOut(float *outl, float *outr);
+
+    int GetVolume();
 signals:
+    void VolumeChanged(int volume);
 
 public slots:
+    void SetVolume(int volume);
 
 private:
+    MixerBuffer _buffer;
+    int _volume;
 
 };
 

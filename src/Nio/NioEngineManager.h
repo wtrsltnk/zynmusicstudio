@@ -1,22 +1,22 @@
-#ifndef ENGINE_MGR_H
-#define ENGINE_MGR_H
+#ifndef _NIOENGINEMANAGER_H_
+#define _NIOENGINEMANAGER_H_
 
 #include <list>
 #include <string>
-#include "Engine.h"
-#include "InMgr.h"
-#include "OutMgr.h"
+#include "NioEngine.h"
+#include "NioInputManager.h"
+#include "NioOutputManager.h"
 #include "IMaster.h"
 
 class MidiIn;
 class AudioOut;
 
 /**Container/Owner of the long lived Engines*/
-class EngineMgr
+class NioEngineManager
 {
 public:
-    EngineMgr(IMaster* master);
-    virtual ~EngineMgr();
+    NioEngineManager(IMaster* master);
+    virtual ~NioEngineManager();
 
     /**Execute a tick*/
     const Stereo<float *> tick(unsigned int frameSize);
@@ -25,8 +25,8 @@ public:
      * @param name case unsensitive name of engine
      * @return pointer to Engine or NULL
      */
-    Engine *getEngine(std::string name);
-    std::list<Engine*>& Engines() { return this->_engines; }
+    NioEngine *getEngine(std::string name);
+    std::list<NioEngine*>& Engines() { return this->_engines; }
 
     /**Start up defaults*/
     bool start();
@@ -43,16 +43,16 @@ public:
 
     IMaster* GetMaster() { return this->_master; }
 
-    OutMgr* Output() { return this->_outputManager; }
-    InMgr* Input() { return this->_inputManager; }
+    NioOutputManager* Output() { return this->_outputManager; }
+    NioInputManager* Input() { return this->_inputManager; }
 
 private:
     IMaster* _master;
-    std::list<Engine *> _engines;
-    Engine*_defaultOut;
-    Engine*_defaultIn;
+    std::list<NioEngine *> _engines;
+    NioEngine*_defaultOut;
+    NioEngine*_defaultIn;
 
-    OutMgr* _outputManager;
-    InMgr* _inputManager;
+    NioOutputManager* _outputManager;
+    NioInputManager* _inputManager;
 };
-#endif
+#endif // _NIOENGINEMANAGER_H_

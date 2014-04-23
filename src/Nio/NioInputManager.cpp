@@ -1,23 +1,23 @@
-#include "InMgr.h"
-#include "EngineMgr.h"
+#include "NioInputManager.h"
+#include "NioEngineManager.h"
 #include <iostream>
 
 using namespace std;
 
-InMgr::InMgr(EngineMgr* enginemgr)
+NioInputManager::NioInputManager(NioEngineManager* enginemgr)
     : _enginemgr(enginemgr), queue(100)
 {
     this->currentIn = NULL;
     sem_init(&this->work, PTHREAD_PROCESS_PRIVATE, 0);
 }
 
-InMgr::~InMgr()
+NioInputManager::~NioInputManager()
 {
     //lets stop the consumer thread
     sem_destroy(&this->work);
 }
 
-void InMgr::PutEvent(Midi::Event ev)
+void NioInputManager::PutEvent(Midi::Event ev)
 {
     if(this->queue.push(ev)) //check for error
         cerr << "ERROR: Midi Ringbuffer is FULL" << endl;
@@ -25,7 +25,7 @@ void InMgr::PutEvent(Midi::Event ev)
         sem_post(&this->work);
 }
 
-void InMgr::flush()
+void NioInputManager::Tick()
 {
     this->_enginemgr->GetMaster()->Lock();
 
@@ -57,9 +57,9 @@ void InMgr::flush()
     this->_enginemgr->GetMaster()->Unlock();
 }
 
-bool InMgr::setSource(string name)
+bool NioInputManager::SetSource(string name)
 {
-    Engine *src = this->getInputEngine(name);
+    NioEngine *src = this->GetInputEngine(name);
 
     if(!src)
         return false;
@@ -73,12 +73,12 @@ bool InMgr::setSource(string name)
 
     //Keep system in a valid state (aka with a running driver)
     if(!success)
-        (this->currentIn = this->getInputEngine("NULL"))->setMidiEnabled(true);
+        (this->currentIn = this->GetInputEngine("NULL"))->setMidiEnabled(true);
 
     return success;
 }
 
-string InMgr::getSource() const
+string NioInputManager::GetSource() const
 {
     if(this->currentIn)
         return this->currentIn->Name();
@@ -86,9 +86,9 @@ string InMgr::getSource() const
         return "ERROR";
 }
 
-Engine* InMgr::getInputEngine(string name)
+NioEngine* NioInputManager::GetInputEngine(string name)
 {
-    Engine* e = this->_enginemgr->getEngine(name);
+    NioEngine* e = this->_enginemgr->getEngine(name);
     if (e != 0 && e->IsMidiIn())
         return e;
     return 0;

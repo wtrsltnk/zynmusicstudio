@@ -1,10 +1,6 @@
 #include "masterchannelstripwidget.h"
 #include "ui_masterchannelstripwidget.h"
-#include "../Misc/Master.h"
-#include "../Effects/EffectMgr.h"
-#include "../Nio/InMgr.h"
-#include "../Nio/OutMgr.h"
-#include "../Nio/EngineMgr.h"
+#include "../mixer/mixer.h"
 #include <QTimer>
 #include <QPainter>
 #include <QMenu>
@@ -15,12 +11,16 @@ MasterChannelStripWidget::MasterChannelStripWidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    this->ui->sysmaster->setValue(Master::getInstance().Pvolume);
+//    this->ui->sysmaster->setValue(Master::getInstance().Pvolume);
 
-    this->ui->btnMidi->setText(Master::getInstance().engineManager->Input()->getSource().c_str());
+    this->ui->btnMidi->setText(Mixer::Instance().EngineManager()->Input()->GetSource().c_str());
     connect(this->ui->btnMidi, SIGNAL(clicked()), this, SLOT(OnShowMidiDevices()));
-    this->ui->btnAudio->setText(Master::getInstance().engineManager->Output()->getSink().c_str());
+    this->ui->btnAudio->setText(Mixer::Instance().EngineManager()->Output()->GetSink().c_str());
     connect(this->ui->btnAudio, SIGNAL(clicked()), this, SLOT(OnShowAudioDevices()));
+
+    this->ui->sysmaster->setValue(Mixer::Instance().Master()->GetVolume());
+    connect(Mixer::Instance().Master(), SIGNAL(VolumeChanged(int)), this->ui->sysmaster, SLOT(setValue(int)));
+    connect(this->ui->sysmaster, SIGNAL(valueChanged(int)), Mixer::Instance().Master(), SLOT(SetVolume(int)));
 
     this->ui->sysvuL->installEventFilter(this);
     this->ui->sysvuR->installEventFilter(this);
@@ -29,8 +29,6 @@ MasterChannelStripWidget::MasterChannelStripWidget(QWidget *parent) :
     this->_vutimer->setInterval(1000/40);
     this->_vutimer->start();
     connect(this->_vutimer, SIGNAL(timeout()), this, SLOT(OnVuTimer()));
-
-    connect(this->ui->sysmaster, SIGNAL(valueChanged(int)), this, SLOT(OnMasterGainChanged(int)));
 }
 
 MasterChannelStripWidget::~MasterChannelStripWidget()
@@ -78,66 +76,61 @@ bool MasterChannelStripWidget::eventFilter(QObject* watched, QEvent* event)
     return false;
 }
 
-void MasterChannelStripWidget::OnMasterGainChanged(int value)
-{
-    Master::getInstance().setPvolume(value);
-}
-
 void MasterChannelStripWidget::OnVuTimer()
 {
-    // This part is copied from MasterUI.fl by Nasca Octavian Paul
-    static float olddbl = 0;
-    static float olddbr = 0;
-    static float oldrmsdbl = 0;
-    static float oldrmsdbr = 0;
-#define MIN_DB (-48)
+//    // This part is copied from MasterUI.fl by Nasca Octavian Paul
+//    static float olddbl = 0;
+//    static float olddbr = 0;
+//    static float oldrmsdbl = 0;
+//    static float oldrmsdbr = 0;
+//#define MIN_DB (-48)
 
-    vuData data = Master::getInstance().getVuData();
+//    vuData data = Master::getInstance().getVuData();
 
-    this->dbl=rap2dB(data.outpeakl);
-    this->dbr=rap2dB(data.outpeakr);
-    this->dbl=(MIN_DB-this->dbl)/MIN_DB;
-    if (this->dbl<0.0) this->dbl=0.0;
-      else if (this->dbl>1.0)this->dbl=1.0;
+//    this->dbl=rap2dB(data.outpeakl);
+//    this->dbr=rap2dB(data.outpeakr);
+//    this->dbl=(MIN_DB-this->dbl)/MIN_DB;
+//    if (this->dbl<0.0) this->dbl=0.0;
+//      else if (this->dbl>1.0)this->dbl=1.0;
 
-    this->dbr=(MIN_DB-this->dbr)/MIN_DB;
-    if (this->dbr<0.0) this->dbr=0.0;
-      else if (this->dbr>1.0) this->dbr=1.0;
+//    this->dbr=(MIN_DB-this->dbr)/MIN_DB;
+//    if (this->dbr<0.0) this->dbr=0.0;
+//      else if (this->dbr>1.0) this->dbr=1.0;
 
-    this->dbl=this->dbl*0.4+olddbl*0.6;
-    this->dbr=this->dbr*0.4+olddbr*0.6;
+//    this->dbl=this->dbl*0.4+olddbl*0.6;
+//    this->dbr=this->dbr*0.4+olddbr*0.6;
 
-    olddbl=this->dbl;
-    olddbr=this->dbr;
+//    olddbl=this->dbl;
+//    olddbr=this->dbr;
 
-    //compute RMS - start
-    this->rmsdbl=rap2dB(data.rmspeakl);
-    this->rmsdbr=rap2dB(data.rmspeakr);
-    this->rmsdbl=(MIN_DB-this->rmsdbl)/MIN_DB;
-    if (this->rmsdbl<0.0) this->rmsdbl=0.0;
-      else if (this->rmsdbl>1.0) this->rmsdbl=1.0;
+//    //compute RMS - start
+//    this->rmsdbl=rap2dB(data.rmspeakl);
+//    this->rmsdbr=rap2dB(data.rmspeakr);
+//    this->rmsdbl=(MIN_DB-this->rmsdbl)/MIN_DB;
+//    if (this->rmsdbl<0.0) this->rmsdbl=0.0;
+//      else if (this->rmsdbl>1.0) this->rmsdbl=1.0;
 
-    this->rmsdbr=(MIN_DB-this->rmsdbr)/MIN_DB;
-    if (this->rmsdbr<0.0) this->rmsdbr=0.0;
-      else if (this->rmsdbr>1.0) this->rmsdbr=1.0;
+//    this->rmsdbr=(MIN_DB-this->rmsdbr)/MIN_DB;
+//    if (this->rmsdbr<0.0) this->rmsdbr=0.0;
+//      else if (this->rmsdbr>1.0) this->rmsdbr=1.0;
 
-    this->rmsdbl=this->rmsdbl*0.4+oldrmsdbl*0.6;
-    this->rmsdbr=this->rmsdbr*0.4+oldrmsdbr*0.6;
+//    this->rmsdbl=this->rmsdbl*0.4+oldrmsdbl*0.6;
+//    this->rmsdbr=this->rmsdbr*0.4+oldrmsdbr*0.6;
 
-    oldrmsdbl=rmsdbl;
-    oldrmsdbr=rmsdbr;
+//    oldrmsdbl=rmsdbl;
+//    oldrmsdbr=rmsdbr;
 
-    this->ui->sysvuL->repaint();
-    this->ui->sysvuR->repaint();
+//    this->ui->sysvuL->repaint();
+//    this->ui->sysvuR->repaint();
 }
 
 void MasterChannelStripWidget::OnShowMidiDevices()
 {
     QMenu m;
-    std::list<Engine *>& en = Master::getInstance().engineManager->Engines();
-    for (std::list<Engine *>::iterator i = en.begin(); i != en.end(); ++i)
+    std::list<NioEngine *>& en = Mixer::Instance().EngineManager()->Engines();
+    for (std::list<NioEngine *>::iterator i = en.begin(); i != en.end(); ++i)
     {
-        Engine* e = dynamic_cast<Engine*>(*i);
+        NioEngine* e = dynamic_cast<NioEngine*>(*i);
         if (e != 0 && e->IsMidiIn())
         {
             QAction* a = m.addAction(e->Name().c_str());
@@ -151,17 +144,17 @@ void MasterChannelStripWidget::OnShowMidiDevices()
 void MasterChannelStripWidget::OnSelectMidiDevice()
 {
     QString sel = ((QAction*)sender())->text();
-    if (Master::getInstance().engineManager->Input()->setSource(sel.toStdString()))
+    if (Mixer::Instance().EngineManager()->Input()->SetSource(sel.toStdString()))
         this->ui->btnMidi->setText(sel);
 }
 
 void MasterChannelStripWidget::OnShowAudioDevices()
 {
     QMenu m;
-    std::list<Engine *>& en = Master::getInstance().engineManager->Engines();
-    for (std::list<Engine *>::iterator i = en.begin(); i != en.end(); ++i)
+    std::list<NioEngine *>& en = Mixer::Instance().EngineManager()->Engines();
+    for (std::list<NioEngine *>::iterator i = en.begin(); i != en.end(); ++i)
     {
-        Engine* e = dynamic_cast<Engine*>(*i);
+        NioEngine* e = dynamic_cast<NioEngine*>(*i);
         if (e != 0 && e->IsAudioOut())
         {
             QAction* a = m.addAction(e->Name().c_str());
@@ -175,6 +168,6 @@ void MasterChannelStripWidget::OnShowAudioDevices()
 void MasterChannelStripWidget::OnSelectAudioDevice()
 {
     QString sel = ((QAction*)sender())->text();
-    if (Master::getInstance().engineManager->Output()->setSink(sel.toStdString()))
+    if (Mixer::Instance().EngineManager()->Output()->SetSink(sel.toStdString()))
         this->ui->btnAudio->setText(sel);
 }

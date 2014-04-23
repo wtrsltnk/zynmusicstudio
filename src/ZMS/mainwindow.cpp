@@ -29,6 +29,7 @@
 #include <iostream>
 #include "sequencer/sequencer.h"
 #include "channel/channelstripwidget.h"
+#include "mixer/mixer.h"
 
 using namespace std;
 
@@ -64,6 +65,11 @@ MainWindow::MainWindow(QWidget *parent) :
     this->ui->actionChannels_pannel->setChecked(this->ui->channelsDock->isVisible());
     this->ui->actionChannel_panel->setChecked(this->ui->channelDock->isVisible());
     this->ui->actionPianoroll_panel->setChecked(this->ui->pianorollDock->isVisible());
+
+    MixerChannel* channel = Mixer::Instance().AddChannel("wouter");
+    channel->SetSink(Mixer::Instance().Master());
+    Instrument* instrument = Mixer::Instance().AddInstrument("test");
+    channel->SetInstrument(instrument);
 }
 
 MainWindow::~MainWindow()

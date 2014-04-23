@@ -1,17 +1,15 @@
-#include "OutMgr.h"
+#include "NioOutputManager.h"
+#include "NioEngineManager.h"
 #include <algorithm>
 #include <iostream>
 #include <cassert>
-#include "Engine.h"
-#include "EngineMgr.h"
-#include "InMgr.h"
+#include "NioEngine.h"
 #include "WavEngine.h"
-#include "../Misc/Master.h"
 #include "../Misc/Util.h" //for set_realtime()
 
 using namespace std;
 
-OutMgr::OutMgr(EngineMgr* mgr)
+NioOutputManager::NioOutputManager(NioEngineManager* mgr)
     : enginemgr(mgr), wave(new WavEngine(mgr)),
       priBuf(new float[4096],
              new float[4096]), priBuffCurrent(priBuf)
@@ -26,7 +24,7 @@ OutMgr::OutMgr(EngineMgr* mgr)
     memset(this->outr, 0, synth->bufferbytes);
 }
 
-OutMgr::~OutMgr()
+NioOutputManager::~NioOutputManager()
 {
     delete this->wave;
     delete [] this->priBuf.l;
@@ -35,7 +33,7 @@ OutMgr::~OutMgr()
     delete [] this->outl;
 }
 
-const Stereo<float *> OutMgr::tick(unsigned int frameSize)
+const Stereo<float *> NioOutputManager::Tick(unsigned int frameSize)
 {
     this->removeStaleSamples();
     while(frameSize > this->storedSmps())
@@ -50,17 +48,17 @@ const Stereo<float *> OutMgr::tick(unsigned int frameSize)
     return this->priBuf;
 }
 
-Engine *OutMgr::getOutputEngine(string name)
+NioEngine *NioOutputManager::GetOutputEngine(string name)
 {
-    Engine* e = this->enginemgr->getEngine(name);
+    NioEngine* e = this->enginemgr->getEngine(name);
     if (e != 0 && e->IsAudioOut())
         return e;
     return 0;
 }
 
-bool OutMgr::setSink(string name)
+bool NioOutputManager::SetSink(string name)
 {
-    Engine* sink = this->getOutputEngine(name);
+    NioEngine* sink = this->GetOutputEngine(name);
 
     if(!sink)
         return false;
@@ -75,12 +73,12 @@ bool OutMgr::setSink(string name)
 
     //Keep system in a valid state (aka with a running driver)
     if(!success)
-        (this->currentOut = this->getOutputEngine("NULL"))->setAudioEnabled(true);
+        (this->currentOut = this->GetOutputEngine("NULL"))->setAudioEnabled(true);
 
     return success;
 }
 
-string OutMgr::getSink() const
+string NioOutputManager::GetSink() const
 {
     if(this->currentOut)
         return this->currentOut->Name();
@@ -91,7 +89,7 @@ string OutMgr::getSink() const
     return "ERROR";
 }
 
-void OutMgr::addSamples(float *l, float *r)
+void NioOutputManager::addSamples(float *l, float *r)
 {
     //allow wave file to syphon off stream
     this->wave->push(Stereo<float *>(l, r), synth->buffersize);
@@ -102,7 +100,7 @@ void OutMgr::addSamples(float *l, float *r)
     this->priBuffCurrent.r += synth->buffersize;
 }
 
-void OutMgr::removeStaleSamples()
+void NioOutputManager::removeStaleSamples()
 {
     if(!this->stales)
         return;

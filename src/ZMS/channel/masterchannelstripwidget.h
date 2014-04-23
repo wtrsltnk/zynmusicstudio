@@ -17,7 +17,6 @@ public:
 
 protected slots:
     void OnVuTimer();
-    void OnMasterGainChanged(int value);
     void OnShowMidiDevices();
     void OnSelectMidiDevice();
     void OnShowAudioDevices();

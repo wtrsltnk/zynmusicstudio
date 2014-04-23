@@ -2,7 +2,7 @@
 #define CHANNELSTRIPWIDGET_H
 
 #include <QFrame>
-#include "../Misc/Instrument.h"
+#include "mixer/mixerchannel.h"
 
 namespace Ui {
 class ChannelStripWidget;
@@ -16,22 +16,22 @@ public:
     explicit ChannelStripWidget(QWidget *parent = 0);
     virtual ~ChannelStripWidget();
 
-    Instrument* GetChannel() { return this->_channel; }
-    void SetChannel(Instrument* channel) { this->_channel = channel; this->OnChannelChanged(channel); }
+    MixerChannel* GetChannel() { return this->_channel; }
+    void SetChannel(MixerChannel* channel);
 
 signals:
-    void ActivateChannel(Instrument* channel);
+    void ActivateChannel(MixerChannel* channel);
 
 public slots:
-    void OnChannelChanged(Instrument* channel);
+    void OnChannelUpdated(MixerChannel* channel);
     void OnVolumeSliderChanged(int value);
-    void OnPanDialChanged(int value);
     void OnCloseClicked();
     void OnEditClicked();
+    void SetChannelColor(const QColor& color);
 
 private:
     Ui::ChannelStripWidget *ui;
-    Instrument* _channel;
+    MixerChannel* _channel;
 
     bool eventFilter(QObject* watched, QEvent* event);
 };

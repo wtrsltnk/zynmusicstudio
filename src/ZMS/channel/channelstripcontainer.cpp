@@ -3,7 +3,7 @@
 #include "masterchannelstripwidget.h"
 #include "mainwindow.h"
 #include "sequencer/sequencer.h"
-#include "../Misc/Master.h"
+#include "mixer/mixer.h"
 #include <QScrollBar>
 
 ChannelStripContainer::ChannelStripContainer(QWidget *parent) :
@@ -15,8 +15,9 @@ ChannelStripContainer::ChannelStripContainer(QWidget *parent) :
     QVBoxLayout* layout = (QVBoxLayout*)this->ui->channelsContent->layout();
     layout->addWidget(new MasterChannelStripWidget(this));
 
-    connect(&Sequencer::Inst(), SIGNAL(CurrentSongIsUpdated()), this, SLOT(UpdateChannels()));
     connect(this->ui->btnAddChannel, SIGNAL(clicked()), this, SLOT(AddChannel()));
+    connect(&Mixer::Instance(), SIGNAL(ChannelAdded(MixerChannel*)), this, SLOT(OnChannelAdded(MixerChannel*)));
+    connect(&Mixer::Instance(), SIGNAL(ChannelRemoved(MixerChannel*)), this, SLOT(OnChannelRemoved(MixerChannel*)));
 
     this->ui->stripLayout->setAlignment(Qt::AlignLeft);
     connect(this->ui->channelsScrollArea->verticalScrollBar(), SIGNAL(rangeChanged(int,int)), this, SLOT(moveScrollBarToBottom(int, int)));
@@ -28,40 +29,27 @@ ChannelStripContainer::~ChannelStripContainer()
     delete ui;
 }
 
-void ChannelStripContainer::UpdateChannels()
+void ChannelStripContainer::OnChannelAdded(MixerChannel* channel)
 {
     QVBoxLayout* layout = (QVBoxLayout*)this->ui->channelsContent->layout();
 
-    for (int i = 0; i < layout->count() - 1; i++)
-    {
-        ChannelStripWidget* widget = dynamic_cast<ChannelStripWidget*>(layout->itemAt(i)->widget());
-        if (widget != 0)
-        {
-            if (Master::getInstance().instrumentIndex(widget->GetChannel()) == -1)
-            {
-                layout->removeWidget(widget);
-                delete widget;
-                i = 0;
-            }
-        }
-    }
+    ChannelStripWidget* widget = new ChannelStripWidget();
+    layout->insertWidget(layout->count() - 1, widget, 0, Qt::AlignLeft);
+    widget->SetChannel(channel);
+}
 
-    for (std::vector<Instrument*>::iterator i = Master::getInstance().Instruments().begin();
-         i != Master::getInstance().Instruments().end(); ++i)
+void ChannelStripContainer::OnChannelRemoved(MixerChannel* channel)
+{
+    ChannelStripWidget* widget = this->GetWidgetByChannel(channel);
+    if (widget != 0)
     {
-        ChannelStripWidget* widget = this->GetWidgetByChannel(*i);
-        if (widget == 0)
-        {
-            widget = new ChannelStripWidget();
-            connect(&Sequencer::Inst(), SIGNAL(ChannelIsUpdated(Instrument*)), widget, SLOT(OnChannelChanged(Instrument*)));
-            connect(widget, SIGNAL(ActivateChannel(Instrument*)), this->_mainParent, SLOT(OnChannelIsActivated(Instrument*)));
-            layout->insertWidget(layout->count() - 1, widget, 0, Qt::AlignLeft);
-        }
-        widget->SetChannel(*i);
+        ((QVBoxLayout*)this->ui->channelsContent->layout())->removeWidget(widget);
+        delete widget;
+        delete channel;
     }
 }
 
-ChannelStripWidget* ChannelStripContainer::GetWidgetByChannel(Instrument* channel)
+ChannelStripWidget* ChannelStripContainer::GetWidgetByChannel(MixerChannel* channel)
 {
     QVBoxLayout* layout = (QVBoxLayout*)this->ui->channelsContent->layout();
 
@@ -77,8 +65,7 @@ ChannelStripWidget* ChannelStripContainer::GetWidgetByChannel(Instrument* channe
 
 void ChannelStripContainer::AddChannel()
 {
-    Master::getInstance().addInstrument();
-    Sequencer::Inst().CurrentSongIsUpdated();
+    Mixer::Instance().AddChannel("Default");
 }
 
 void ChannelStripContainer::moveScrollBarToBottom(int min, int max)

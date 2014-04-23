@@ -30,12 +30,12 @@
 #endif
 #include <pthread.h>
 #include "../globals.h"
-#include "Engine.h"
+#include "NioEngine.h"
 
-class NulEngine : public Engine
+class NulEngine : public NioEngine
 {
 public:
-    NulEngine(EngineMgr* mgr);
+    NulEngine(NioEngineManager* mgr);
     virtual ~NulEngine();
 
     virtual bool IsMidiIn() { return true; }

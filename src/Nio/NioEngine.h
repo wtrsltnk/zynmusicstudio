@@ -20,20 +20,20 @@
 
 */
 
-#ifndef ENGINE_H
-#define ENGINE_H
+#ifndef _NIOENGINE_H_
+#define _NIOENGINE_H_
 
 #include "../Misc/Stereo.h"
 #include "../globals.h"
 #include <string>
 
-class EngineMgr;
+class NioEngineManager;
 
-class Engine
+class NioEngine
 {
 public:
-    Engine(EngineMgr* mgr);
-    virtual ~Engine();
+    NioEngine(NioEngineManager* mgr);
+    virtual ~NioEngine();
 
     /**Start the Driver with all capabilities
      * @return true on success*/
@@ -44,7 +44,7 @@ public:
     std::string& Name() { return this->_name; }
 protected:
     std::string _name;
-    EngineMgr* _engineMgr;
+    NioEngineManager* _engineMgr;
 
 public:
     virtual bool IsMidiIn() = 0;
@@ -71,8 +71,7 @@ protected:
      * (has nsamples sampled at a rate of samplerate)*/
     const Stereo<float *> getNext();
 
-//        int samplerate;
     int bufferSize;
 
 };
-#endif
+#endif // _NIOENGINE_H_

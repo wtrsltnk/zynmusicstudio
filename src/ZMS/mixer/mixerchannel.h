@@ -3,11 +3,13 @@
 
 #include <QObject>
 #include <QColor>
-#include "../Misc/Instrument.h"
-#include "mixersenddestination.h"
+#include "mixerbuffer.h"
+#include "mixersource.h"
+#include "mixersendsink.h"
 #include "mixersendsource.h"
+#include "../Misc/Instrument.h"
 
-class MixerChannel : public QObject, public MixerSendSource, public MixerSendDestination
+class MixerChannel : public QObject, public MixerSendSource, public MixerSendSink, public MixerSource
 {
     Q_OBJECT
 public:
@@ -17,25 +19,33 @@ public:
 
     QString GetName();
     QColor GetColor();
+    char GetVolume();
 
+    virtual MixerBuffer& AudioOut();
 signals:
+    void ChannelIsUpdated(MixerChannel* channel);
     void InstrumentChanged(Instrument* instrument);
 
     void NameChanged(QString name);
     void ColorChanged(QColor color);
+    void VolumeChanged(char volume);
 
 public slots:
     void SetInstrument(Instrument* instrument);
 
     void SetName(QString name);
     void SetColor(QColor color);
+    void SetVolume(char volume);
 
 private:
+    MixerBuffer _buffer;
     Instrument* _instrument;
-    QList<MixerSendDestination*> _sends;
 
     QString _name;
     QColor _color;
+    char _volume;
+
+    int _currentTick;
 
 };
 

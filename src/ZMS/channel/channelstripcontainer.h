@@ -16,12 +16,13 @@ public:
     explicit ChannelStripContainer(QWidget *parent = 0);
     ~ChannelStripContainer();
 
-    ChannelStripWidget* GetWidgetByChannel(Instrument* channel);
+    ChannelStripWidget* GetWidgetByChannel(MixerChannel* channel);
 
 public slots:
-    void UpdateChannels();
     void moveScrollBarToBottom(int min, int max);
     void AddChannel();
+    void OnChannelAdded(MixerChannel* channel);
+    void OnChannelRemoved(MixerChannel* channel);
 
 private:
     Ui::ChannelStripContainer *ui;

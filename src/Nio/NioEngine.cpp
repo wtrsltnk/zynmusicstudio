@@ -19,23 +19,23 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 
 */
-#include "Engine.h"
-#include "EngineMgr.h"
+#include "NioEngine.h"
+#include "NioEngineManager.h"
 #include "IMaster.h"
 
-Engine::Engine(EngineMgr* mgr)
+NioEngine::NioEngine(NioEngineManager* mgr)
     : _engineMgr(mgr), bufferSize(synth->buffersize)
 { }
 
-Engine::~Engine()
+NioEngine::~NioEngine()
 { }
 
-void Engine::setBufferSize(int _bufferSize)
+void NioEngine::setBufferSize(int _bufferSize)
 {
     this->bufferSize = _bufferSize;
 }
 
-const Stereo<float *> Engine::getNext()
+const Stereo<float *> NioEngine::getNext()
 {
     return this->_engineMgr->tick(this->bufferSize);
 }

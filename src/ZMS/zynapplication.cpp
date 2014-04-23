@@ -21,6 +21,7 @@
 */
 #include "zynapplication.h"
 #include "mainwindow.h"
+#include "../ZMS/mixer/mixer.h"
 #include <QApplication>
 #include <QStyleFactory>
 #include <QPalette>
@@ -141,9 +142,21 @@ ZynApplication::ZynApplication(int argc, char *argv[]) :
                         );
 }
 
+ZynApplication::~ZynApplication()
+{
+    Mixer::Instance().Lock();
+    Mixer::Instance().Unlock();
+
+    Mixer::Instance().EngineManager()->stop();
+}
+
 int ZynApplication::exec()
 {
-    MainWindow wnd;
-    wnd.show();
-    return QApplication::exec();
+    if (Mixer::Instance().EngineManager()->start())
+    {
+        MainWindow wnd;
+        wnd.show();
+        return QApplication::exec();
+    }
+    return 0;
 }
