@@ -25,10 +25,11 @@ public:
     MixerChannel* AddChannel(const QString& name, QColor color = Qt::blue);
     void RemoveChannel(MixerChannel* channel);
     int ChannelIndex(MixerChannel* channel);
-    QList<MixerChannel*> Channels();
+    QList<MixerChannel*>& Channels();
 
     MixerBus* GetBus(int index);
     Instrument* AddInstrument(const QString& name);
+    QList<Instrument*>& Instruments() { return this->_instruments; }
 
     NioEngineManager* EngineManager() { return this->_engineManager; }
     MixerMaster* Master() { return &this->_master; }

@@ -11,8 +11,6 @@ MasterChannelStripWidget::MasterChannelStripWidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
-//    this->ui->sysmaster->setValue(Master::getInstance().Pvolume);
-
     this->ui->btnMidi->setText(Mixer::Instance().EngineManager()->Input()->GetSource().c_str());
     connect(this->ui->btnMidi, SIGNAL(clicked()), this, SLOT(OnShowMidiDevices()));
     this->ui->btnAudio->setText(Mixer::Instance().EngineManager()->Output()->GetSink().c_str());

@@ -19,7 +19,7 @@ public:
 
     QString GetName();
     QColor GetColor();
-    char GetVolume();
+    int GetVolume();
 
     virtual MixerBuffer& AudioOut();
 signals:
@@ -28,14 +28,14 @@ signals:
 
     void NameChanged(QString name);
     void ColorChanged(QColor color);
-    void VolumeChanged(char volume);
+    void VolumeChanged(int volume);
 
 public slots:
     void SetInstrument(Instrument* instrument);
 
     void SetName(QString name);
     void SetColor(QColor color);
-    void SetVolume(char volume);
+    void SetVolume(int volume);
 
 private:
     MixerBuffer _buffer;
@@ -43,7 +43,7 @@ private:
 
     QString _name;
     QColor _color;
-    char _volume;
+    int _volume;
 
     int _currentTick;
 

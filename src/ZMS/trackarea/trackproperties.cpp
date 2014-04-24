@@ -1,10 +1,13 @@
 #include "trackproperties.h"
 #include "ui_trackproperties.h"
-#include "trackareaselectchanneldialog.h"
 #include "sequencer/sequencer.h"
+#include "mixer/mixer.h"
 #include <QMessageBox>
 #include <QInputDialog>
 #include <QResizeEvent>
+#include <QMenu>
+#include <QList>
+#include <QVariant>
 #include <iostream>
 
 using namespace std;
@@ -17,6 +20,7 @@ TrackProperties::TrackProperties(SequencerTrack* track) :
     ui->setupUi(this);
 
     this->ui->comboBox->installEventFilter(this);
+    this->ui->btnChannel->installEventFilter(this);
 
     connect(this->ui->btnClose, SIGNAL(clicked()), this, SLOT(OnCloseClicked()));
     connect(this->ui->btnChannel, SIGNAL(clicked()), this, SLOT(OnChangeChannel()));
@@ -28,7 +32,12 @@ TrackProperties::TrackProperties(SequencerTrack* track) :
 
     this->ui->label->installEventFilter(this);
 
-    connect(&Sequencer::Inst(), SIGNAL(ChannelIsUpdated(Instrument*)), this, SLOT(OnChannelUpdated(Instrument*)));
+    if (this->_track != 0)
+    {
+        connect(this->_track, SIGNAL(ChannelChanged(MixerChannel*)), this, SLOT(ChannelChanged(MixerChannel*)));
+        if (this->_track->GetChannel() != 0)
+            connect(this->_track->GetChannel(), SIGNAL(NameChanged(QString)), this, SLOT(TrackChannelNameChanged(QString)));
+    }
 }
 
 TrackProperties::~TrackProperties()
@@ -45,16 +54,22 @@ bool TrackProperties::eventFilter(QObject *o, QEvent *e)
         dlg.setModal(true);
         dlg.setTextValue(this->ui->label->text());
         if (dlg.exec() == QDialog::Accepted)
-        {
             this->_track->SetTitle(dlg.textValue());
-            Sequencer::Inst().CurrentSongIsUpdated();
-        }
+
+        return true;
+    }
+
+    if (o == this->ui->btnChannel && e->type() == QEvent::ContextMenu)
+    {
+        QContextMenuEvent* contextEvent = (QContextMenuEvent*)e;
+        this->PickChannel(contextEvent->globalPos());
         return true;
     }
 
     if (e->type() == QEvent::MouseButtonPress)
     {
         Sequencer::Inst().CurrentSong()->SetCurrentTrack(this->_track);
+        return true;
     }
 
     return false;
@@ -84,6 +99,14 @@ void TrackProperties::OnCloseClicked()
     }
 }
 
+void TrackProperties::OnChangeChannel()
+{
+    if (this->_track->GetChannel() == 0)
+    {
+        this->PickChannel(this->ui->btnChannel->mapToGlobal(this->ui->btnChannel->pos()));
+    }
+}
+
 void TrackProperties::UpdateWidget()
 {
     this->ui->label->setText(this->_track->Title());
@@ -94,21 +117,67 @@ void TrackProperties::UpdateWidget()
         this->setStyleSheet("");
 }
 
-void TrackProperties::OnChangeChannel()
-{
-    TrackAreaSelectChannelDialog dlg;
-
-    if (dlg.exec() == QDialog::Accepted && dlg.SelectedChannel() != 0)
-    {
-        this->_track->SetChannel(dlg.SelectedChannel());
-        Sequencer::Inst().ChannelIsUpdated(dlg.SelectedChannel());
-        this->ActivateChannel(this->_track->GetChannel());
-    }
-}
-void TrackProperties::OnChannelUpdated(Instrument* channel)
+void TrackProperties::OnChannelUpdated(MixerChannel* channel)
 {
     if (channel == this->_track->GetChannel())
     {
-        this->ui->btnChannel->setText(this->_track->GetChannel()->Pname.c_str());
+        this->ui->btnChannel->setText(this->_track->GetChannel()->GetName());
+    }
+}
+
+void TrackProperties::ChannelPicked(QAction* action)
+{
+    MixerChannel* channel = action->data().value<MixerChannel*>();
+    if (channel == 0)
+        channel = Mixer::Instance().AddChannel("Default");
+
+    if (this->_track->GetChannel() != 0)
+        disconnect(this->_track->GetChannel(), SIGNAL(NameChanged(QString)), this, SLOT(TrackChannelNameChanged(QString)));
+    this->_track->SetChannel(channel);
+
+    if (this->_track->GetChannel() != 0)
+        this->ui->btnChannel->setText(this->_track->GetChannel()->GetName());
+}
+
+void TrackProperties::ChannelChanged(MixerChannel* channel)
+{
+    if (channel != 0)
+    {
+        this->ui->btnChannel->setText(channel->GetName());
+        connect(channel, SIGNAL(NameChanged(QString)), this, SLOT(TrackChannelNameChanged(QString)));
+    }
+}
+
+void TrackProperties::TrackChannelNameChanged(const QString& title)
+{
+    this->ui->btnChannel->setText(title);
+}
+
+void TrackProperties::PickChannel(const QPoint &pos)
+{
+    QMenu m(this);
+    connect(&m, SIGNAL(triggered(QAction*)), this, SLOT(ChannelPicked(QAction*)));
+
+    for (QList<MixerChannel*>::iterator itr = Mixer::Instance().Channels().begin(); itr != Mixer::Instance().Channels().end(); ++itr)
+    {
+        MixerChannel* channel = (MixerChannel*)*itr;
+        QAction* tmp = new QAction(channel->GetName(), this);
+        tmp->setData(qVariantFromValue(channel));
+        m.addAction(tmp);
+    }
+    m.addSeparator();
+
+    // Option to add channel
+    QAction* newaction = new QAction("New channel", this);
+    newaction->setData(QVariant::fromValue((void*)0));
+    m.addAction(newaction);
+
+    m.exec(pos);
+
+    while (m.actions().empty() == false)
+    {
+        QAction* a = m.actions().back();
+        m.actions().pop_back();
+        delete a;
     }
 }

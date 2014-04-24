@@ -61,7 +61,7 @@ void EffectButtonStrip::OnUpdateEffectButtons(QList<EffectMgr*>& effects)
 void EffectButtonStrip::UpdateMinHeight()
 {
     int min = this->ui->buttonlayout->count();
-    min += 5 - (min % 5);
+    min += 3 - (min % 3);
     this->setMinimumHeight(min * this->ui->btnAdd->height());
     this->setMaximumHeight(min * this->ui->btnAdd->height());
 }

@@ -22,7 +22,6 @@ set(zynmusicstudio_zms_SRCS
     trackarea/trackproperties.cpp
     trackarea/trackareaselection.cpp
     trackarea/trackareatool.cpp
-    trackarea/trackareaselectchanneldialog.cpp
 
     channel/channeleditorwidget.cpp
     channel/channelstripwidget.cpp
@@ -66,7 +65,6 @@ set(zynmusicstudio_zms_HEADERS
     trackarea/trackproperties.h
     trackarea/trackareaselection.h
     trackarea/trackareatool.h
-    trackarea/trackareaselectchanneldialog.h
 
     channel/channeleditorwidget.h
     channel/channelstripwidget.h
@@ -94,7 +92,6 @@ set(zynmusicstudio_zms_FORMS
 
     trackarea/trackareawidget.ui
     trackarea/trackproperties.ui
-    trackarea/trackareaselectchanneldialog.ui
 
     channel/channeleditorwidget.ui
     channel/channelstripwidget.ui

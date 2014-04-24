@@ -47,7 +47,7 @@ int Mixer::ChannelIndex(MixerChannel* channel)
     return this->_channels.indexOf(channel);
 }
 
-QList<MixerChannel*> Mixer::Channels()
+QList<MixerChannel*>& Mixer::Channels()
 {
     return this->_channels;
 }

@@ -23,17 +23,18 @@ signals:
     void ActivateChannel(MixerChannel* channel);
 
 public slots:
-    void OnChannelUpdated(MixerChannel* channel);
-    void OnVolumeSliderChanged(int value);
     void OnCloseClicked();
     void OnEditClicked();
     void SetChannelColor(const QColor& color);
+    void ChannelPicked(QAction* action);
+    void ChangeChannelInstrument(Instrument* instrument);
 
 private:
     Ui::ChannelStripWidget *ui;
     MixerChannel* _channel;
 
     bool eventFilter(QObject* watched, QEvent* event);
+    void PickInstrument(const QPoint &pos);
 };
 
 #endif // CHANNELSTRIPWIDGET_H

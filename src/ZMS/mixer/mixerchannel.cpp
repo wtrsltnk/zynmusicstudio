@@ -20,33 +20,47 @@ QColor MixerChannel::GetColor()
     return this->_color;
 }
 
-char MixerChannel::GetVolume()
+int MixerChannel::GetVolume()
 {
     return this->_volume;
 }
 
 void MixerChannel::SetInstrument(Instrument* instrument)
 {
-    this->_instrument = instrument;
-    emit InstrumentChanged(this->_instrument);
+    if (this->_instrument != instrument)
+    {
+        this->_instrument = instrument;
+        emit InstrumentChanged(this->_instrument);
+    }
 }
 
 void MixerChannel::SetName(QString name)
 {
-    this->_name = name;
-    emit NameChanged(this->_name);
+    if (this->_name != name)
+    {
+        this->_name = name;
+        emit NameChanged(this->_name);
+    }
 }
 
 void MixerChannel::SetColor(QColor color)
 {
-    this->_color = color;
-    emit ColorChanged(this->_color);
+    if (this->_color != color)
+    {
+        this->_color = color;
+        emit ColorChanged(this->_color);
+    }
 }
 
-void MixerChannel::SetVolume(char volume)
+void MixerChannel::SetVolume(int volume)
 {
-    this->_volume = volume;
-    emit VolumeChanged(this->_volume);
+    if (this->_volume != volume)
+    {
+        this->_volume = volume;
+        if (this->_volume < 0) this->_volume = 0;
+        if (this->_volume > 128) this->_volume = 128;
+        emit VolumeChanged(this->_volume);
+    }
 }
 
 MixerBuffer& MixerChannel::AudioOut()

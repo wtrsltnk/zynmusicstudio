@@ -4,19 +4,22 @@
 #include "mixer/mixer.h"
 #include <QInputDialog>
 #include <QMessageBox>
+#include <QContextMenuEvent>
+#include <QMenu>
 #include <iostream>
 
 using namespace std;
 
 ChannelStripWidget::ChannelStripWidget(QWidget *parent) :
     QFrame(parent),
-    ui(new Ui::ChannelStripWidget)
+    ui(new Ui::ChannelStripWidget),
+    _channel(0)
 {
     ui->setupUi(this);
 
     this->ui->lblName->installEventFilter(this);
+    this->ui->btnEdit->installEventFilter(this);
 
-    connect(this->ui->volume, SIGNAL(valueChanged(int)), this, SLOT(OnVolumeSliderChanged(int)));
     connect(this->ui->btnClose, SIGNAL(clicked()), this, SLOT(OnCloseClicked()));
     connect(this->ui->btnEdit, SIGNAL(clicked()), this, SLOT(OnEditClicked()));
 }
@@ -45,34 +48,51 @@ bool ChannelStripWidget::eventFilter(QObject* o, QEvent* e)
         }
         return true;
     }
+
+    if (o == this->ui->btnEdit && e->type() == QEvent::ContextMenu)
+    {
+        QContextMenuEvent* contextEvent = (QContextMenuEvent*)e;
+        this->PickInstrument(contextEvent->globalPos());
+        return true;
+    }
+
     return false;
 }
 
 void ChannelStripWidget::SetChannel(MixerChannel *channel)
 {
-    this->_channel = channel;
     if (this->_channel != 0)
     {
-        this->ui->volume->setValue(this->_channel->GetVolume());
-        this->ui->lblName->setText(this->_channel->GetName());
-        this->SetChannelColor(this->_channel->GetColor());
-        connect(this->_channel, SIGNAL(NameChanged(QString)), this->ui->lblName, SLOT(setText(QString)));
+        disconnect(this->_channel, SIGNAL(VolumeChanged(int)), this->ui->volume, SLOT(setValue(int)));
+        disconnect(this->ui->volume, SIGNAL(valueChanged(int)), this->_channel, SLOT(SetVolume(int)));
+        disconnect(this->_channel, SIGNAL(NameChanged(QString)), this->ui->lblName, SLOT(setText(QString)));
+        disconnect(this->_channel, SIGNAL(ColorChanged(QColor)), this, SLOT(SetChannelColor(QColor)));
+        disconnect(this->_channel, SIGNAL(InstrumentChanged(Instrument*)), this, SLOT(ChangeChannelInstrument(Instrument*)));
     }
-}
 
-void ChannelStripWidget::OnChannelUpdated(MixerChannel* channel)
-{
-    if (channel == this->_channel)
+    this->_channel = channel;
+
+    if (this->_channel != 0)
     {
+        connect(this->_channel, SIGNAL(VolumeChanged(int)), this->ui->volume, SLOT(setValue(int)));
+        connect(this->ui->volume, SIGNAL(valueChanged(int)), this->_channel, SLOT(SetVolume(int)));
+        connect(this->_channel, SIGNAL(NameChanged(QString)), this->ui->lblName, SLOT(setText(QString)));
+        connect(this->_channel, SIGNAL(ColorChanged(QColor)), this, SLOT(SetChannelColor(QColor)));
+        connect(this->_channel, SIGNAL(InstrumentChanged(Instrument*)), this, SLOT(ChangeChannelInstrument(Instrument*)));
+
         this->ui->volume->setValue(this->_channel->GetVolume());
         this->ui->lblName->setText(this->_channel->GetName());
         this->SetChannelColor(this->_channel->GetColor());
+        this->ChangeChannelInstrument(this->_channel->GetInstrument());
     }
 }
 
-void ChannelStripWidget::OnVolumeSliderChanged(int value)
+void ChannelStripWidget::ChangeChannelInstrument(Instrument* instrument)
 {
-    this->_channel->SetVolume(value);
+    if (instrument != 0)
+    {
+        this->ui->btnEdit->setText(instrument->Pname.c_str());
+    }
 }
 
 void ChannelStripWidget::OnCloseClicked()
@@ -91,5 +111,50 @@ void ChannelStripWidget::OnCloseClicked()
 
 void ChannelStripWidget::OnEditClicked()
 {
-    emit ActivateChannel(this->_channel);
+    if (this->_channel->GetInstrument() == 0)
+    {
+        this->PickInstrument(this->ui->btnEdit->mapToGlobal(QPoint()));
+    }
+    else
+    {
+        // TODO : edit instrument here
+    }
+}
+
+void ChannelStripWidget::ChannelPicked(QAction* action)
+{
+    Instrument* instrument = (Instrument*)action->data().value<void*>();
+    if (instrument == 0)
+        instrument = Mixer::Instance().AddInstrument("Default instrument");
+
+    this->_channel->SetInstrument(instrument);
+}
+
+void ChannelStripWidget::PickInstrument(const QPoint &pos)
+{
+    QMenu m(this);
+    connect(&m, SIGNAL(triggered(QAction*)), this, SLOT(ChannelPicked(QAction*)));
+
+    for (QList<Instrument*>::iterator itr = Mixer::Instance().Instruments().begin(); itr != Mixer::Instance().Instruments().end(); ++itr)
+    {
+        Instrument* instrument = (Instrument*)*itr;
+        QAction* tmp = new QAction(instrument->Pname.c_str(), this);
+        tmp->setData(QVariant::fromValue((void*)instrument));
+        m.addAction(tmp);
+    }
+    m.addSeparator();
+
+    // Option to add channel
+    QAction* newaction = new QAction("New instrument", this);
+    newaction->setData(QVariant::fromValue((void*)0));
+    m.addAction(newaction);
+
+    m.exec(pos);
+
+    while (m.actions().empty() == false)
+    {
+        QAction* a = m.actions().back();
+        m.actions().pop_back();
+        delete a;
+    }
 }

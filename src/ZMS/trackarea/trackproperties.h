@@ -23,6 +23,9 @@ signals:
 
 public slots:
     void UpdateWidget();
+    void ChannelPicked(QAction* action);
+    void ChannelChanged(MixerChannel* channel);
+    void TrackChannelNameChanged(const QString& title);
 
 protected:
     virtual bool eventFilter(QObject *o, QEvent *e);
@@ -32,11 +35,13 @@ protected:
 protected slots:
     void OnCloseClicked();
     void OnChangeChannel();
-    void OnChannelUpdated(Instrument* channel);
+    void OnChannelUpdated(MixerChannel* channel);
 
 private:
     Ui::TrackProperties *ui;
     SequencerTrack* _track;
+
+    void PickChannel(const QPoint& pos);
 };
 
 #endif // TRACKPROPERTIES_H

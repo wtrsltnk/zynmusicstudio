@@ -4,7 +4,7 @@
 static int track_counter = 0;
 
 SequencerTrack::SequencerTrack(SequencerSong* song)
-    : _song(song), _title(QString("Track ") + QString::number(track_counter++))
+    : QObject(0), _song(song), _title(QString("Track ") + QString::number(track_counter++)), _channel(0)
 { }
 
 SequencerTrack::~SequencerTrack()
@@ -14,6 +14,24 @@ SequencerTrack::~SequencerTrack()
         SequencerClip* clip = this->_clips.back();
         this->_clips.pop_back();
         delete clip;
+    }
+}
+
+void SequencerTrack::SetTitle(const QString& title)
+{
+    if (this->_title != title)
+    {
+        this->_title = title;
+        emit TitleChanged(this->_title);
+    }
+}
+
+void SequencerTrack::SetChannel(MixerChannel* channel)
+{
+    if (this->_channel != channel)
+    {
+        this->_channel = channel;
+        emit ChannelChanged(this->_channel);
     }
 }
 
