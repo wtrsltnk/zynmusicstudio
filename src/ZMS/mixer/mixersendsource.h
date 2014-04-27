@@ -8,7 +8,8 @@ class MixerSendSink;
 class MixerSendSource
 {
 public:
-    explicit MixerSendSource();
+    MixerSendSource();
+    virtual ~MixerSendSource();
 
     QList<MixerSendSink*> Destinations() { return this->_destinations; }
     void AddDestination(MixerSendSink* destination);

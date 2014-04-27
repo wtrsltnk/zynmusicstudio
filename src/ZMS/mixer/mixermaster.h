@@ -6,7 +6,7 @@
 #include "mixerbuffer.h"
 #include "../../Nio/NioEngineManager.h"
 
-class MixerMaster : public QObject, public MixerSink
+class MixerMaster : public MixerSink
 {
     Q_OBJECT
 public:
@@ -15,6 +15,7 @@ public:
     void AudioOut(float *outl, float *outr);
 
     int GetVolume();
+    virtual QString Title() { return "Master"; }
 signals:
     void VolumeChanged(int volume);
 
@@ -24,6 +25,7 @@ public slots:
 private:
     MixerBuffer _buffer;
     int _volume;
+    float _volumeScale;
 
 };
 

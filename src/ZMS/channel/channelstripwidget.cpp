@@ -19,9 +19,10 @@ ChannelStripWidget::ChannelStripWidget(QWidget *parent) :
 
     this->ui->lblName->installEventFilter(this);
     this->ui->btnEdit->installEventFilter(this);
+    this->ui->btnOutput->installEventFilter(this);
 
     connect(this->ui->btnClose, SIGNAL(clicked()), this, SLOT(OnCloseClicked()));
-    connect(this->ui->btnEdit, SIGNAL(clicked()), this, SLOT(OnEditClicked()));
+    connect(this->ui->btnEdit, SIGNAL(clicked()), this, SLOT(OnInstrumentClicked()));
 }
 
 ChannelStripWidget::~ChannelStripWidget()
@@ -29,9 +30,18 @@ ChannelStripWidget::~ChannelStripWidget()
     delete ui;
 }
 
-void ChannelStripWidget::SetChannelColor(const QColor& color)
+void ChannelStripWidget::OnCloseClicked()
 {
-    this->ui->lblName->setStyleSheet(QString("QLabel{background-color:rgb(%0,%1,%2);}").arg(color.red()).arg(color.green()).arg(color.blue()));
+    QMessageBox dlg;
+    dlg.setModal(true);
+    dlg.setText("Are you sure to remove this track?");
+    dlg.setIcon(QMessageBox::Information);
+    dlg.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    if (dlg.exec() == QMessageBox::Yes)
+    {
+        Mixer::Instance().RemoveChannel(this->_channel);
+        Sequencer::Inst().CurrentSongIsUpdated();
+    }
 }
 
 bool ChannelStripWidget::eventFilter(QObject* o, QEvent* e)
@@ -56,7 +66,19 @@ bool ChannelStripWidget::eventFilter(QObject* o, QEvent* e)
         return true;
     }
 
+    if (o == this->ui->btnOutput && e->type() == QEvent::ContextMenu)
+    {
+        QContextMenuEvent* contextEvent = (QContextMenuEvent*)e;
+        this->PickOutput(contextEvent->globalPos());
+        return true;
+    }
+
     return false;
+}
+
+void ChannelStripWidget::SetChannelColor(const QColor& color)
+{
+    this->ui->lblName->setStyleSheet(QString("QLabel{background-color:rgb(%0,%1,%2);}").arg(color.red()).arg(color.green()).arg(color.blue()));
 }
 
 void ChannelStripWidget::SetChannel(MixerChannel *channel)
@@ -68,6 +90,7 @@ void ChannelStripWidget::SetChannel(MixerChannel *channel)
         disconnect(this->_channel, SIGNAL(NameChanged(QString)), this->ui->lblName, SLOT(setText(QString)));
         disconnect(this->_channel, SIGNAL(ColorChanged(QColor)), this, SLOT(SetChannelColor(QColor)));
         disconnect(this->_channel, SIGNAL(InstrumentChanged(Instrument*)), this, SLOT(ChangeChannelInstrument(Instrument*)));
+        disconnect(this->_channel, SIGNAL(SinkChanged(MixerSink*)), this, SLOT(ChangeChannelOutput(MixerSink*)));
     }
 
     this->_channel = channel;
@@ -79,37 +102,17 @@ void ChannelStripWidget::SetChannel(MixerChannel *channel)
         connect(this->_channel, SIGNAL(NameChanged(QString)), this->ui->lblName, SLOT(setText(QString)));
         connect(this->_channel, SIGNAL(ColorChanged(QColor)), this, SLOT(SetChannelColor(QColor)));
         connect(this->_channel, SIGNAL(InstrumentChanged(Instrument*)), this, SLOT(ChangeChannelInstrument(Instrument*)));
+        connect(this->_channel, SIGNAL(SinkChanged(MixerSink*)), this, SLOT(ChangeChannelOutput(MixerSink*)));
 
         this->ui->volume->setValue(this->_channel->GetVolume());
         this->ui->lblName->setText(this->_channel->GetName());
         this->SetChannelColor(this->_channel->GetColor());
         this->ChangeChannelInstrument(this->_channel->GetInstrument());
+        this->ChangeChannelOutput(this->_channel->Sink());
     }
 }
 
-void ChannelStripWidget::ChangeChannelInstrument(Instrument* instrument)
-{
-    if (instrument != 0)
-    {
-        this->ui->btnEdit->setText(instrument->Pname.c_str());
-    }
-}
-
-void ChannelStripWidget::OnCloseClicked()
-{
-    QMessageBox dlg;
-    dlg.setModal(true);
-    dlg.setText("Are you sure to remove this track?");
-    dlg.setIcon(QMessageBox::Information);
-    dlg.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-    if (dlg.exec() == QMessageBox::Yes)
-    {
-        Mixer::Instance().RemoveChannel(this->_channel);
-        Sequencer::Inst().CurrentSongIsUpdated();
-    }
-}
-
-void ChannelStripWidget::OnEditClicked()
+void ChannelStripWidget::OnInstrumentClicked()
 {
     if (this->_channel->GetInstrument() == 0)
     {
@@ -121,7 +124,7 @@ void ChannelStripWidget::OnEditClicked()
     }
 }
 
-void ChannelStripWidget::ChannelPicked(QAction* action)
+void ChannelStripWidget::InstrumentPicked(QAction* action)
 {
     Instrument* instrument = (Instrument*)action->data().value<void*>();
     if (instrument == 0)
@@ -130,10 +133,18 @@ void ChannelStripWidget::ChannelPicked(QAction* action)
     this->_channel->SetInstrument(instrument);
 }
 
+void ChannelStripWidget::ChangeChannelInstrument(Instrument* instrument)
+{
+    if (instrument != 0)
+    {
+        this->ui->btnEdit->setText(instrument->Pname.c_str());
+    }
+}
+
 void ChannelStripWidget::PickInstrument(const QPoint &pos)
 {
     QMenu m(this);
-    connect(&m, SIGNAL(triggered(QAction*)), this, SLOT(ChannelPicked(QAction*)));
+    connect(&m, SIGNAL(triggered(QAction*)), this, SLOT(InstrumentPicked(QAction*)));
 
     for (QList<Instrument*>::iterator itr = Mixer::Instance().Instruments().begin(); itr != Mixer::Instance().Instruments().end(); ++itr)
     {
@@ -148,6 +159,44 @@ void ChannelStripWidget::PickInstrument(const QPoint &pos)
     QAction* newaction = new QAction("New instrument", this);
     newaction->setData(QVariant::fromValue((void*)0));
     m.addAction(newaction);
+
+    m.exec(pos);
+
+    while (m.actions().empty() == false)
+    {
+        QAction* a = m.actions().back();
+        m.actions().pop_back();
+        delete a;
+    }
+}
+
+void ChannelStripWidget::OutputPicked(QAction* action)
+{
+    MixerSink* sink = (MixerSink*)action->data().value<void*>();
+    if (sink != 0)
+        this->_channel->SetSink(sink);
+}
+
+void ChannelStripWidget::ChangeChannelOutput(MixerSink* sink)
+{
+    if (sink != 0)
+    {
+        this->ui->btnOutput->setText(sink->Title());
+    }
+}
+
+void ChannelStripWidget::PickOutput(const QPoint &pos)
+{
+    QMenu m(this);
+    connect(&m, SIGNAL(triggered(QAction*)), this, SLOT(OutputPicked(QAction*)));
+
+    for (QList<MixerSink*>::iterator itr = Mixer::Instance().Outputs().begin(); itr != Mixer::Instance().Outputs().end(); ++itr)
+    {
+        MixerSink* sink = (MixerSink*)*itr;
+        QAction* tmp = new QAction(sink->Title(), this);
+        tmp->setData(QVariant::fromValue((void*)sink));
+        m.addAction(tmp);
+    }
 
     m.exec(pos);
 

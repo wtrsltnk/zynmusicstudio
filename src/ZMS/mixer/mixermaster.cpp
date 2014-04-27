@@ -4,8 +4,10 @@
 using namespace std;
 
 MixerMaster::MixerMaster(QObject *parent) :
-    QObject(parent), _volume(100)
-{ }
+    MixerSink(parent)
+{
+    this->SetVolume(100);
+}
 
 void MixerMaster::AudioOut(float *outl, float *outr)
 {
@@ -14,7 +16,11 @@ void MixerMaster::AudioOut(float *outl, float *outr)
     for (QList<MixerSource*>::iterator itr = this->_sources.begin(); itr != this->_sources.end(); ++itr)
         this->_buffer += (*itr)->AudioOut();
 
-    this->_buffer.CopyTo(outl, outr);
+    for (int i = 0; i < synth->buffersize; i++)
+    {
+        outl[i] = this->_buffer.Left()[i] * this->_volumeScale;
+        outr[i] = this->_buffer.Right()[i] * this->_volumeScale;
+    }
 }
 
 int MixerMaster::GetVolume()
@@ -29,6 +35,7 @@ void MixerMaster::SetVolume(int volume)
         this->_volume = volume;
         if (this->_volume < 0) this->_volume = 0;
         if (this->_volume > 128) this->_volume = 128;
+        this->_volumeScale = float(this->_volume) / 128.0f;
         emit VolumeChanged(this->_volume);
     }
 }

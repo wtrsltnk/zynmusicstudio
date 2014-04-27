@@ -4,6 +4,16 @@
 MixerSendSink::MixerSendSink()
 { }
 
+MixerSendSink::~MixerSendSink()
+{
+    while (this->_sources.empty() == false)
+    {
+        MixerSendSource* source = this->_sources.back();
+        this->_sources.pop_back();
+        source->RemoveDestination(this);
+    }
+}
+
 void MixerSendSink::AddSource(MixerSendSource* source)
 {
     if (this->_sources.contains(source) == false)

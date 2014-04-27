@@ -9,6 +9,7 @@ class MixerSendSink
 {
 public:
     explicit MixerSendSink();
+    virtual ~MixerSendSink();
 
     QList<MixerSendSource*> Sources() { return this->_sources; }
     void AddSource(MixerSendSource* source);

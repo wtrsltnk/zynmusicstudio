@@ -1,7 +1,8 @@
 #include "mixersink.h"
 #include "mixersource.h"
 
-MixerSink::MixerSink()
+MixerSink::MixerSink(QObject *parent)
+    : QObject(parent)
 { }
 
 MixerSink::~MixerSink()

@@ -30,6 +30,7 @@ public:
     MixerBus* GetBus(int index);
     Instrument* AddInstrument(const QString& name);
     QList<Instrument*>& Instruments() { return this->_instruments; }
+    QList<MixerSink*>& Outputs() { return this->_outputs; }
 
     NioEngineManager* EngineManager() { return this->_engineManager; }
     MixerMaster* Master() { return &this->_master; }
@@ -55,6 +56,7 @@ private:
     MixerMaster _master;
     QList<Instrument*> _instruments;
     QList<MixerChannel*> _channels;
+    QList<MixerSink*> _outputs;
     MixerBus* _busses[MAX_BUS_COUNT];
 
     pthread_mutex_t _mutex;

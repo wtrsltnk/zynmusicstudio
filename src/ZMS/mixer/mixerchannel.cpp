@@ -1,9 +1,15 @@
 #include "mixerchannel.h"
 #include "mixer.h"
+#include "mixereffect.h"
 
 MixerChannel::MixerChannel(QObject *parent) :
-    QObject(parent), MixerSendSource(), MixerSendSink(), _instrument(0), _volume(100)
+    MixerSource(parent), MixerSendSource(), MixerSendSink(), _instrument(0), _volume(100)
 { }
+
+MixerChannel::~MixerChannel()
+{
+    this->SetInstrument(0);
+}
 
 Instrument* MixerChannel::GetInstrument()
 {
@@ -70,7 +76,13 @@ MixerBuffer& MixerChannel::AudioOut()
     {
         this->_buffer.Reset();
         if (this->_instrument != 0)
+        {
             this->_buffer.CopyFrom(this->_instrument->partoutl, this->_instrument->partoutr);
+
+            // Only when there is an instrument, and potentially sound, we do effects
+            for (QList<MixerEffect*>::iterator itr = this->_effects.begin(); itr != this->_effects.end(); ++itr)
+                (*itr)->EffectOnBuffer(this->_buffer);
+        }
 
         // And finnally we progress the local tick
         this->_currentTick = Mixer::CurrentTick;

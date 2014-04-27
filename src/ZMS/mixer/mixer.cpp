@@ -14,6 +14,8 @@ Mixer::Mixer(QObject *parent) :
     this->_fft = new FFTwrapper(synth->oscilsize);
 
     this->_microtonal.defaults();
+
+    this->_outputs.push_back(&this->_master);
 }
 
 Mixer& Mixer::Instance()

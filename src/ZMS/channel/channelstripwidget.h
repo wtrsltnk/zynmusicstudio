@@ -24,10 +24,14 @@ signals:
 
 public slots:
     void OnCloseClicked();
-    void OnEditClicked();
     void SetChannelColor(const QColor& color);
-    void ChannelPicked(QAction* action);
+
+    void OnInstrumentClicked();
+    void InstrumentPicked(QAction* action);
     void ChangeChannelInstrument(Instrument* instrument);
+
+    void OutputPicked(QAction* action);
+    void ChangeChannelOutput(MixerSink* sink);
 
 private:
     Ui::ChannelStripWidget *ui;
@@ -35,6 +39,7 @@ private:
 
     bool eventFilter(QObject* watched, QEvent* event);
     void PickInstrument(const QPoint &pos);
+    void PickOutput(const QPoint &pos);
 };
 
 #endif // CHANNELSTRIPWIDGET_H

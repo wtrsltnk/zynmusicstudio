@@ -9,11 +9,12 @@
 #include "mixersendsource.h"
 #include "../Misc/Instrument.h"
 
-class MixerChannel : public QObject, public MixerSendSource, public MixerSendSink, public MixerSource
+class MixerChannel : public MixerSource, public MixerSendSource, public MixerSendSink
 {
     Q_OBJECT
 public:
     explicit MixerChannel(QObject *parent = 0);
+    virtual ~MixerChannel();
 
     Instrument* GetInstrument();
 
@@ -23,7 +24,6 @@ public:
 
     virtual MixerBuffer& AudioOut();
 signals:
-    void ChannelIsUpdated(MixerChannel* channel);
     void InstrumentChanged(Instrument* instrument);
 
     void NameChanged(QString name);
