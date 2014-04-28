@@ -1,7 +1,7 @@
 #include "mixersample.h"
 
 MixerSample::MixerSample(QObject* parent)
-    : MixerGenerator(parent)
+    : MixerChannelInput(parent)
 { }
 
 MixerSample::~MixerSample()

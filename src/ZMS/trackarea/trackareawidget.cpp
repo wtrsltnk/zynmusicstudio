@@ -217,8 +217,6 @@ void TrackAreaWidget::UpdateTracks()
         {
             p = new TrackProperties(track);
             tp->addWidget(p);
-            if (this->_mainParent != 0)
-                connect(p, SIGNAL(ActivateChannel(Instrument*)), this->_mainParent, SLOT(OnChannelIsActivated(Instrument*)));
         }
         p->UpdateWidget();
 

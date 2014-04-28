@@ -1,7 +1,7 @@
 #include "mixervst.h"
 
 MixerVst::MixerVst(QObject* parent)
-    : MixerGenerator(parent)
+    : MixerChannelInput(parent)
 { }
 
 MixerVst::~MixerVst()

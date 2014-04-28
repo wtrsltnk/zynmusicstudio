@@ -2,7 +2,10 @@
 #include "mixer.h"
 
 MixerBus::MixerBus(QObject *parent) :
-    QObject(parent), MixerSendSink(), MixerSendSource()
+    MixerChannelInput(parent)
+{ }
+
+MixerBus::~MixerBus()
 { }
 
 void MixerBus::AudioOut(float *outl, float *outr)

@@ -14,8 +14,6 @@ Mixer::Mixer(QObject *parent) :
     this->_fft = new FFTwrapper(synth->oscilsize);
 
     this->_microtonal.defaults();
-
-    this->_outputs.push_back(&this->_master);
 }
 
 Mixer& Mixer::Instance()
@@ -62,13 +60,13 @@ MixerBus* Mixer::GetBus(int index)
     return this->_busses[index];
 }
 
-Instrument* Mixer::AddInstrument(const QString& name)
+MixerInstrument* Mixer::AddInstrument(const QString& name)
 {
     this->Lock();
 
-    Instrument* instrument = new Instrument(&this->_microtonal, this->_fft, &this->_mutex);
+    MixerInstrument* instrument = new MixerInstrument(new Instrument(&this->_microtonal, this->_fft, &this->_mutex));
 
-    instrument->Pname = name.toStdString();
+    instrument->GetInstrument()->Pname = name.toStdString();
     this->_instruments.push_back(instrument);
 
     this->Unlock();
@@ -92,7 +90,7 @@ void Mixer::AudioOut(float *outl, float *outr)
     Mixer::CurrentTick++;
 
     // First let all instruments compute the samples
-    for (QList<Instrument*>::iterator itr = this->_instruments.begin(); itr != this->_instruments.end(); ++itr)
+    for (QList<MixerInstrument*>::iterator itr = this->_instruments.begin(); itr != this->_instruments.end(); ++itr)
         (*itr)->ComputeSamples();
 
     // Next ask MixerMaster for its samples
@@ -101,30 +99,26 @@ void Mixer::AudioOut(float *outl, float *outr)
 
 void Mixer::NoteOn(char chan, char note, char velocity)
 {
-    for (QList<Instrument*>::iterator itr = this->_instruments.begin(); itr != this->_instruments.end(); ++itr)
-        if ((*itr)->Prcvchn == chan)
-            (*itr)->NoteOn(note, velocity, 0);
+    for (QList<MixerInstrument*>::iterator itr = this->_instruments.begin(); itr != this->_instruments.end(); ++itr)
+        (*itr)->NoteOn(chan, note, velocity);
 }
 
 void Mixer::NoteOff(char chan, char note)
 {
-    for (QList<Instrument*>::iterator itr = this->_instruments.begin(); itr != this->_instruments.end(); ++itr)
-        if ((*itr)->Prcvchn == chan)
-            (*itr)->NoteOff(note);
+    for (QList<MixerInstrument*>::iterator itr = this->_instruments.begin(); itr != this->_instruments.end(); ++itr)
+        (*itr)->NoteOff(chan, note);
 }
 
 void Mixer::PolyphonicAftertouch(char chan, char note, char velocity)
 {
-    for (QList<Instrument*>::iterator itr = this->_instruments.begin(); itr != this->_instruments.end(); ++itr)
-        if ((*itr)->Prcvchn == chan)
-            (*itr)->PolyphonicAftertouch(note, velocity, 0);
+    for (QList<MixerInstrument*>::iterator itr = this->_instruments.begin(); itr != this->_instruments.end(); ++itr)
+        (*itr)->PolyphonicAftertouch(chan, note, velocity);
 }
 
 void Mixer::SetController(char chan, int type, int par)
 {
-    for (QList<Instrument*>::iterator itr = this->_instruments.begin(); itr != this->_instruments.end(); ++itr)
-        if ((*itr)->Prcvchn == chan)
-            (*itr)->SetController(type, par);
+    for (QList<MixerInstrument*>::iterator itr = this->_instruments.begin(); itr != this->_instruments.end(); ++itr)
+        (*itr)->SetController(chan, type, par);
 }
 
 void Mixer::SetProgram(char chan, unsigned int pgm)

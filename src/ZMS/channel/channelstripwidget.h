@@ -3,6 +3,7 @@
 
 #include <QFrame>
 #include "mixer/mixerchannel.h"
+#include "mixer/mixerchannelinput.h"
 
 namespace Ui {
 class ChannelStripWidget;
@@ -19,19 +20,13 @@ public:
     MixerChannel* GetChannel() { return this->_channel; }
     void SetChannel(MixerChannel* channel);
 
-signals:
-    void ActivateChannel(MixerChannel* channel);
-
 public slots:
     void OnCloseClicked();
     void SetChannelColor(const QColor& color);
 
     void OnInstrumentClicked();
     void InstrumentPicked(QAction* action);
-    void ChangeChannelInstrument(Instrument* instrument);
-
-    void OutputPicked(QAction* action);
-    void ChangeChannelOutput(MixerSink* sink);
+    void ChangeChannelInput(MixerChannelInput* generator);
 
 private:
     Ui::ChannelStripWidget *ui;
@@ -39,7 +34,6 @@ private:
 
     bool eventFilter(QObject* watched, QEvent* event);
     void PickInstrument(const QPoint &pos);
-    void PickOutput(const QPoint &pos);
 };
 
 #endif // CHANNELSTRIPWIDGET_H

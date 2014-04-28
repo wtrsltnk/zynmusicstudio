@@ -5,9 +5,9 @@
  * TODO : Create a MixerGenerator that uses Vst instrument plugins to generate sound
  */
 
-#include "../mixergenerator.h"
+#include "../mixerchannelinput.h"
 
-class MixerVst : public MixerGenerator
+class MixerVst : public MixerChannelInput
 {
     Q_OBJECT
 public:

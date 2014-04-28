@@ -1,9 +1,9 @@
 #ifndef MIXERSYNTHESIZER_H
 #define MIXERSYNTHESIZER_H
 
-#include "../mixergenerator.h"
+#include "../mixerchannelinput.h"
 
-class MixerSynthesizer : public MixerGenerator
+class MixerSynthesizer : public MixerChannelInput
 {
     Q_OBJECT
 public:

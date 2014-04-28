@@ -2,20 +2,27 @@
 #define MIXERMASTER_H
 
 #include <QObject>
-#include "mixersink.h"
+#include <QList>
 #include "mixerbuffer.h"
 #include "../../Nio/NioEngineManager.h"
 
-class MixerMaster : public MixerSink
+class MixerChannel;
+
+class MixerMaster : public QObject
 {
     Q_OBJECT
 public:
-    explicit MixerMaster(QObject *parent = 0);
+    MixerMaster(QObject *parent = 0);
+    virtual ~MixerMaster();
 
     void AudioOut(float *outl, float *outr);
 
     int GetVolume();
     virtual QString Title() { return "Master"; }
+
+    void AddSource(MixerChannel* source);
+    void RemoveSource(MixerChannel* source);
+
 signals:
     void VolumeChanged(int volume);
 
@@ -26,6 +33,8 @@ private:
     MixerBuffer _buffer;
     int _volume;
     float _volumeScale;
+
+    QList<MixerChannel*> _sources;
 
 };
 

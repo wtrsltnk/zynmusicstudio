@@ -33,10 +33,9 @@ set(zynmusicstudio_zms_SRCS
     channel/effectbuttonstrip.cpp
 
     mixer/mixer.cpp
-    mixer/mixersource.cpp
     mixer/mixerbuffer.cpp
-    mixer/mixersink.cpp
-    mixer/mixergenerator.cpp
+    mixer/mixerchannelinput.cpp
+    mixer/mixerinstrument.cpp
     mixer/generators/mixersynthesizer.cpp
     mixer/generators/mixerdrumkit.cpp
     mixer/generators/mixersample.cpp
@@ -82,9 +81,8 @@ set(zynmusicstudio_zms_HEADERS
     channel/effectbuttonstrip.h
 
     mixer/mixer.h
-    mixer/mixersource.h
-    mixer/mixersink.h
-    mixer/mixergenerator.h
+    mixer/mixerchannelinput.h
+    mixer/mixerinstrument.h
     mixer/generators/mixersynthesizer.h
     mixer/generators/mixerdrumkit.h
     mixer/generators/mixersample.h

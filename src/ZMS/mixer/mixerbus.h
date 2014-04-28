@@ -4,15 +4,18 @@
 #include <QObject>
 #include "mixerbuffer.h"
 #include "mixersendsink.h"
-#include "mixersendsource.h"
+#include "mixerchannelinput.h"
 
-class MixerBus : public QObject, public MixerSendSink, public MixerSendSource
+class MixerBus : public MixerChannelInput
 {
     Q_OBJECT
 public:
     explicit MixerBus(QObject *parent = 0);
+    virtual ~MixerBus();
 
     void AudioOut(float *outl, float *outr);
+
+    MixerSendSink SendSink;
 signals:
 
 public slots:

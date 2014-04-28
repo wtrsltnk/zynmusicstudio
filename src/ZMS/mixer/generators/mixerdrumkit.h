@@ -1,9 +1,9 @@
 #ifndef MIXERDRUMKIT_H
 #define MIXERDRUMKIT_H
 
-#include "../mixergenerator.h"
+#include "../mixerchannelinput.h"
 
-class MixerDrumKit : public MixerGenerator
+class MixerDrumKit : public MixerChannelInput
 {
     Q_OBJECT
 public:

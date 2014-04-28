@@ -1,7 +1,7 @@
 #include "mixerdrumkit.h"
 
 MixerDrumKit::MixerDrumKit(QObject* parent)
-    : MixerGenerator(parent)
+    : MixerChannelInput(parent)
 { }
 
 MixerDrumKit::~MixerDrumKit()

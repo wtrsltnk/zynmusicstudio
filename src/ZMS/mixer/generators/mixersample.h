@@ -5,9 +5,9 @@
  * TODO : Create a MixerGenerator that uses samples to generate sound
  */
 
-#include "../mixergenerator.h"
+#include "../mixerchannelinput.h"
 
-class MixerSample : public MixerGenerator
+class MixerSample : public MixerChannelInput
 {
     Q_OBJECT
 public:

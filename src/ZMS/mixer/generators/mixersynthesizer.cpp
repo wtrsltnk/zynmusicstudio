@@ -1,7 +1,7 @@
 #include "mixersynthesizer.h"
 
 MixerSynthesizer::MixerSynthesizer(QObject* parent)
-    : MixerGenerator(parent)
+    : MixerChannelInput(parent)
 { }
 
 MixerSynthesizer::~MixerSynthesizer()

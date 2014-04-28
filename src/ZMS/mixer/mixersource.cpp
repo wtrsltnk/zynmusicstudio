@@ -1,6 +1,6 @@
 #include "mixersource.h"
 #include "mixersink.h"
-#include "mixergenerator.h"
+#include "mixerchannelinput.h"
 #include "mixereffect.h"
 
 MixerSource::MixerSource(QObject* parent)
@@ -10,7 +10,7 @@ MixerSource::MixerSource(QObject* parent)
 MixerSource::~MixerSource()
 {
     this->SetSink(0);
-    this->SetGenerator(0);
+    this->SetChannelInput(0);
     while (this->_effects.empty() == false)
     {
         MixerEffect* effect = this->_effects.back();
@@ -34,7 +34,7 @@ void MixerSource::SetSink(MixerSink* sink)
     }
 }
 
-void MixerSource::SetGenerator(MixerGenerator* generator)
+void MixerSource::SetChannelInput(MixerChannelInput* generator)
 {
     if (this->_generator != generator)
     {
@@ -45,7 +45,7 @@ void MixerSource::SetGenerator(MixerGenerator* generator)
         if (this->_generator != 0)
             this->_generator->SetSource(this);
 
-        emit GeneratorChanged(this->_generator);
+        emit ChannelInputChanged(this->_generator);
     }
 }
 

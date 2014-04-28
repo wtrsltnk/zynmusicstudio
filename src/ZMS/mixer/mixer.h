@@ -8,6 +8,7 @@
 #include "mixermaster.h"
 #include "mixerchannel.h"
 #include "mixerbus.h"
+#include "mixerinstrument.h"
 #include "../../Misc/Microtonal.h"
 #include "../../Nio/NioEngineManager.h"
 
@@ -28,9 +29,8 @@ public:
     QList<MixerChannel*>& Channels();
 
     MixerBus* GetBus(int index);
-    Instrument* AddInstrument(const QString& name);
-    QList<Instrument*>& Instruments() { return this->_instruments; }
-    QList<MixerSink*>& Outputs() { return this->_outputs; }
+    MixerInstrument* AddInstrument(const QString& name);
+    QList<MixerInstrument*>& Instruments() { return this->_instruments; }
 
     NioEngineManager* EngineManager() { return this->_engineManager; }
     MixerMaster* Master() { return &this->_master; }
@@ -54,9 +54,8 @@ public: // IMaster Interface
 
 private:
     MixerMaster _master;
-    QList<Instrument*> _instruments;
+    QList<MixerInstrument*> _instruments;
     QList<MixerChannel*> _channels;
-    QList<MixerSink*> _outputs;
     MixerBus* _busses[MAX_BUS_COUNT];
 
     pthread_mutex_t _mutex;

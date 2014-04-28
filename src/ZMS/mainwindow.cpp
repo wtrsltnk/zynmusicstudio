@@ -68,8 +68,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     MixerChannel* channel = Mixer::Instance().AddChannel("wouter");
     channel->SetSink(Mixer::Instance().Master());
-    Instrument* instrument = Mixer::Instance().AddInstrument("test");
-    channel->SetInstrument(instrument);
+    MixerInstrument* instrument = Mixer::Instance().AddInstrument("test");
+    channel->SetChannelInput(instrument);
 }
 
 MainWindow::~MainWindow()
@@ -83,12 +83,6 @@ void MainWindow::ClipIsActivated(TrackAreaClip* clip)
     QList<TrackAreaClip*> selection;
     selection.push_back(clip);
     this->ui->pianoroll->ClipSelectionChanged(selection);
-}
-
-void MainWindow::OnChannelIsActivated(Instrument* channel)
-{
-    this->ui->channelDock->show();
-    this->ui->channeleditor->SetChannel(channel);
 }
 
 void MainWindow::OnPlay()

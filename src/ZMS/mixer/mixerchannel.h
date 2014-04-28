@@ -4,46 +4,59 @@
 #include <QObject>
 #include <QColor>
 #include "mixerbuffer.h"
-#include "mixersource.h"
 #include "mixersendsink.h"
 #include "mixersendsource.h"
 #include "../Misc/Instrument.h"
 
-class MixerChannel : public MixerSource, public MixerSendSource, public MixerSendSink
+class MixerMaster;
+class MixerChannelInput;
+class MixerEffect;
+
+class MixerChannel : public QObject
 {
     Q_OBJECT
 public:
     explicit MixerChannel(QObject *parent = 0);
     virtual ~MixerChannel();
 
-    Instrument* GetInstrument();
-
     QString GetName();
     QColor GetColor();
     int GetVolume();
 
     virtual MixerBuffer& AudioOut();
-signals:
-    void InstrumentChanged(Instrument* instrument);
 
+    virtual MixerMaster* Sink() { return this->_sink; }
+    virtual MixerChannelInput* ChannelInput() { return this->_generator; }
+    virtual QList<MixerEffect*>& Effects() { return this->_effects; }
+
+signals:
     void NameChanged(QString name);
     void ColorChanged(QColor color);
     void VolumeChanged(int volume);
 
-public slots:
-    void SetInstrument(Instrument* instrument);
+    void SinkChanged(MixerMaster* sink);
+    void ChannelInputChanged(MixerChannelInput* input);
 
+public slots:
     void SetName(QString name);
     void SetColor(QColor color);
     void SetVolume(int volume);
 
+    virtual void SetSink(MixerMaster* sink);
+    virtual void SetChannelInput(MixerChannelInput* input);
+    virtual void AddEffect(MixerEffect* effect);
+    virtual void RemoveEffect(MixerEffect* effect);
+
 private:
     MixerBuffer _buffer;
-    Instrument* _instrument;
 
     QString _name;
     QColor _color;
     int _volume;
+
+    MixerMaster* _sink;
+    MixerChannelInput* _generator;
+    QList<MixerEffect*> _effects;
 
     int _currentTick;
 
