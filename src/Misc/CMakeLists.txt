@@ -3,6 +3,7 @@ set(zynaddsubfx_misc_SRCS
     Misc/Config.cpp
     Misc/Dump.cpp
     Misc/Instrument.cpp
+    Misc/Drumkit.cpp
     Misc/Master.cpp
     Misc/Microtonal.cpp
     Misc/Util.cpp

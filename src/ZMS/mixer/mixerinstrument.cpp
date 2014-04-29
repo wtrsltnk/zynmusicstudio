@@ -9,7 +9,8 @@ MixerInstrument::~MixerInstrument()
 
 void MixerInstrument::ComputeSamples()
 {
-    this->_instrument->ComputeSamples();
+    if (this->_instrument != 0)
+        this->_instrument->ComputeSamples();
 }
 
 void MixerInstrument::NoteOn(char chan, char note, char velocity)

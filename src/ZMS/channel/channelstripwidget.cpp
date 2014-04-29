@@ -19,7 +19,6 @@ ChannelStripWidget::ChannelStripWidget(QWidget *parent) :
 
     this->ui->lblName->installEventFilter(this);
     this->ui->btnEdit->installEventFilter(this);
-    this->ui->btnOutput->installEventFilter(this);
 
     connect(this->ui->btnClose, SIGNAL(clicked()), this, SLOT(OnCloseClicked()));
     connect(this->ui->btnEdit, SIGNAL(clicked()), this, SLOT(OnInstrumentClicked()));
@@ -93,7 +92,7 @@ void ChannelStripWidget::SetChannel(MixerChannel *channel)
         connect(this->ui->volume, SIGNAL(valueChanged(int)), this->_channel, SLOT(SetVolume(int)));
         connect(this->_channel, SIGNAL(NameChanged(QString)), this->ui->lblName, SLOT(setText(QString)));
         connect(this->_channel, SIGNAL(ColorChanged(QColor)), this, SLOT(SetChannelColor(QColor)));
-        connect(this->_channel, SIGNAL(GeneratorChanged(MixerChannelInput*)), this, SLOT(ChangeChannelInput(MixerChannelInput*)));
+        connect(this->_channel, SIGNAL(ChannelInputChanged(MixerChannelInput*)), this, SLOT(ChangeChannelInput(MixerChannelInput*)));
 
         this->ui->volume->setValue(this->_channel->GetVolume());
         this->ui->lblName->setText(this->_channel->GetName());
@@ -138,8 +137,8 @@ void ChannelStripWidget::PickInstrument(const QPoint &pos)
 
     for (QList<MixerInstrument*>::iterator itr = Mixer::Instance().Instruments().begin(); itr != Mixer::Instance().Instruments().end(); ++itr)
     {
-        Instrument* instrument = (Instrument*)*itr;
-        QAction* tmp = new QAction(instrument->Pname.c_str(), this);
+        MixerInstrument* instrument = (MixerInstrument*)*itr;
+        QAction* tmp = new QAction(instrument->GetInstrument()->Pname.c_str(), this);
         tmp->setData(QVariant::fromValue((void*)instrument));
         m.addAction(tmp);
     }

@@ -20,8 +20,8 @@
 
 */
 
-#ifndef INSTRUMENT_H
-#define INSTRUMENT_H
+#ifndef DRUMKIT_H
+#define DRUMKIT_H
 
 #define MAX_INFO_TEXT_SIZE 1000
 
@@ -41,16 +41,16 @@ class XMLWrapper;
 class FFTwrapper;
 
 /** Part implementation*/
-class Instrument
+class Drumkit
 {
     public:
         /**Constructor
          * @param microtonal_ Pointer to the microtonal object
          * @param fft_ Pointer to the FFTwrapper
          * @param mutex_ Pointer to the master pthread_mutex_t*/
-        Instrument(Microtonal *microtonal_, FFTwrapper *fft_, pthread_mutex_t *mutex_);
+        Drumkit(Microtonal *microtonal_, FFTwrapper *fft_, pthread_mutex_t *mutex_);
         /**Destructor*/
-        virtual ~Instrument();
+        virtual ~Drumkit();
 
         // Midi commands implemented
         void NoteOn(unsigned char note,
@@ -92,16 +92,17 @@ class Instrument
         //the part's kit
         struct {
             unsigned char      Penabled, Pmuted, Pminkey, Pmaxkey;
+            unsigned char     *Pname;
             unsigned char      Padenabled, Psubenabled, Ppadenabled;
             ADnoteParameters  *adpars;
             SUBnoteParameters *subpars;
             PADnoteParameters *padpars;
-        } synths;
+        } kit[NUM_KIT_ITEMS];
 
 
         //Part parameters
         void setkeylimit(unsigned char Pkeylimit);
-        void setstatus(int Penabled_);
+        void setkititemstatus(int kititem, int Penabled_);
 
         unsigned char Penabled; /**<if the part is enabled*/
         unsigned char Pvolume; /**<part volume*/
@@ -115,6 +116,8 @@ class Instrument
         unsigned char Pvelsns; //velocity sensing (amplitude velocity scale)
         unsigned char Pveloffs; //velocity offset
         unsigned char Pnoteon; //if the part receives NoteOn messages
+        unsigned char Pkitmode; //if the kitmode is enabled
+        unsigned char Pdrummode; //if all keys are mapped and the system is 12tET (used for drums)
 
         unsigned char Ppolymode; //Part mode - 0=monophonic , 1=polyphonic
         unsigned char Plegatomode; // 0=normal, 1=legato
@@ -159,7 +162,7 @@ class Instrument
                    *subnote,
                    *padnote;
                 int sendtoparteffect;
-            } item;
+            } kititem[NUM_KIT_ITEMS];
             int time;
         };
 
@@ -184,4 +187,4 @@ class Instrument
         FFTwrapper *fft;
 };
 
-#endif
+#endif // DRUMKIT_H

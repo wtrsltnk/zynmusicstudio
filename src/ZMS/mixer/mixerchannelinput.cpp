@@ -12,7 +12,7 @@ MixerChannelInput::~MixerChannelInput()
 
 void MixerChannelInput::SetSource(MixerChannel* source)
 {
-    if (this->_source != source)
+    if (this->_source != source && this->_source != 0)
     {
         if (this->_source != 0)
             this->_source->SetChannelInput(0);

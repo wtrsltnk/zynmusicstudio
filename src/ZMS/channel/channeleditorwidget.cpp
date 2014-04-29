@@ -46,28 +46,28 @@ void ChannelEditorWidget::OnChannelUpdated(Instrument* channel)
     if (this->_channel == channel)
     {
         this->ui->label->setText(this->_channel->Pname.c_str());
-        this->ui->chkEnableAdd->setChecked(this->_channel->kit[0].Padenabled);
-        this->ui->chkEnableSub->setChecked(this->_channel->kit[0].Psubenabled);
-        this->ui->chkEnablePad->setChecked(this->_channel->kit[0].Ppadenabled);
+        this->ui->chkEnableAdd->setChecked(this->_channel->synths.Padenabled);
+        this->ui->chkEnableSub->setChecked(this->_channel->synths.Psubenabled);
+        this->ui->chkEnablePad->setChecked(this->_channel->synths.Ppadenabled);
     }
 }
 
 void ChannelEditorWidget::OnAddSynthEnabledChanged(bool state)
 {
     this->ui->synths->tabBar()->setTabEnabled(1, state);
-    this->_channel->kit[0].Padenabled = (state ? 1 : 0);
+    this->_channel->synths.Padenabled = (state ? 1 : 0);
 }
 
 void ChannelEditorWidget::OnSubSynthEnabledChanged(bool state)
 {
     this->ui->synths->tabBar()->setTabEnabled(2, state);
-    this->_channel->kit[0].Psubenabled = (state ? 1 : 0);
+    this->_channel->synths.Psubenabled = (state ? 1 : 0);
 }
 
 void ChannelEditorWidget::OnPadSynthEnabledChanged(bool state)
 {
     this->ui->synths->tabBar()->setTabEnabled(3, state);
-    this->_channel->kit[0].Ppadenabled = (state ? 1 : 0);
+    this->_channel->synths.Ppadenabled = (state ? 1 : 0);
 }
 
 void ChannelEditorWidget::SetChannel(Instrument *channel)

@@ -36,10 +36,6 @@ set(zynmusicstudio_zms_SRCS
     mixer/mixerbuffer.cpp
     mixer/mixerchannelinput.cpp
     mixer/mixerinstrument.cpp
-    mixer/generators/mixersynthesizer.cpp
-    mixer/generators/mixerdrumkit.cpp
-    mixer/generators/mixersample.cpp
-    mixer/generators/mixervst.cpp
     mixer/mixermaster.cpp
     mixer/mixereffect.cpp
     mixer/mixerchannel.cpp
@@ -83,10 +79,6 @@ set(zynmusicstudio_zms_HEADERS
     mixer/mixer.h
     mixer/mixerchannelinput.h
     mixer/mixerinstrument.h
-    mixer/generators/mixersynthesizer.h
-    mixer/generators/mixerdrumkit.h
-    mixer/generators/mixersample.h
-    mixer/generators/mixervst.h
     mixer/mixerbuffer.h
     mixer/mixereffect.h
     mixer/mixermaster.h

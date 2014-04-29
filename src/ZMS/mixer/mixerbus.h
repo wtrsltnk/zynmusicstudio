@@ -10,7 +10,7 @@ class MixerBus : public MixerChannelInput
 {
     Q_OBJECT
 public:
-    explicit MixerBus(QObject *parent = 0);
+    MixerBus(QObject *parent = 0);
     virtual ~MixerBus();
 
     void AudioOut(float *outl, float *outr);

@@ -4,7 +4,6 @@
 #include <QObject>
 #include <QColor>
 #include "mixerbuffer.h"
-#include "mixersendsink.h"
 #include "mixersendsource.h"
 #include "../Misc/Instrument.h"
 
@@ -29,6 +28,7 @@ public:
     virtual MixerChannelInput* ChannelInput() { return this->_generator; }
     virtual QList<MixerEffect*>& Effects() { return this->_effects; }
 
+    MixerSendSource SendSource;
 signals:
     void NameChanged(QString name);
     void ColorChanged(QColor color);
