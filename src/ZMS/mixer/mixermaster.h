@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QList>
 #include "mixerbuffer.h"
+#include "mixereffectcontainer.h"
 #include "../../Nio/NioEngineManager.h"
 
 class MixerChannel;
@@ -23,6 +24,7 @@ public:
     void AddSource(MixerChannel* source);
     void RemoveSource(MixerChannel* source);
 
+    MixerEffectContainer Effects;
 signals:
     void VolumeChanged(int volume);
 

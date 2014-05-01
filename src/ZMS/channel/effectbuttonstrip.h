@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QPushButton>
 #include <QList>
-#include "mixer/mixereffect.h"
+#include "mixer/mixereffectcontainer.h"
 
 namespace Ui {
 class EffectButtonStrip;
@@ -29,10 +29,8 @@ class EffectButtonStrip : public QWidget
     Q_OBJECT
 
 public:
-    EffectButtonStrip(MixerChannel* channel, QWidget *parent = 0);
+    EffectButtonStrip(MixerEffectContainer* effects, QWidget *parent = 0);
     ~EffectButtonStrip();
-
-    void UpdateMinHeight();
 
 public slots:
     void OnAddEffectClicked();
@@ -41,7 +39,7 @@ public slots:
 
 private:
     Ui::EffectButtonStrip *ui;
-    MixerChannel* _channel;
+    MixerEffectContainer* _effects;
 
 };
 

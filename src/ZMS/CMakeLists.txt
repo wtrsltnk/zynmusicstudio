@@ -39,6 +39,7 @@ set(zynmusicstudio_zms_SRCS
     mixer/mixerinstrument.cpp
     mixer/mixermaster.cpp
     mixer/mixereffect.cpp
+    mixer/mixereffectcontainer.cpp
     mixer/mixerchannel.cpp
     mixer/mixerbus.cpp
     mixer/mixersendsource.cpp
@@ -83,6 +84,7 @@ set(zynmusicstudio_zms_HEADERS
     mixer/mixerinstrument.h
     mixer/mixerbuffer.h
     mixer/mixereffect.h
+    mixer/mixereffectcontainer.h
     mixer/mixermaster.h
     mixer/mixerchannel.h
     mixer/mixerbus.h

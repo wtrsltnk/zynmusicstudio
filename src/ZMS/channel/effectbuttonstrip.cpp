@@ -1,6 +1,7 @@
 #include "effectbuttonstrip.h"
 #include "ui_effectbuttonstrip.h"
 #include "mixer/mixer.h"
+#include "mixer/mixereffect.h"
 #include <iostream>
 
 using namespace std;
@@ -9,32 +10,32 @@ EffectButton::EffectButton(MixerEffect* effect)
     : _effect(effect)
 {
     this->setText("wow");
+    this->setMinimumHeight(24);
 }
 
 EffectButton::~EffectButton()
 { }
 
-EffectButtonStrip::EffectButtonStrip(MixerChannel* channel, QWidget *parent) :
+EffectButtonStrip::EffectButtonStrip(MixerEffectContainer* effects, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::EffectButtonStrip),
-    _channel(channel)
+    _effects(effects)
 {
     ui->setupUi(this);
 
-    if (this->_channel != 0)
+    if (this->_effects != 0)
     {
-        for (QList<MixerEffect*>::iterator itr = this->_channel->Effects().begin(); itr != this->_channel->Effects().end(); ++itr)
+        for (QList<MixerEffect*>::iterator itr = this->_effects->Effects().begin(); itr != this->_effects->Effects().end(); ++itr)
         {
             EffectButton* btn = new EffectButton(*itr);
             // todo: connect clicked()
             this->ui->buttonlayout->insertWidget(this->ui->buttonlayout->count() - 2, btn);
         }
+        connect(this->_effects, SIGNAL(EffectAdded(MixerEffect*)), this, SLOT(AddEffect(MixerEffect*)));
+        connect(this->_effects, SIGNAL(EffectRemoved(MixerEffect*)), this, SLOT(RemoveEffect(MixerEffect*)));
     }
 
     connect(this->ui->btnAdd, SIGNAL(clicked()), this, SLOT(OnAddEffectClicked()));
-
-    connect(this->_channel, SIGNAL(EffectAdded(MixerEffect*)), this, SLOT(AddEffect(MixerEffect*)));
-    connect(this->_channel, SIGNAL(EffectRemoved(MixerEffect*)), this, SLOT(RemoveEffect(MixerEffect*)));
 }
 
 EffectButtonStrip::~EffectButtonStrip()
@@ -55,7 +56,8 @@ EffectButtonStrip::~EffectButtonStrip()
 void EffectButtonStrip::OnAddEffectClicked()
 {
     MixerEffect* effect = new MixerEffect();
-    this->_channel->AddEffect(effect);
+    this->_effects->AddEffect(effect);
+    this->setMinimumHeight(24 * (this->ui->buttonlayout->count() + 2));
 }
 
 void EffectButtonStrip::AddEffect(MixerEffect* effect)

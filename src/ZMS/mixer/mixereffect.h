@@ -4,7 +4,7 @@
 #include <QObject>
 #include "mixerbuffer.h"
 
-class MixerChannel;
+class MixerEffectContainer;
 
 class MixerEffect : public QObject
 {
@@ -13,7 +13,7 @@ public:
     explicit MixerEffect(QObject *parent = 0);
     virtual ~MixerEffect();
 
-    virtual MixerChannel* Source() { return this->_source; }
+    virtual MixerEffectContainer* Source() { return this->_source; }
 
     // This will not change the input buffer
 //    virtual const MixerBuffer& EffectFromBuffer(const MixerBuffer& in) = 0;
@@ -21,13 +21,13 @@ public:
     // This will change the input buffer
     virtual void EffectOnBuffer(MixerBuffer& in) { }
 signals:
-    void SourceChanged(MixerChannel* source);
+    void SourceChanged(MixerEffectContainer* source);
 
 public slots:
-    virtual void SetSource(MixerChannel* source);
+    virtual void SetSource(MixerEffectContainer* source);
 
 protected:
-    MixerChannel* _source;
+    MixerEffectContainer* _source;
     MixerBuffer _buffer;
 };
 

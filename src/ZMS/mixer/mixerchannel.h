@@ -5,6 +5,7 @@
 #include <QColor>
 #include "mixerbuffer.h"
 #include "mixersendsource.h"
+#include "mixereffectcontainer.h"
 #include "../Misc/Instrument.h"
 
 class MixerMaster;
@@ -26,9 +27,9 @@ public:
 
     virtual MixerMaster* Sink() { return this->_sink; }
     virtual MixerChannelInput* ChannelInput() { return this->_generator; }
-    virtual QList<MixerEffect*>& Effects() { return this->_effects; }
 
     MixerSendSource SendSource;
+    MixerEffectContainer Effects;
 signals:
     void NameChanged(QString name);
     void ColorChanged(QColor color);
@@ -36,8 +37,6 @@ signals:
 
     void SinkChanged(MixerMaster* sink);
     void ChannelInputChanged(MixerChannelInput* input);
-    void EffectAdded(MixerEffect* effect);
-    void EffectRemoved(MixerEffect* effect);
 
 public slots:
     void SetName(QString name);
@@ -46,8 +45,6 @@ public slots:
 
     virtual void SetSink(MixerMaster* sink);
     virtual void SetChannelInput(MixerChannelInput* input);
-    virtual void AddEffect(MixerEffect* effect);
-    virtual void RemoveEffect(MixerEffect* effect);
 
 private:
     MixerBuffer _buffer;
@@ -58,7 +55,6 @@ private:
 
     MixerMaster* _sink;
     MixerChannelInput* _generator;
-    QList<MixerEffect*> _effects;
 
     int _currentTick;
 

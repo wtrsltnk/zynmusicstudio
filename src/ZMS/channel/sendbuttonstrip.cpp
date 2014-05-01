@@ -4,7 +4,9 @@
 
 SendButton::SendButton(MixerSendSink *sink)
     : _sink(sink)
-{ }
+{
+    this->setMinimumHeight(24);
+}
 
 SendButton::~SendButton()
 { }
@@ -18,9 +20,17 @@ SendButtonStrip::SendButtonStrip(MixerSendSource* sends, QWidget *parent) :
 
     if (this->_sends != 0)
     {
+        for (QList<MixerSendSink*>::iterator itr = this->_sends->Sinks().begin(); itr != this->_sends->Sinks().end(); ++itr)
+        {
+            SendButton* btn = new SendButton(*itr);
+            // todo: connect clicked()
+            this->ui->buttonlayout->insertWidget(this->ui->buttonlayout->count() - 2, btn);
+        }
         connect(this->_sends, SIGNAL(SinkAdded(MixerSendSink*)), this, SLOT(AddSink(MixerSendSink*)));
         connect(this->_sends, SIGNAL(SinkRemoved(MixerSendSink*)), this, SLOT(RemoveSink(MixerSendSink*)));
     }
+
+    connect(this->ui->btnAdd, SIGNAL(clicked()), this, SLOT(OnAddSendClicked()));
 }
 
 SendButtonStrip::~SendButtonStrip()
@@ -36,6 +46,11 @@ SendButtonStrip::~SendButtonStrip()
     }
 
     delete ui;
+}
+
+void SendButtonStrip::OnAddSendClicked()
+{
+    this->setMinimumHeight(24 * (this->ui->buttonlayout->count() + 2));
 }
 
 void SendButtonStrip::AddSink(MixerSendSink* sink)

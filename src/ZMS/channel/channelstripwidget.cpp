@@ -22,7 +22,7 @@ ChannelStripWidget::ChannelStripWidget(MixerChannel* channel, QWidget *parent) :
     this->ui_sendButtonStrip = new SendButtonStrip(&channel->SendSource, this);
     this->ui->channelParts->insertWidget(2, this->ui_sendButtonStrip);
 
-    this->ui_effectButtonStrip = new EffectButtonStrip(channel, this);
+    this->ui_effectButtonStrip = new EffectButtonStrip(&channel->Effects, this);
     this->ui->channelParts->insertWidget(2, this->ui_effectButtonStrip);
 
     this->ui->lblName->installEventFilter(this);

@@ -32,6 +32,7 @@ public:
     ~SendButtonStrip();
 
 protected slots:
+    void OnAddSendClicked();
     void AddSink(MixerSendSink* sink);
     void RemoveSink(MixerSendSink* sink);
 

@@ -2,10 +2,13 @@
 #define MASTERCHANNELSTRIPWIDGET_H
 
 #include <QFrame>
+#include "effectbuttonstrip.h"
 
 namespace Ui {
 class MasterChannelStripWidget;
 }
+
+class MixerMaster;
 
 class MasterChannelStripWidget : public QFrame
 {
@@ -24,6 +27,8 @@ protected slots:
 
 private:
     Ui::MasterChannelStripWidget *ui;
+    EffectButtonStrip *uieffectButtons;
+    MixerMaster* _master;
     QTimer* _vutimer;
 
     float dbl;

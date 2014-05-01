@@ -10,7 +10,7 @@ MixerEffect::~MixerEffect()
     this->SetSource(0);
 }
 
-void MixerEffect::SetSource(MixerChannel *source)
+void MixerEffect::SetSource(MixerEffectContainer *source)
 {
     if (this->_source != source)
     {

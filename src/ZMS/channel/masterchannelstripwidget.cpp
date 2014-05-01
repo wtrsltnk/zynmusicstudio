@@ -1,15 +1,20 @@
 #include "masterchannelstripwidget.h"
 #include "ui_masterchannelstripwidget.h"
 #include "../mixer/mixer.h"
+#include "../mixer/mixermaster.h"
 #include <QTimer>
 #include <QPainter>
 #include <QMenu>
 
 MasterChannelStripWidget::MasterChannelStripWidget(QWidget *parent) :
     QFrame(parent),
-    ui(new Ui::MasterChannelStripWidget)
+    ui(new Ui::MasterChannelStripWidget),
+    _master(Mixer::Instance().Master())
 {
     ui->setupUi(this);
+
+    this->uieffectButtons = new EffectButtonStrip(&this->_master->Effects, this);
+    this->ui->partslayout->insertWidget(1, this->uieffectButtons);
 
     this->ui->btnMidi->setText(Mixer::Instance().EngineManager()->Input()->GetSource().c_str());
     connect(this->ui->btnMidi, SIGNAL(clicked()), this, SLOT(OnShowMidiDevices()));

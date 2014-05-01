@@ -10,12 +10,6 @@ MixerChannel::~MixerChannel()
 {
     this->SetSink(0);
     this->SetChannelInput(0);
-    while (this->_effects.empty() == false)
-    {
-        MixerEffect* effect = this->_effects.back();
-        this->_effects.pop_back();
-        effect->SetSource(0);
-    }
 }
 
 QString MixerChannel::GetName()
@@ -75,7 +69,7 @@ MixerBuffer& MixerChannel::AudioOut()
                 this->_buffer.CopyFrom(instrument->GetInstrument()->partoutl, instrument->GetInstrument()->partoutr);
 
             // Only when there is an instrument, and potentially sound, we do effects
-            for (QList<MixerEffect*>::iterator itr = this->_effects.begin(); itr != this->_effects.end(); ++itr)
+            for (QList<MixerEffect*>::iterator itr = this->Effects.Effects().begin(); itr != this->Effects.Effects().end(); ++itr)
                 (*itr)->EffectOnBuffer(this->_buffer);
         }
 
@@ -112,27 +106,5 @@ void MixerChannel::SetChannelInput(MixerChannelInput* generator)
             this->_generator->SetSource(this);
 
         emit ChannelInputChanged(this->_generator);
-    }
-}
-
-void MixerChannel::AddEffect(MixerEffect* effect)
-{
-    if (this->_effects.contains(effect) == false)
-    {
-        this->_effects.push_back(effect);
-        if (effect != 0)
-            effect->SetSource(this);
-        emit EffectAdded(effect);
-    }
-}
-
-void MixerChannel::RemoveEffect(MixerEffect* effect)
-{
-    if (this->_effects.contains(effect))
-    {
-        this->_effects.removeOne(effect);
-        if (effect != 0)
-            effect->SetSource(0);
-        emit EffectRemoved(effect);
     }
 }
