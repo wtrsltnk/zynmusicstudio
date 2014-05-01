@@ -31,6 +31,7 @@ set(zynmusicstudio_zms_SRCS
     channel/subsyntheditorwidget.cpp
     channel/padsyntheditorwidget.cpp
     channel/effectbuttonstrip.cpp
+    channel/sendbuttonstrip.cpp
 
     mixer/mixer.cpp
     mixer/mixerbuffer.cpp
@@ -75,6 +76,7 @@ set(zynmusicstudio_zms_HEADERS
     channel/subsyntheditorwidget.h
     channel/padsyntheditorwidget.h
     channel/effectbuttonstrip.h
+    channel/sendbuttonstrip.h
 
     mixer/mixer.h
     mixer/mixerchannelinput.h
@@ -103,6 +105,7 @@ set(zynmusicstudio_zms_FORMS
     channel/subsyntheditorwidget.ui
     channel/padsyntheditorwidget.ui
     channel/effectbuttonstrip.ui
+    channel/sendbuttonstrip.ui
     )
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR})

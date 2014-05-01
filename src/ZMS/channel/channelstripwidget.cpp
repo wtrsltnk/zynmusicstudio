@@ -1,5 +1,7 @@
 #include "channelstripwidget.h"
 #include "ui_channelstripwidget.h"
+#include "sendbuttonstrip.h"
+#include "effectbuttonstrip.h"
 #include "sequencer/sequencer.h"
 #include "mixer/mixer.h"
 #include <QInputDialog>
@@ -10,15 +12,32 @@
 
 using namespace std;
 
-ChannelStripWidget::ChannelStripWidget(QWidget *parent) :
+ChannelStripWidget::ChannelStripWidget(MixerChannel* channel, QWidget *parent) :
     QFrame(parent),
     ui(new Ui::ChannelStripWidget),
-    _channel(0)
+    _channel(channel)
 {
     ui->setupUi(this);
 
+    this->ui_sendButtonStrip = new SendButtonStrip(&channel->SendSource, this);
+    this->ui->channelParts->insertWidget(2, this->ui_sendButtonStrip);
+
+    this->ui_effectButtonStrip = new EffectButtonStrip(channel, this);
+    this->ui->channelParts->insertWidget(2, this->ui_effectButtonStrip);
+
     this->ui->lblName->installEventFilter(this);
     this->ui->btnEdit->installEventFilter(this);
+
+    connect(this->_channel, SIGNAL(VolumeChanged(int)), this->ui->volume, SLOT(setValue(int)));
+    connect(this->ui->volume, SIGNAL(valueChanged(int)), this->_channel, SLOT(SetVolume(int)));
+    connect(this->_channel, SIGNAL(NameChanged(QString)), this->ui->lblName, SLOT(setText(QString)));
+    connect(this->_channel, SIGNAL(ColorChanged(QColor)), this, SLOT(SetChannelColor(QColor)));
+    connect(this->_channel, SIGNAL(ChannelInputChanged(MixerChannelInput*)), this, SLOT(ChangeChannelInput(MixerChannelInput*)));
+
+    this->ui->volume->setValue(this->_channel->GetVolume());
+    this->ui->lblName->setText(this->_channel->GetName());
+    this->SetChannelColor(this->_channel->GetColor());
+    this->ChangeChannelInput(this->_channel->ChannelInput());
 
     connect(this->ui->btnClose, SIGNAL(clicked()), this, SLOT(OnCloseClicked()));
     connect(this->ui->btnEdit, SIGNAL(clicked()), this, SLOT(OnInstrumentClicked()));
@@ -26,6 +45,8 @@ ChannelStripWidget::ChannelStripWidget(QWidget *parent) :
 
 ChannelStripWidget::~ChannelStripWidget()
 {
+    delete this->ui_sendButtonStrip;
+    delete this->ui_effectButtonStrip;
     delete ui;
 }
 
@@ -39,7 +60,7 @@ void ChannelStripWidget::OnCloseClicked()
     if (dlg.exec() == QMessageBox::Yes)
     {
         Mixer::Instance().RemoveChannel(this->_channel);
-        Sequencer::Inst().CurrentSongIsUpdated();
+        this->_channel = 0;
     }
 }
 
@@ -71,34 +92,6 @@ bool ChannelStripWidget::eventFilter(QObject* o, QEvent* e)
 void ChannelStripWidget::SetChannelColor(const QColor& color)
 {
     this->ui->lblName->setStyleSheet(QString("QLabel{background-color:rgb(%0,%1,%2);}").arg(color.red()).arg(color.green()).arg(color.blue()));
-}
-
-void ChannelStripWidget::SetChannel(MixerChannel *channel)
-{
-    if (this->_channel != 0)
-    {
-        disconnect(this->_channel, SIGNAL(VolumeChanged(int)), this->ui->volume, SLOT(setValue(int)));
-        disconnect(this->ui->volume, SIGNAL(valueChanged(int)), this->_channel, SLOT(SetVolume(int)));
-        disconnect(this->_channel, SIGNAL(NameChanged(QString)), this->ui->lblName, SLOT(setText(QString)));
-        disconnect(this->_channel, SIGNAL(ColorChanged(QColor)), this, SLOT(SetChannelColor(QColor)));
-        disconnect(this->_channel, SIGNAL(InstrumentChanged(Instrument*)), this, SLOT(ChangeChannelInstrument(Instrument*)));
-    }
-
-    this->_channel = channel;
-
-    if (this->_channel != 0)
-    {
-        connect(this->_channel, SIGNAL(VolumeChanged(int)), this->ui->volume, SLOT(setValue(int)));
-        connect(this->ui->volume, SIGNAL(valueChanged(int)), this->_channel, SLOT(SetVolume(int)));
-        connect(this->_channel, SIGNAL(NameChanged(QString)), this->ui->lblName, SLOT(setText(QString)));
-        connect(this->_channel, SIGNAL(ColorChanged(QColor)), this, SLOT(SetChannelColor(QColor)));
-        connect(this->_channel, SIGNAL(ChannelInputChanged(MixerChannelInput*)), this, SLOT(ChangeChannelInput(MixerChannelInput*)));
-
-        this->ui->volume->setValue(this->_channel->GetVolume());
-        this->ui->lblName->setText(this->_channel->GetName());
-        this->SetChannelColor(this->_channel->GetColor());
-        this->ChangeChannelInput(this->_channel->ChannelInput());
-    }
 }
 
 void ChannelStripWidget::OnInstrumentClicked()

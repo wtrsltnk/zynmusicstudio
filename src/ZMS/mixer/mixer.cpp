@@ -39,7 +39,10 @@ MixerChannel* Mixer::AddChannel(const QString& name, QColor color)
 void Mixer::RemoveChannel(MixerChannel* channel)
 {
     if (this->_channels.removeOne(channel))
+    {
         emit ChannelRemoved(channel);
+        delete channel;
+    }
 }
 
 int Mixer::ChannelIndex(MixerChannel* channel)

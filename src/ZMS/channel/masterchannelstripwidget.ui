@@ -50,23 +50,7 @@
    <property name="verticalSpacing">
     <number>2</number>
    </property>
-   <item row="3" column="1">
-    <widget class="QSlider" name="sysmaster">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>150</height>
-      </size>
-     </property>
-     <property name="maximum">
-      <number>128</number>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="0" colspan="3">
+   <item row="3" column="0" colspan="3">
     <widget class="QLabel" name="lblName">
      <property name="minimumSize">
       <size>
@@ -87,6 +71,28 @@
       <set>Qt::AlignCenter</set>
      </property>
     </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QSlider" name="sysmaster">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>150</height>
+      </size>
+     </property>
+     <property name="maximum">
+      <number>128</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QWidget" name="sysvuL" native="true"/>
+   </item>
+   <item row="2" column="2">
+    <widget class="QWidget" name="sysvuR" native="true"/>
    </item>
    <item row="1" column="0" colspan="3">
     <widget class="QGroupBox" name="grpIO">
@@ -129,32 +135,8 @@
      </layout>
     </widget>
    </item>
-   <item row="3" column="2">
-    <widget class="QWidget" name="sysvuR" native="true"/>
-   </item>
-   <item row="3" column="0">
-    <widget class="QWidget" name="sysvuL" native="true"/>
-   </item>
-   <item row="2" column="0" colspan="3">
-    <widget class="EffectButtonStrip" name="effectStrip" native="true">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>20</height>
-      </size>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>EffectButtonStrip</class>
-   <extends>QWidget</extends>
-   <header>channel/effectbuttonstrip.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

@@ -33,9 +33,8 @@ void ChannelStripContainer::OnChannelAdded(MixerChannel* channel)
 {
     QVBoxLayout* layout = (QVBoxLayout*)this->ui->channelsContent->layout();
 
-    ChannelStripWidget* widget = new ChannelStripWidget();
+    ChannelStripWidget* widget = new ChannelStripWidget(channel);
     layout->insertWidget(layout->count() - 1, widget, 0, Qt::AlignLeft);
-    widget->SetChannel(channel);
 }
 
 void ChannelStripContainer::OnChannelRemoved(MixerChannel* channel)
@@ -45,7 +44,6 @@ void ChannelStripContainer::OnChannelRemoved(MixerChannel* channel)
     {
         ((QVBoxLayout*)this->ui->channelsContent->layout())->removeWidget(widget);
         delete widget;
-        delete channel;
     }
 }
 

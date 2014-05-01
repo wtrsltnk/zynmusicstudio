@@ -1,95 +1,81 @@
 #include "effectbuttonstrip.h"
 #include "ui_effectbuttonstrip.h"
+#include "mixer/mixer.h"
 #include <iostream>
 
 using namespace std;
 
-EffectButton::EffectButton(EffectMgr* effect)
+EffectButton::EffectButton(MixerEffect* effect)
     : _effect(effect)
-{ }
+{
+    this->setText("wow");
+}
 
 EffectButton::~EffectButton()
 { }
 
-EffectButtonStrip::EffectButtonStrip(QWidget *parent) :
+EffectButtonStrip::EffectButtonStrip(MixerChannel* channel, QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::EffectButtonStrip)
+    ui(new Ui::EffectButtonStrip),
+    _channel(channel)
 {
     ui->setupUi(this);
 
+    if (this->_channel != 0)
+    {
+        for (QList<MixerEffect*>::iterator itr = this->_channel->Effects().begin(); itr != this->_channel->Effects().end(); ++itr)
+        {
+            EffectButton* btn = new EffectButton(*itr);
+            // todo: connect clicked()
+            this->ui->buttonlayout->insertWidget(this->ui->buttonlayout->count() - 2, btn);
+        }
+    }
+
     connect(this->ui->btnAdd, SIGNAL(clicked()), this, SLOT(OnAddEffectClicked()));
+
+    connect(this->_channel, SIGNAL(EffectAdded(MixerEffect*)), this, SLOT(AddEffect(MixerEffect*)));
+    connect(this->_channel, SIGNAL(EffectRemoved(MixerEffect*)), this, SLOT(RemoveEffect(MixerEffect*)));
 }
 
 EffectButtonStrip::~EffectButtonStrip()
 {
+    for (int i = 0; i < this->ui->buttonlayout->count(); i++)
+    {
+        EffectButton* btn = dynamic_cast<EffectButton*>(this->ui->buttonlayout->itemAt(i)->widget());
+        if (btn != 0)
+        {
+            this->ui->buttonlayout->removeWidget(btn);
+            delete btn;
+        }
+    }
+
     delete ui;
 }
 
-void EffectButtonStrip::OnUpdateEffectButtons(QList<EffectMgr*>& effects)
+void EffectButtonStrip::OnAddEffectClicked()
 {
-    // Remove buttons of removed effects
+    MixerEffect* effect = new MixerEffect();
+    this->_channel->AddEffect(effect);
+}
+
+void EffectButtonStrip::AddEffect(MixerEffect* effect)
+{
+    EffectButton* btn = new EffectButton(effect);
+    this->ui->buttonlayout->insertWidget(this->ui->buttonlayout->count() - 2, btn);
+}
+
+void EffectButtonStrip::RemoveEffect(MixerEffect* effect)
+{
     for (int i = 0; i < this->ui->buttonlayout->count(); i++)
     {
         EffectButton* btn = dynamic_cast<EffectButton*>(this->ui->buttonlayout->itemAt(i)->widget());
         if (btn != 0)
         {
-            if (effects.contains(btn->Effect()) == false)
+            if (btn->Effect() == effect)
             {
                 this->ui->buttonlayout->removeWidget(btn);
                 delete btn;
-                i--;
             }
         }
     }
-
-    // Add new effects were needed
-    for (QList<EffectMgr*>::iterator i = effects.begin(); i != effects.end(); ++i)
-    {
-        EffectButton* btn = this->GetButtonByEffect(*i);
-        if (btn == 0)
-        {
-            btn = new EffectButton(*i);
-            this->ui->buttonlayout->insertWidget(this->ui->buttonlayout->count() - 2, btn);
-            connect(btn, SIGNAL(clicked()), this, SLOT(OnEffectClicked()));
-        }
-        btn->setText(QString((*i)->getEffectName()));
-    }
-
-    this->UpdateMinHeight();
-}
-
-void EffectButtonStrip::UpdateMinHeight()
-{
-    int min = this->ui->buttonlayout->count();
-    min += 3 - (min % 3);
-    this->setMinimumHeight(min * this->ui->btnAdd->height());
-    this->setMaximumHeight(min * this->ui->btnAdd->height());
-}
-
-EffectButton* EffectButtonStrip::GetButtonByEffect(EffectMgr* effect)
-{
-    for (int i = 0; i < this->ui->buttonlayout->count(); i++)
-    {
-        EffectButton* btn = dynamic_cast<EffectButton*>(this->ui->buttonlayout->itemAt(i)->widget());
-        if (btn != 0)
-            if (btn->Effect() == effect)
-                return btn;
-    }
-    return 0;
-}
-
-void EffectButtonStrip::OnEffectClicked()
-{ }
-
-void EffectButtonStrip::OnAddEffectClicked()
-{
-    QList<EffectMgr*> effects;
-    for (int i = 0; i < this->ui->buttonlayout->count(); i++)
-    {
-        EffectButton* btn = dynamic_cast<EffectButton*>(this->ui->buttonlayout->itemAt(i)->widget());
-        if (btn != 0)
-            effects.append(btn->Effect());
-    }
-    effects << new EffectMgr(true, 0);
-    this->OnUpdateEffectButtons(effects);
 }

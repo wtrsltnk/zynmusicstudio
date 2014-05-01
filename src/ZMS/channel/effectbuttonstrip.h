@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QPushButton>
 #include <QList>
-#include "../Effects/EffectMgr.h"
+#include "mixer/mixereffect.h"
 
 namespace Ui {
 class EffectButtonStrip;
@@ -14,13 +14,13 @@ class EffectButton : public QPushButton
 {
     Q_OBJECT
 public:
-    EffectButton(EffectMgr* effect);
+    EffectButton(MixerEffect* effect);
     virtual ~EffectButton();
 
-    EffectMgr* Effect() { return this->_effect; }
+    MixerEffect* Effect() { return this->_effect; }
 
 private:
-    EffectMgr* _effect;
+    MixerEffect* _effect;
 
 };
 
@@ -29,23 +29,19 @@ class EffectButtonStrip : public QWidget
     Q_OBJECT
 
 public:
-    explicit EffectButtonStrip(QWidget *parent = 0);
+    EffectButtonStrip(MixerChannel* channel, QWidget *parent = 0);
     ~EffectButtonStrip();
 
     void UpdateMinHeight();
 
-signals:
-    void AddEffectButtonClicked();
-
 public slots:
-    void OnUpdateEffectButtons(QList<EffectMgr*>& effects);
-    void OnEffectClicked();
     void OnAddEffectClicked();
+    void AddEffect(MixerEffect* effect);
+    void RemoveEffect(MixerEffect* effect);
 
 private:
     Ui::EffectButtonStrip *ui;
-
-    EffectButton* GetButtonByEffect(EffectMgr* effect);
+    MixerChannel* _channel;
 
 };
 

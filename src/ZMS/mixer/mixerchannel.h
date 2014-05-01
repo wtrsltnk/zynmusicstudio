@@ -36,6 +36,8 @@ signals:
 
     void SinkChanged(MixerMaster* sink);
     void ChannelInputChanged(MixerChannelInput* input);
+    void EffectAdded(MixerEffect* effect);
+    void EffectRemoved(MixerEffect* effect);
 
 public slots:
     void SetName(QString name);

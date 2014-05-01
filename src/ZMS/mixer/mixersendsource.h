@@ -1,22 +1,29 @@
 #ifndef MIXERSENDSOURCE_H
 #define MIXERSENDSOURCE_H
 
+#include <QObject>
 #include <QList>
 
 class MixerSendSink;
 
-class MixerSendSource
+class MixerSendSource : public QObject
 {
+    Q_OBJECT
+
 public:
-    MixerSendSource();
+    MixerSendSource(QObject* parent = 0);
     virtual ~MixerSendSource();
 
-    QList<MixerSendSink*> Destinations() { return this->_destinations; }
-    void AddDestination(MixerSendSink* destination);
-    void RemoveDestination(MixerSendSink* destination);
+    QList<MixerSendSink*> Sinks() { return this->_sinks; }
+    void AddDestination(MixerSendSink* sink);
+    void RemoveDestination(MixerSendSink* sink);
+
+signals:
+    void SinkAdded(MixerSendSink* sink);
+    void SinkRemoved(MixerSendSink* sink);
 
 private:
-    QList<MixerSendSink*> _destinations;
+    QList<MixerSendSink*> _sinks;
 
 };
 

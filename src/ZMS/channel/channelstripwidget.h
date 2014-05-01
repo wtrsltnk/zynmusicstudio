@@ -14,11 +14,10 @@ class ChannelStripWidget : public QFrame
     Q_OBJECT
 
 public:
-    explicit ChannelStripWidget(QWidget *parent = 0);
+    explicit ChannelStripWidget(MixerChannel* channel, QWidget *parent = 0);
     virtual ~ChannelStripWidget();
 
     MixerChannel* GetChannel() { return this->_channel; }
-    void SetChannel(MixerChannel* channel);
 
 public slots:
     void OnCloseClicked();
@@ -30,6 +29,8 @@ public slots:
 
 private:
     Ui::ChannelStripWidget *ui;
+    class SendButtonStrip* ui_sendButtonStrip;
+    class EffectButtonStrip* ui_effectButtonStrip;
     MixerChannel* _channel;
 
     bool eventFilter(QObject* watched, QEvent* event);

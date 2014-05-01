@@ -122,6 +122,7 @@ void MixerChannel::AddEffect(MixerEffect* effect)
         this->_effects.push_back(effect);
         if (effect != 0)
             effect->SetSource(this);
+        emit EffectAdded(effect);
     }
 }
 
@@ -132,5 +133,6 @@ void MixerChannel::RemoveEffect(MixerEffect* effect)
         this->_effects.removeOne(effect);
         if (effect != 0)
             effect->SetSource(0);
+        emit EffectRemoved(effect);
     }
 }

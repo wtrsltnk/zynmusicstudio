@@ -59,6 +59,10 @@ ZynApplication::ZynApplication(int argc, char *argv[]) :
         "   background-color: #555555;"
         "}"
 
+        "SendButtonStrip #buttons {"
+        "   background-color: #555555;"
+        "}"
+
         "TrackProperties {"
         "    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #494949, stop:0.5 #444444, stop:1 #3F3F3F);"
         "    border-top: 1px solid #555555;"
