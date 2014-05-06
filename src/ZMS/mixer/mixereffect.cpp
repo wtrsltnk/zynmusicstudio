@@ -1,13 +1,29 @@
 #include "mixereffect.h"
 #include "mixerchannel.h"
 
-MixerEffect::MixerEffect(QObject *parent) :
+MixerEffect::MixerEffect(const QString& name, QObject *parent) :
     QObject(parent), _source(0)
-{ }
+{
+    this->SetName(name);
+}
 
 MixerEffect::~MixerEffect()
 {
     this->SetSource(0);
+}
+
+QString MixerEffect::GetName()
+{
+    return this->_name;
+}
+
+void MixerEffect::SetName(QString name)
+{
+    if (this->_name != name)
+    {
+        this->_name = name;
+        emit NameChanged(this->_name);
+    }
 }
 
 void MixerEffect::SetSource(MixerEffectContainer *source)

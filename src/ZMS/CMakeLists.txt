@@ -31,6 +31,7 @@ set(zynmusicstudio_zms_SRCS
     channel/subsyntheditorwidget.cpp
     channel/padsyntheditorwidget.cpp
     channel/effectbuttonstrip.cpp
+    channel/inserteffectbuttonstrip.cpp
     channel/sendbuttonstrip.cpp
 
     mixer/mixer.cpp
@@ -40,6 +41,8 @@ set(zynmusicstudio_zms_SRCS
     mixer/mixermaster.cpp
     mixer/mixereffect.cpp
     mixer/mixereffectcontainer.cpp
+    mixer/mixerinserteffect.cpp
+    mixer/mixerinserteffectcontainer.cpp
     mixer/mixerchannel.cpp
     mixer/mixerbus.cpp
     mixer/mixersendsource.cpp
@@ -77,6 +80,7 @@ set(zynmusicstudio_zms_HEADERS
     channel/subsyntheditorwidget.h
     channel/padsyntheditorwidget.h
     channel/effectbuttonstrip.h
+    channel/inserteffectbuttonstrip.h
     channel/sendbuttonstrip.h
 
     mixer/mixer.h
@@ -85,6 +89,8 @@ set(zynmusicstudio_zms_HEADERS
     mixer/mixerbuffer.h
     mixer/mixereffect.h
     mixer/mixereffectcontainer.h
+    mixer/mixerinserteffect.h
+    mixer/mixerinserteffectcontainer.h
     mixer/mixermaster.h
     mixer/mixerchannel.h
     mixer/mixerbus.h
@@ -107,6 +113,7 @@ set(zynmusicstudio_zms_FORMS
     channel/subsyntheditorwidget.ui
     channel/padsyntheditorwidget.ui
     channel/effectbuttonstrip.ui
+    channel/inserteffectbuttonstrip.ui
     channel/sendbuttonstrip.ui
     )
 

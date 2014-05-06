@@ -7,6 +7,11 @@ MixerInstrument::MixerInstrument(Instrument* instrument)
 MixerInstrument::~MixerInstrument()
 { }
 
+const QString MixerInstrument::GetName()
+{
+    return QString::fromStdString(this->_instrument->Pname);
+}
+
 void MixerInstrument::ComputeSamples()
 {
     if (this->_instrument != 0)

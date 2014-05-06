@@ -42,8 +42,6 @@ MainWindow::MainWindow(QWidget *parent) :
     this->ui->trackareawidget->_mainParent = this;
     this->ui->channelsContainer->_mainParent = this;
 
-    this->ui->channelDock->hide();
-
     connect(&this->ui->trackareawidget->Selection(), SIGNAL(SelectionChanged(QList<TrackAreaClip*>)),
             this->ui->pianoroll, SLOT(ClipSelectionChanged(QList<TrackAreaClip*>)));
     connect(this->ui->trackareawidget, SIGNAL(ActivateClip(TrackAreaClip*)), this, SLOT(ClipIsActivated(TrackAreaClip*)));
@@ -59,11 +57,9 @@ MainWindow::MainWindow(QWidget *parent) :
     Sequencer::Inst().CurrentSongIsUpdated();
 
     connect(this->ui->actionChannels_pannel, SIGNAL(toggled(bool)), this->ui->channelsDock, SLOT(setVisible(bool)));
-    connect(this->ui->actionChannel_panel, SIGNAL(toggled(bool)), this->ui->channelDock, SLOT(setVisible(bool)));
     connect(this->ui->actionPianoroll_panel, SIGNAL(toggled(bool)), this->ui->pianorollDock, SLOT(setVisible(bool)));
 
     this->ui->actionChannels_pannel->setChecked(this->ui->channelsDock->isVisible());
-    this->ui->actionChannel_panel->setChecked(this->ui->channelDock->isVisible());
     this->ui->actionPianoroll_panel->setChecked(this->ui->pianorollDock->isVisible());
 
     MixerChannel* channel = Mixer::Instance().AddChannel("wouter");

@@ -13,6 +13,7 @@ public:
     virtual ~MixerChannelInput();
 
     virtual MixerChannel* Source() { return this->_source; }
+    virtual const QString GetName() = 0;
 
 signals:
     void SourceChanged(MixerChannel* source);

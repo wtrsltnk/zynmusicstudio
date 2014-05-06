@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QPushButton>
+#include <QAction>
 #include <QList>
 #include "mixer/mixereffectcontainer.h"
 
@@ -36,10 +37,15 @@ public slots:
     void OnAddEffectClicked();
     void AddEffect(MixerEffect* effect);
     void RemoveEffect(MixerEffect* effect);
+    void ActionSelected(QAction* action);
 
 private:
     Ui::EffectButtonStrip *ui;
     MixerEffectContainer* _effects;
+    QAction* _removeAction;
+    QAction* _editAction;
+
+    virtual bool eventFilter(QObject *o, QEvent *e);
 
 };
 

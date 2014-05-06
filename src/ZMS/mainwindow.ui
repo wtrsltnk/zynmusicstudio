@@ -38,27 +38,6 @@
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="channelDock">
-   <property name="floating">
-    <bool>true</bool>
-   </property>
-   <property name="allowedAreas">
-    <set>Qt::NoDockWidgetArea</set>
-   </property>
-   <property name="windowTitle">
-    <string>Channel-panel</string>
-   </property>
-   <attribute name="dockWidgetArea">
-    <number>8</number>
-   </attribute>
-   <widget class="QWidget" name="channelDockWidget">
-    <layout class="QVBoxLayout" name="channelDockWidgetLayout">
-     <item>
-      <widget class="ChannelEditorWidget" name="channeleditor" native="true"/>
-     </item>
-    </layout>
-   </widget>
-  </widget>
   <widget class="QDockWidget" name="channelsDock">
    <property name="windowTitle">
     <string>Channels-pannel</string>
@@ -100,7 +79,6 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionChannels_pannel"/>
-   <addaction name="actionChannel_panel"/>
    <addaction name="actionPianoroll_panel"/>
   </widget>
   <widget class="QDockWidget" name="headerDock">
@@ -241,17 +219,6 @@
     <string>Pianoroll panel</string>
    </property>
   </action>
-  <action name="actionChannel_panel">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Channel panel</string>
-   </property>
-   <property name="toolTip">
-    <string>Channel panel</string>
-   </property>
-  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -264,12 +231,6 @@
    <class>TrackAreaWidget</class>
    <extends>QWidget</extends>
    <header>trackarea/trackareawidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ChannelEditorWidget</class>
-   <extends>QWidget</extends>
-   <header>channel/channeleditorwidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

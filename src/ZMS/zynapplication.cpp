@@ -59,6 +59,10 @@ ZynApplication::ZynApplication(int argc, char *argv[]) :
         "   background-color: #555555;"
         "}"
 
+        "InsertEffectButtonStrip #buttons {"
+        "   background-color: #555555;"
+        "}"
+
         "SendButtonStrip #buttons {"
         "   background-color: #555555;"
         "}"

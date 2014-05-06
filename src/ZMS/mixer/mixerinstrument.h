@@ -12,6 +12,7 @@ public:
     virtual ~MixerInstrument();
 
     Instrument* GetInstrument() { return this->_instrument; }
+    virtual const QString GetName();
 
     void ComputeSamples();
     virtual void NoteOn(char chan, char note, char velocity);

@@ -2,6 +2,7 @@
 #include "ui_channelstripwidget.h"
 #include "sendbuttonstrip.h"
 #include "effectbuttonstrip.h"
+#include "inserteffectbuttonstrip.h"
 #include "sequencer/sequencer.h"
 #include "mixer/mixer.h"
 #include <QInputDialog>
@@ -19,11 +20,14 @@ ChannelStripWidget::ChannelStripWidget(MixerChannel* channel, QWidget *parent) :
 {
     ui->setupUi(this);
 
-    this->ui_sendButtonStrip = new SendButtonStrip(&channel->SendSource, this);
-    this->ui->channelParts->insertWidget(2, this->ui_sendButtonStrip);
-
     this->ui_effectButtonStrip = new EffectButtonStrip(&channel->Effects, this);
     this->ui->channelParts->insertWidget(2, this->ui_effectButtonStrip);
+
+    this->ui_insertEffectButtonStrip = new InsertEffectButtonStrip(&channel->InsertEffects, this);
+    this->ui->channelParts->insertWidget(3, this->ui_insertEffectButtonStrip);
+
+    this->ui_sendButtonStrip = new SendButtonStrip(&channel->SendSource, this);
+    this->ui->channelParts->insertWidget(4, this->ui_sendButtonStrip);
 
     this->ui->lblName->installEventFilter(this);
     this->ui->btnEdit->installEventFilter(this);
@@ -108,18 +112,26 @@ void ChannelStripWidget::OnInstrumentClicked()
 
 void ChannelStripWidget::InstrumentPicked(QAction* action)
 {
-    MixerInstrument* instrument = (MixerInstrument*)action->data().value<void*>();
-    if (instrument == 0)
-        instrument = Mixer::Instance().AddInstrument("Default instrument");
+    if (QString(action->data().typeName()) == QString("int"))
+    {
+        MixerBus* bus = Mixer::Instance().GetBus(action->data().toInt());
+        this->_channel->SetChannelInput(bus);
+    }
+    else
+    {
+        MixerInstrument* instrument = (MixerInstrument*)action->data().value<void*>();
+        if (instrument == 0)
+            instrument = Mixer::Instance().AddInstrument("Default instrument");
 
-    this->_channel->SetChannelInput(instrument);
+        this->_channel->SetChannelInput(instrument);
+    }
 }
 
 void ChannelStripWidget::ChangeChannelInput(MixerChannelInput* instrument)
 {
     if (instrument != 0)
     {
-        this->ui->btnEdit->setText(((MixerInstrument*)instrument)->GetInstrument()->Pname.c_str());
+        this->ui->btnEdit->setText(instrument->GetName());
     }
 }
 
@@ -128,6 +140,13 @@ void ChannelStripWidget::PickInstrument(const QPoint &pos)
     QMenu m(this);
     connect(&m, SIGNAL(triggered(QAction*)), this, SLOT(InstrumentPicked(QAction*)));
 
+    // Option to add channel
+    QAction* newaction = new QAction("New instrument", this);
+    newaction->setData(QVariant::fromValue((void*)0));
+    m.addAction(newaction);
+
+    m.addSeparator();
+
     for (QList<MixerInstrument*>::iterator itr = Mixer::Instance().Instruments().begin(); itr != Mixer::Instance().Instruments().end(); ++itr)
     {
         MixerInstrument* instrument = (MixerInstrument*)*itr;
@@ -135,12 +154,17 @@ void ChannelStripWidget::PickInstrument(const QPoint &pos)
         tmp->setData(QVariant::fromValue((void*)instrument));
         m.addAction(tmp);
     }
+
     m.addSeparator();
 
-    // Option to add channel
-    QAction* newaction = new QAction("New instrument", this);
-    newaction->setData(QVariant::fromValue((void*)0));
-    m.addAction(newaction);
+    QMenu* busses = new QMenu("Busses");
+    m.addMenu(busses);
+    for (int i = 0; i < MAX_BUS_COUNT; i++)
+    {
+        QAction* tmp = new QAction(QString("Bus ") + QString::number(i), this);
+        tmp->setData(QVariant::fromValue(i));
+        busses->addAction(tmp);
+    }
 
     m.exec(pos);
 

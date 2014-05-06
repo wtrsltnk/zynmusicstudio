@@ -31,6 +31,7 @@ private:
     Ui::ChannelStripWidget *ui;
     class SendButtonStrip* ui_sendButtonStrip;
     class EffectButtonStrip* ui_effectButtonStrip;
+    class InsertEffectButtonStrip* ui_insertEffectButtonStrip;
     MixerChannel* _channel;
 
     bool eventFilter(QObject* watched, QEvent* event);

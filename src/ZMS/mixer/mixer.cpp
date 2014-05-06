@@ -1,4 +1,5 @@
 #include "mixer.h"
+#include "mixereffect.h"
 #include "../../DSP/FFTwrapper.h"
 #include "../../globals.h"
 
@@ -55,10 +56,60 @@ QList<MixerChannel*>& Mixer::Channels()
     return this->_channels;
 }
 
+MixerEffect* Mixer::AddEffect(const QString& name)
+{
+    MixerEffect* effect = new MixerEffect(name);
+
+    this->_effects.push_back(effect);
+
+    return effect;
+}
+
+void Mixer::RemoveEffect(MixerEffect* effect)
+{
+    if (this->_effects.removeOne(effect))
+        delete effect;
+}
+
+int Mixer::EffectIndex(MixerEffect* effect)
+{
+    return this->_effects.indexOf(effect);
+}
+
+QList<MixerEffect*>& Mixer::Effects()
+{
+    return this->_effects;
+}
+
+MixerEffect* Mixer::AddInsertEffect(const QString& name)
+{
+    MixerEffect* effect = new MixerEffect(name);
+
+    this->_effects.push_back(effect);
+
+    return effect;
+}
+
+void Mixer::RemoveInsertEffect(MixerEffect* effect)
+{
+    if (this->_effects.removeOne(effect))
+        delete effect;
+}
+
+int Mixer::InsertEffectIndex(MixerEffect* effect)
+{
+    return this->_effects.indexOf(effect);
+}
+
+QList<MixerEffect*>& Mixer::InsertEffects()
+{
+    return this->_effects;
+}
+
 MixerBus* Mixer::GetBus(int index)
 {
     if (this->_busses[index] == 0)
-        this->_busses[index] = new MixerBus();
+        this->_busses[index] = new MixerBus(QString("Bus ") + QString::number(index));
 
     return this->_busses[index];
 }

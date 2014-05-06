@@ -6,6 +6,7 @@
 #include "mixerbuffer.h"
 #include "mixersendsource.h"
 #include "mixereffectcontainer.h"
+#include "mixerinserteffectcontainer.h"
 #include "../Misc/Instrument.h"
 
 class MixerMaster;
@@ -30,6 +31,7 @@ public:
 
     MixerSendSource SendSource;
     MixerEffectContainer Effects;
+    MixerInsertEffectContainer InsertEffects;
 signals:
     void NameChanged(QString name);
     void ColorChanged(QColor color);

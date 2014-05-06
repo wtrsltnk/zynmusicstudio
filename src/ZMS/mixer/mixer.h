@@ -28,7 +28,18 @@ public:
     int ChannelIndex(MixerChannel* channel);
     QList<MixerChannel*>& Channels();
 
+    MixerEffect* AddEffect(const QString& name);
+    void RemoveEffect(MixerEffect* effect);
+    int EffectIndex(MixerEffect* effect);
+    QList<MixerEffect*>& Effects();
+
+    MixerEffect* AddInsertEffect(const QString& name);
+    void RemoveInsertEffect(MixerEffect* effect);
+    int InsertEffectIndex(MixerEffect* effect);
+    QList<MixerEffect*>& InsertEffects();
+
     MixerBus* GetBus(int index);
+
     MixerInstrument* AddInstrument(const QString& name);
     QList<MixerInstrument*>& Instruments() { return this->_instruments; }
 
@@ -56,6 +67,8 @@ private:
     MixerMaster _master;
     QList<MixerInstrument*> _instruments;
     QList<MixerChannel*> _channels;
+    QList<MixerEffect*> _effects;
+    QList<MixerEffect*> _insertEffects;
     MixerBus* _busses[MAX_BUS_COUNT];
 
     pthread_mutex_t _mutex;

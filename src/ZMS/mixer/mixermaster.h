@@ -5,6 +5,7 @@
 #include <QList>
 #include "mixerbuffer.h"
 #include "mixereffectcontainer.h"
+#include "mixerinserteffectcontainer.h"
 #include "../../Nio/NioEngineManager.h"
 
 class MixerChannel;
