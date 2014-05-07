@@ -14,6 +14,15 @@ MixerInsertEffectContainer::~MixerInsertEffectContainer()
     }
 }
 
+bool MixerInsertEffectContainer::ContainsEffect(MixerEffect* effect)
+{
+    for (QList<MixerInsertEffect*>::iterator itr = this->_effects.begin(); itr != this->_effects.end(); ++itr)
+        if ((*itr)->GetEffect() == effect)
+            return true;
+
+    return false;
+}
+
 void MixerInsertEffectContainer::AddInsertEffect(MixerInsertEffect* effect)
 {
     if (this->_effects.contains(effect) == false)

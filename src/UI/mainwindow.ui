@@ -80,6 +80,7 @@
    </attribute>
    <addaction name="actionChannels_pannel"/>
    <addaction name="actionPianoroll_panel"/>
+   <addaction name="actionInserteffects_panel"/>
   </widget>
   <widget class="QDockWidget" name="headerDock">
    <property name="features">
@@ -217,6 +218,17 @@
    </property>
    <property name="text">
     <string>Pianoroll panel</string>
+   </property>
+  </action>
+  <action name="actionInserteffects_panel">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Inserteffects panel</string>
+   </property>
+   <property name="toolTip">
+    <string>Inserteffects panel</string>
    </property>
   </action>
  </widget>

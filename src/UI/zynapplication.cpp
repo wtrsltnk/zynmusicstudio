@@ -21,7 +21,7 @@
 */
 #include "zynapplication.h"
 #include "mainwindow.h"
-#include "../ZMS/mixer/mixer.h"
+#include "mixer/mixer.h"
 #include <QApplication>
 #include <QStyleFactory>
 #include <QPalette>

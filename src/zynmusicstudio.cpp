@@ -32,7 +32,7 @@
 #include <Windows.h>
 #endif
 
-#include "ZMS/zynapplication.h"
+#include "UI/zynapplication.h"
 #include "Misc/Master.h"
 #include "Misc/Util.h"
 

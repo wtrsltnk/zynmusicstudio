@@ -48,6 +48,8 @@ public:
 signals:
     void ChannelAdded(MixerChannel* channel);
     void ChannelRemoved(MixerChannel* channel);
+    void InsertEffectAdded(MixerEffect* effect);
+    void InsertEffectRemoved(MixerEffect* effect);
 
 public slots:
 

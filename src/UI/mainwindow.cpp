@@ -30,6 +30,7 @@
 #include "sequencer/sequencer.h"
 #include "channel/channelstripwidget.h"
 #include "mixer/mixer.h"
+#include "effects/inserteffectswidget.h"
 
 using namespace std;
 
@@ -38,6 +39,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    this->_insertEffectsDock = new QDockWidget("Inserteffects", this);
+    this->_insertEffectsDock->setFloating(true);
+    this->_insertEffectsDock->setWidget(new InsertEffectsWidget());
 
     this->ui->trackareawidget->_mainParent = this;
     this->ui->channelsContainer->_mainParent = this;
@@ -57,7 +62,13 @@ MainWindow::MainWindow(QWidget *parent) :
     Sequencer::Inst().CurrentSongIsUpdated();
 
     connect(this->ui->actionChannels_pannel, SIGNAL(toggled(bool)), this->ui->channelsDock, SLOT(setVisible(bool)));
+    connect(this->ui->channelsDock, SIGNAL(visibilityChanged(bool)), this->ui->actionChannels_pannel, SLOT(setChecked(bool)));
+
     connect(this->ui->actionPianoroll_panel, SIGNAL(toggled(bool)), this->ui->pianorollDock, SLOT(setVisible(bool)));
+    connect(this->ui->pianorollDock, SIGNAL(visibilityChanged(bool)), this->ui->actionPianoroll_panel, SLOT(setChecked(bool)));
+
+    connect(this->ui->actionInserteffects_panel, SIGNAL(toggled(bool)), this->_insertEffectsDock, SLOT(setVisible(bool)));
+    connect(this->_insertEffectsDock, SIGNAL(visibilityChanged(bool)), this->ui->actionInserteffects_panel, SLOT(setChecked(bool)));
 
     this->ui->actionChannels_pannel->setChecked(this->ui->channelsDock->isVisible());
     this->ui->actionPianoroll_panel->setChecked(this->ui->pianorollDock->isVisible());

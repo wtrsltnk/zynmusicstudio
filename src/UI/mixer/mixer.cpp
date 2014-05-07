@@ -85,25 +85,29 @@ MixerEffect* Mixer::AddInsertEffect(const QString& name)
 {
     MixerEffect* effect = new MixerEffect(name);
 
-    this->_effects.push_back(effect);
+    this->_insertEffects.push_back(effect);
+    emit InsertEffectAdded(effect);
 
     return effect;
 }
 
 void Mixer::RemoveInsertEffect(MixerEffect* effect)
 {
-    if (this->_effects.removeOne(effect))
+    if (this->_insertEffects.contains(effect))
+    {
+        emit InsertEffectRemoved(effect);
         delete effect;
+    }
 }
 
 int Mixer::InsertEffectIndex(MixerEffect* effect)
 {
-    return this->_effects.indexOf(effect);
+    return this->_insertEffects.indexOf(effect);
 }
 
 QList<MixerEffect*>& Mixer::InsertEffects()
 {
-    return this->_effects;
+    return this->_insertEffects;
 }
 
 MixerBus* Mixer::GetBus(int index)

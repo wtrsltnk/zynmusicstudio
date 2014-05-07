@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QList>
 
+class MixerEffect;
 class MixerInsertEffect;
 
 class MixerInsertEffectContainer : public QObject
@@ -14,6 +15,7 @@ public:
     virtual ~MixerInsertEffectContainer();
 
     QList<MixerInsertEffect*>& InsertEffects() { return this->_effects; }
+    bool ContainsEffect(MixerEffect* effect);
 
 signals:
     void InsertEffectAdded(MixerInsertEffect* effect);

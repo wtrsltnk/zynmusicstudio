@@ -50,6 +50,7 @@ protected slots:
 
 private:
     Ui::MainWindow *ui;
+    QDockWidget* _insertEffectsDock;
 
     void keyPressEvent(QKeyEvent* event);
     void keyReleaseEvent(QKeyEvent* event);

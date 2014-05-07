@@ -39,7 +39,7 @@
 #include <unistd.h>
 #endif
 
-#include "../ZMS/sequencer/sequencer.h"
+#include "../UI/sequencer/sequencer.h"
 
 using namespace std;
 

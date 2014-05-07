@@ -1,4 +1,4 @@
-set(zynmusicstudio_zms_SRCS
+set(zynmusicstudio_ui_SRCS
     zynapplication.cpp
     mainwindow.cpp
     timesignature.cpp
@@ -33,6 +33,9 @@ set(zynmusicstudio_zms_SRCS
     channel/effectbuttonstrip.cpp
     channel/inserteffectbuttonstrip.cpp
     channel/sendbuttonstrip.cpp
+    
+    effects/inserteffectswidget.cpp
+    effects/effectwidget.cpp
 
     mixer/mixer.cpp
     mixer/mixerbuffer.cpp
@@ -48,7 +51,7 @@ set(zynmusicstudio_zms_SRCS
     mixer/mixersendsource.cpp
     mixer/mixersendsink.cpp
     )
-set(zynmusicstudio_zms_HEADERS
+set(zynmusicstudio_ui_HEADERS
     mainwindow.h
     timesignature.h
     viewscale.h
@@ -82,6 +85,9 @@ set(zynmusicstudio_zms_HEADERS
     channel/effectbuttonstrip.h
     channel/inserteffectbuttonstrip.h
     channel/sendbuttonstrip.h
+    
+    effects/inserteffectswidget.h
+    effects/effectwidget.h
 
     mixer/mixer.h
     mixer/mixerchannelinput.h
@@ -97,7 +103,7 @@ set(zynmusicstudio_zms_HEADERS
     mixer/mixersendsource.h
     mixer/mixersendsink.h
     )
-set(zynmusicstudio_zms_FORMS
+set(zynmusicstudio_ui_FORMS
     mainwindow.ui
 
     pianoroll/pianorollwidget.ui
@@ -115,14 +121,17 @@ set(zynmusicstudio_zms_FORMS
     channel/effectbuttonstrip.ui
     channel/inserteffectbuttonstrip.ui
     channel/sendbuttonstrip.ui
+    
+    effects/inserteffectswidget.ui
+    effects/effectwidget.ui
     )
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
 # QT library
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Core REQUIRED)
-qt5_wrap_cpp(zynmusicstudio_zms_HEADERS_MOC ${zynmusicstudio_zms_HEADERS})
-qt5_wrap_ui(zynmusicstudio_zms_FORMS_HEADERS ${zynmusicstudio_zms_FORMS})
+qt5_wrap_cpp(zynmusicstudio_ui_HEADERS_MOC ${zynmusicstudio_ui_HEADERS})
+qt5_wrap_ui(zynmusicstudio_ui_FORMS_HEADERS ${zynmusicstudio_ui_FORMS})
 
 message(STATUS "bin : ${CMAKE_CURRENT_BINARY_DIR}")
 
@@ -133,15 +142,15 @@ set(LOCAL_INCLUDE_DIRS
     ${Qt5Widgets_INCLUDE_DIRS}
     )
 
-set(ZMS_INCLUDE_DIRS ${LOCAL_INCLUDE_DIRS} PARENT_SCOPE)
+set(UI_INCLUDE_DIRS ${LOCAL_INCLUDE_DIRS} PARENT_SCOPE)
 
-qt5_wrap_cpp(zynmusicstudio_zms_HEADERS_MOC ${zynmusicstudio_zms_HEADERS})
-qt5_wrap_ui(zynmusicstudio_zms_FORMS_HEADERS ${zynmusicstudio_zms_FORMS})
+qt5_wrap_cpp(zynmusicstudio_ui_HEADERS_MOC ${zynmusicstudio_ui_HEADERS})
+qt5_wrap_ui(zynmusicstudio_ui_FORMS_HEADERS ${zynmusicstudio_ui_FORMS})
 
-add_library(zynmusicstudio_zms STATIC
-    ${zynmusicstudio_zms_SRCS}
-    ${zynmusicstudio_zms_HEADERS_MOC}
-    ${zynmusicstudio_zms_FORMS_HEADERS}
+add_library(zynmusicstudio_ui STATIC
+    ${zynmusicstudio_ui_SRCS}
+    ${zynmusicstudio_ui_HEADERS_MOC}
+    ${zynmusicstudio_ui_FORMS_HEADERS}
     )
 
-qt5_use_modules(zynmusicstudio_zms Widgets)
+qt5_use_modules(zynmusicstudio_ui Widgets)

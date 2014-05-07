@@ -86,14 +86,13 @@ else(MSVC)
     add_definitions(-fPIC)
 endif(MSVC)
 
-#####################################################################################
-### BEGIN : Core ZynAddSubFx code
-#   - needed for all executables and libraries in this cmakelists
 add_subdirectory(Misc)
 add_subdirectory(Synth)
 add_subdirectory(Effects)
 add_subdirectory(Params)
 add_subdirectory(DSP)
+add_subdirectory(Nio)
+add_subdirectory(UI)
 
 add_library(zynaddsubfx_core STATIC
     ${zynaddsubfx_dsp_SRCS}
@@ -110,26 +109,15 @@ target_link_libraries(zynaddsubfx_core
     ${OS_LIBRARIES}
     )
 
-add_subdirectory(Nio)
-### END : Core ZynAddSubFx code
-#####################################################################################
-
-
-#####################################################################################
-### BEGIN : ZynMusicStudio code (ZMS)
-#   - needed for zynmusicstudio executable
-message(STATUS "Building ZynMusicStudio executable")
-add_subdirectory(ZMS)
-
-include_directories(${ZMS_INCLUDE_DIRS})
+include_directories(
+    ${UI_INCLUDE_DIRS}
+    )
 
 add_executable(zynmusicstudio zynmusicstudio.cpp)
 
 target_link_libraries(zynmusicstudio
 	zynaddsubfx_nio
         zynaddsubfx_core
-        zynmusicstudio_zms
+        zynmusicstudio_ui
 	${NIO_LIBRARIES}
 	)
-### END : ZynMusicStudio code (ZMS)
-#####################################################################################

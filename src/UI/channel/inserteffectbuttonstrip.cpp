@@ -136,14 +136,27 @@ void InsertEffectButtonStrip::ActionSelected(QAction* action)
     {
         // EDIT
     }
+    else
+    {
+        MixerEffect* effect = action->data().value<MixerEffect*>();
+        this->_effects->AddInsertEffect(new MixerInsertEffect(effect));
+        this->setMinimumHeight(24 * (this->ui->buttonlayout->count() + 2));
+    }
 }
 
 void InsertEffectButtonStrip::OnAddEffectClicked()
 {
-    // Todo : pick an insert effect here instead of create new one
-    MixerEffect* effect = Mixer::Instance().AddInsertEffect("Insert effect");
-    this->_effects->AddInsertEffect(new MixerInsertEffect(effect));
-    this->setMinimumHeight(24 * (this->ui->buttonlayout->count() + 2));
+    QMenu menu;
+    connect(&menu, SIGNAL(triggered(QAction*)), this, SLOT(ActionSelected(QAction*)));
+
+    for (QList<MixerEffect*>::iterator itr = Mixer::Instance().InsertEffects().begin(); itr != Mixer::Instance().InsertEffects().end(); ++itr)
+    {
+        MixerEffect* effect = *itr;
+        QAction* action = menu.addAction(effect->GetName());
+        action->setEnabled(this->_effects->ContainsEffect(effect) == false);
+        action->setData(QVariant::fromValue(effect));
+    }
+    menu.exec(this->ui->btnAdd->mapToGlobal(QPoint(0, this->ui->btnAdd->height())));
 }
 
 void InsertEffectButtonStrip::AddEffect(MixerInsertEffect* effect)
