@@ -56,14 +56,6 @@ QList<MixerChannel*>& Mixer::Channels()
     return this->_channels;
 }
 
-MixerEffect* Mixer::AddEffect(const QString& name)
-{
-    MixerEffect* effect = new MixerEffect(name);
-
-    this->_effects.push_back(effect);
-
-    return effect;
-}
 
 void Mixer::RemoveEffect(MixerEffect* effect)
 {

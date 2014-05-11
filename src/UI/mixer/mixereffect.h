@@ -5,25 +5,22 @@
 #include "mixerbuffer.h"
 
 class MixerEffectContainer;
+class Effect;
 
 class MixerEffect : public QObject
 {
     Q_OBJECT
 
-    friend class Mixer;
-    MixerEffect(const QString& name, QObject *parent = 0);
 public:
+    MixerEffect(const QString& name, QObject *parent = 0);
     virtual ~MixerEffect();
 
     QString GetName();
 
     virtual MixerEffectContainer* Source() { return this->_source; }
 
-    // This will not change the input buffer
-//    virtual const MixerBuffer& EffectFromBuffer(const MixerBuffer& in) = 0;
-
     // This will change the input buffer
-    virtual void EffectOnBuffer(MixerBuffer& in) { }
+    virtual void EffectOnBuffer(MixerBuffer& in) = 0;
 signals:
     void NameChanged(QString name);
     void SourceChanged(MixerEffectContainer* source);
@@ -35,7 +32,6 @@ public slots:
 protected:
     QString _name;
     MixerEffectContainer* _source;
-    MixerBuffer _buffer;
 
 };
 

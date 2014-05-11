@@ -50,6 +50,11 @@ set(zynmusicstudio_ui_SRCS
     mixer/mixerbus.cpp
     mixer/mixersendsource.cpp
     mixer/mixersendsink.cpp
+
+    library/library.cpp
+    library/libraryplugin.cpp
+    library/libraryeqeffectplugin.cpp
+    library/libraryeqeffect.cpp
     )
 set(zynmusicstudio_ui_HEADERS
     mainwindow.h
@@ -102,6 +107,11 @@ set(zynmusicstudio_ui_HEADERS
     mixer/mixerbus.h
     mixer/mixersendsource.h
     mixer/mixersendsink.h
+
+    library/library.h
+    library/libraryplugin.h
+    library/libraryeqeffectplugin.h
+    library/libraryeqeffect.h
     )
 set(zynmusicstudio_ui_FORMS
     mainwindow.ui
