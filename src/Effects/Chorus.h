@@ -79,7 +79,6 @@ class Chorus:public Effect
 
     private:
         //Chorus Parameters
-        unsigned char Pvolume;
         unsigned char Pdepth;      //the depth of the Chorus(ms)
         unsigned char Pdelay;      //the delay (ms)
         unsigned char Pfb;         //feedback
@@ -89,7 +88,6 @@ class Chorus:public Effect
 
 
         //Parameter Controls
-        void setvolume(unsigned char _Pvolume);
         void setdepth(unsigned char _Pdepth);
         void setdelay(unsigned char _Pdelay);
         void setfb(unsigned char _Pfb);

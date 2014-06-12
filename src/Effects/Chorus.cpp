@@ -159,13 +159,6 @@ void Chorus::setfb(unsigned char _Pfb)
     fb  = (Pfb - 64.0f) / 64.1f;
 }
 
-void Chorus::setvolume(unsigned char _Pvolume)
-{
-    Pvolume   = _Pvolume;
-    outvolume = Pvolume / 127.0f;
-    volume    = (!insertion) ? 1.0f : outvolume;
-}
-
 
 void Chorus::setpreset(unsigned char npreset)
 {

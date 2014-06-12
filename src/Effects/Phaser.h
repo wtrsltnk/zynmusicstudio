@@ -46,7 +46,6 @@ class Phaser:public Effect
     private:
         //Phaser parameters
         EffectLFO     lfo;          //Phaser modulator
-        unsigned char Pvolume;      //Used to set wet/dry mix
         unsigned char Pdistortion;  //Model distortion added by FET element
         unsigned char Pdepth;       //Depth of phaser sweep
         unsigned char Pwidth;       //Phaser width (LFO amplitude)
@@ -59,7 +58,6 @@ class Phaser:public Effect
         unsigned char Panalog;
 
         //Control parameters
-        void setvolume(unsigned char Pvolume);
         void setdepth(unsigned char Pdepth);
         void setfb(unsigned char Pfb);
         void setdistortion(unsigned char Pdistortion);

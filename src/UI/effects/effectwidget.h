@@ -14,10 +14,13 @@ class EffectWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit EffectWidget(MixerEffect* effect, QWidget *parent = 0);
-    ~EffectWidget();
+    EffectWidget(MixerEffect* effect, QWidget *parent = 0);
+    virtual ~EffectWidget();
 
     MixerEffect* Effect() { return this->_effect; }
+
+public slots:
+    void OnEffectTypeChanged(int index);
 
 private:
     Ui::EffectWidget *ui;

@@ -275,16 +275,6 @@ void Phaser::setfb(unsigned char Pfb)
     feedback  = (float) (Pfb - 64) / 64.2f;
 }
 
-void Phaser::setvolume(unsigned char Pvolume)
-{
-    this->Pvolume = Pvolume;
-    outvolume     = Pvolume / 127.0f;
-    if(insertion == 0)
-        volume = 1.0f;
-    else
-        volume = outvolume;
-}
-
 void Phaser::setdistortion(unsigned char Pdistortion)
 {
     this->Pdistortion = Pdistortion;

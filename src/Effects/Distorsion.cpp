@@ -27,7 +27,6 @@
 
 Distorsion::Distorsion(bool insertion_, float *efxoutl_, float *efxoutr_)
     :Effect(insertion_, efxoutl_, efxoutr_, NULL, 0),
-      Pvolume(50),
       Pdrive(90),
       Plevel(64),
       Ptype(0),
@@ -37,6 +36,7 @@ Distorsion::Distorsion(bool insertion_, float *efxoutl_, float *efxoutr_)
       Pstereo(0),
       Pprefiltering(0)
 {
+    this->Pvolume = 50;
     lpfl = new AnalogFilter(2, 22000, 1, 0);
     lpfr = new AnalogFilter(2, 22000, 1, 0);
     hpfl = new AnalogFilter(3, 20, 1, 0);

@@ -40,7 +40,6 @@ class Distorsion:public Effect
 
     private:
         //Parameters
-        unsigned char Pvolume;       //Volume or E/R
         unsigned char Pdrive;        //the input amplification
         unsigned char Plevel;        //the output amplification
         unsigned char Ptype;         //Distorsion type
@@ -50,7 +49,7 @@ class Distorsion:public Effect
         unsigned char Pstereo;       //0=mono, 1=stereo
         unsigned char Pprefiltering; //if you want to do the filtering before the distorsion
 
-        void setvolume(unsigned char _Pvolume);
+        virtual void setvolume(unsigned char _Pvolume);
         void setlpf(unsigned char _Plpf);
         void sethpf(unsigned char _Phpf);
 

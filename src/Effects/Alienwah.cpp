@@ -120,16 +120,6 @@ void Alienwah::setfb(unsigned char _Pfb)
         fb = -fb;
 }
 
-void Alienwah::setvolume(unsigned char _Pvolume)
-{
-    Pvolume   = _Pvolume;
-    outvolume = Pvolume / 127.0f;
-    if(insertion == 0)
-        volume = 1.0f;
-    else
-        volume = outvolume;
-}
-
 void Alienwah::setphase(unsigned char _Pphase)
 {
     Pphase = _Pphase;

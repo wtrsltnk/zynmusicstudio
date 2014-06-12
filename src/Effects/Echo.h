@@ -70,13 +70,12 @@ class Echo:public Effect
         void cleanup(void);
     private:
         //Parameters
-        unsigned char Pvolume;  /**<#1 Volume or Dry/Wetness*/
         unsigned char Pdelay;   /**<#3 Delay of the Echo*/
         unsigned char Plrdelay; /**<#4 L/R delay difference*/
         unsigned char Pfb;      /**<#6Feedback*/
         unsigned char Phidamp;  /**<#7Dampening of the Echo*/
 
-        void setvolume(unsigned char _Pvolume);
+        virtual void setvolume(unsigned char _Pvolume);
         void setdelay(unsigned char _Pdelay);
         void setlrdelay(unsigned char _Plrdelay);
         void setfb(unsigned char _Pfb);

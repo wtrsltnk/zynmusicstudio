@@ -43,7 +43,6 @@ class Reverb:public Effect
 
     private:
         //Parametrii
-        unsigned char Pvolume;
         unsigned char Ptime;        //duration
         unsigned char Pidelay;      //initial delay
         unsigned char Pidelayfb;    //initial feedback
@@ -57,7 +56,7 @@ class Reverb:public Effect
         unsigned char Pbandwidth;   //bandwidth
 
         //parameter control
-        void setvolume(unsigned char _Pvolume);
+        virtual void setvolume(unsigned char _Pvolume);
         void settime(unsigned char _Ptime);
         void setlohidamp(unsigned char _Plohidamp);
         void setidelay(unsigned char _Pidelay);

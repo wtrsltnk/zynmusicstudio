@@ -47,6 +47,13 @@ void Effect::crossover(float &a, float &b, float crossover)
     b = tmpb * (1.0f - crossover) + tmpa * crossover;
 }
 
+void Effect::setvolume(unsigned char _Pvolume)
+{
+    Pvolume   = _Pvolume;
+    outvolume = Pvolume / 127.0f;
+    volume    = (!insertion) ? 1.0f : outvolume;
+}
+
 void Effect::setpanning(char Ppanning_)
 {
     Ppanning = Ppanning_;

@@ -36,6 +36,14 @@ set(zynmusicstudio_ui_SRCS
     
     effects/inserteffectswidget.cpp
     effects/effectwidget.cpp
+    effects/alien_effectwidget.cpp
+    effects/chorus_effectwidget.cpp
+    effects/distortion_effectwidget.cpp
+    effects/dynamic_effectwidget.cpp
+    effects/echo_effectwidget.cpp
+    effects/eq_effectwidget.cpp
+    effects/phaser_effectwidget.cpp
+    effects/reverb_effectwidget.cpp
 
     mixer/mixer.cpp
     mixer/mixerbuffer.cpp
@@ -93,6 +101,14 @@ set(zynmusicstudio_ui_HEADERS
     
     effects/inserteffectswidget.h
     effects/effectwidget.h
+    effects/alien_effectwidget.h
+    effects/chorus_effectwidget.h
+    effects/distortion_effectwidget.h
+    effects/dynamic_effectwidget.h
+    effects/echo_effectwidget.h
+    effects/eq_effectwidget.h
+    effects/phaser_effectwidget.h
+    effects/reverb_effectwidget.h
 
     mixer/mixer.h
     mixer/mixerchannelinput.h
@@ -134,6 +150,14 @@ set(zynmusicstudio_ui_FORMS
     
     effects/inserteffectswidget.ui
     effects/effectwidget.ui
+    effects/alien_effectwidget.ui
+    effects/chorus_effectwidget.ui
+    effects/distortion_effectwidget.ui
+    effects/dynamic_effectwidget.ui
+    effects/echo_effectwidget.ui
+    effects/eq_effectwidget.ui
+    effects/phaser_effectwidget.ui
+    effects/reverb_effectwidget.ui
     )
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR})

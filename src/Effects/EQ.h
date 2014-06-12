@@ -39,11 +39,6 @@ class EQ:public Effect
         float getfreqresponse(float freq);
 
     private:
-        //Parameters
-        unsigned char Pvolume;
-
-        void setvolume(unsigned char _Pvolume);
-
         struct {
             //parameters
             unsigned char Ptype, Pfreq, Pgain, Pq, Pstages;

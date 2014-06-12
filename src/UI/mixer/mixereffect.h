@@ -7,6 +7,23 @@
 class MixerEffectContainer;
 class Effect;
 
+namespace EffectTypes
+{
+    enum eTypes
+    {
+        None = 0,
+        Alien,
+        Chorus,
+        Distortion,
+        Dynamic,
+        Echo,
+        EQ,
+        Phaser,
+        Reverb,
+        _Count
+    };
+}
+
 class MixerEffect : public QObject
 {
     Q_OBJECT
@@ -20,7 +37,7 @@ public:
     virtual MixerEffectContainer* Source() { return this->_source; }
 
     // This will change the input buffer
-    virtual void EffectOnBuffer(MixerBuffer& in) = 0;
+    virtual void EffectOnBuffer(MixerBuffer& in);
 signals:
     void NameChanged(QString name);
     void SourceChanged(MixerEffectContainer* source);
@@ -28,10 +45,12 @@ signals:
 public slots:
     void SetName(QString name);
     virtual void SetSource(MixerEffectContainer* source);
+    void SetEffect(int index);
 
 protected:
     QString _name;
     MixerEffectContainer* _source;
+    Effect* _effect;
 
 };
 

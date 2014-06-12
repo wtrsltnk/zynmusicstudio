@@ -56,7 +56,6 @@ class Alienwah:public Effect
     private:
         //Alienwah Parameters
         EffectLFO     lfo;      //lfo-ul Alienwah
-        unsigned char Pvolume;
         unsigned char Pdepth;   //the depth of the Alienwah
         unsigned char Pfb;      //feedback
         unsigned char Pdelay;
@@ -64,7 +63,6 @@ class Alienwah:public Effect
 
 
         //Control Parameters
-        void setvolume(unsigned char _Pvolume);
         void setdepth(unsigned char _Pdepth);
         void setfb(unsigned char _Pfb);
         void setdelay(unsigned char _Pdelay);

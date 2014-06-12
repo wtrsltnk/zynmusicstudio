@@ -29,7 +29,6 @@
 
 Echo::Echo(bool insertion_, float *efxoutl_, float *efxoutr_)
     :Effect(insertion_, efxoutl_, efxoutr_, NULL, 0),
-      Pvolume(50),
       Pdelay(60),
       Plrdelay(100),
       Pfb(40),

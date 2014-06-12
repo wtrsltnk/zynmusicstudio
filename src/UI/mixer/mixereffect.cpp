@@ -1,8 +1,9 @@
 #include "mixereffect.h"
 #include "mixerchannel.h"
+#include "../Effects/Effect.h"
 
 MixerEffect::MixerEffect(const QString& name, QObject *parent) :
-    QObject(parent), _source(0)
+    QObject(parent), _source(0), _effect(0)
 {
     this->SetName(name);
 }
@@ -36,5 +37,18 @@ void MixerEffect::SetSource(MixerEffectContainer *source)
         if (this->_source != 0)
             this->_source->AddEffect(this);
         emit SourceChanged(source);
+    }
+}
+
+void MixerEffect::SetEffect(int index)
+{
+
+}
+
+void MixerEffect::EffectOnBuffer(MixerBuffer &in)
+{
+    if (this->_effect != 0)
+    {
+        this->_effect->out(in.Left(), in.Right());
     }
 }

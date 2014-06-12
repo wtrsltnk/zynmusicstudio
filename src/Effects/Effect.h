@@ -95,11 +95,13 @@ class Effect
         static void crossover(float &a, float &b, float crossover);
 
     protected:
+        virtual void setvolume(unsigned char _Pvolume);
         void setpanning(char Ppanning_);
         void setlrcross(char Plrcross_);
 
         const bool insertion;
         //panning parameters
+        unsigned char Pvolume;
         char  Ppanning;
         float pangainL;
         float pangainR;

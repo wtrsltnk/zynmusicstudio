@@ -26,7 +26,6 @@
 
 DynamicFilter::DynamicFilter(bool insertion_, float *efxoutl_, float *efxoutr_)
     :Effect(insertion_, efxoutl_, efxoutr_, new FilterParams(0, 64, 64), 0),
-      Pvolume(110),
       Pdepth(0),
       Pampsns(90),
       Pampsnsinv(0),
@@ -34,6 +33,7 @@ DynamicFilter::DynamicFilter(bool insertion_, float *efxoutl_, float *efxoutr_)
       filterl(NULL),
       filterr(NULL)
 {
+    this->Pvolume = 110;
     setpreset(Ppreset);
     cleanup();
 }
@@ -104,17 +104,6 @@ void DynamicFilter::setdepth(unsigned char _Pdepth)
 {
     Pdepth = _Pdepth;
     depth  = powf(Pdepth / 127.0f, 2.0f);
-}
-
-
-void DynamicFilter::setvolume(unsigned char _Pvolume)
-{
-    Pvolume   = _Pvolume;
-    outvolume = Pvolume / 127.0f;
-    if(!insertion)
-        volume = 1.0f;
-    else
-        volume = outvolume;
 }
 
 void DynamicFilter::setampsns(unsigned char _Pampsns)

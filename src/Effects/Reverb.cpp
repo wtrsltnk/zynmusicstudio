@@ -31,7 +31,6 @@
 Reverb::Reverb(bool insertion_, float *efxoutl_, float *efxoutr_)
     :Effect(insertion_, efxoutl_, efxoutr_, NULL, 0),
       // defaults
-      Pvolume(48),
       Ptime(64),
       Pidelay(40),
       Pidelayfb(0),

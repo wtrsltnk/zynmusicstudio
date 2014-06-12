@@ -70,15 +70,6 @@ void EQ::out(const Stereo<float *> &smp)
 }
 
 
-//Parameter control
-void EQ::setvolume(unsigned char _Pvolume)
-{
-    Pvolume   = _Pvolume;
-    outvolume = powf(0.005f, (1.0f - Pvolume / 127.0f)) * 10.0f;
-    volume    = (!insertion) ? 1.0f : outvolume;
-}
-
-
 void EQ::setpreset(unsigned char npreset)
 {
     const int     PRESET_SIZE = 1;
