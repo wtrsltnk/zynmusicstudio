@@ -176,6 +176,6 @@ void NioEngineManager::preferedSampleRate(unsigned &rate)
     }
 }
 #else
-void EngineMgr::preferedSampleRate(unsigned &)
+void NioEngineManager::preferedSampleRate(unsigned &)
 {}
 #endif
