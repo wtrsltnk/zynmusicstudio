@@ -23,7 +23,16 @@ IF (JACK_INCLUDE_DIR)
   SET(JACK_FIND_QUIETLY TRUE)
 ENDIF (JACK_INCLUDE_DIR)
 
-FIND_PATH(JACK_INCLUDE_DIR jack/jack.h)
+FIND_PATH(JACK_INCLUDE_DIR 
+		NAMES
+				jack/jack.h
+		PATHS
+				include
+				/usr/include
+				/usr/local/include
+				/opt/local/include
+				/sw/include
+)
 
 IF (CMAKE_CL_64)
     SET(JACK_NAMES libjack64.lib)
@@ -31,7 +40,16 @@ ELSE()
     SET(JACK_NAMES libjack.lib)
 ENDIF()
 
-FIND_LIBRARY(JACK_LIBRARY NAMES ${JACK_NAMES})
+FIND_LIBRARY(JACK_LIBRARY 
+		NAMES 
+				${JACK_NAMES}
+		PATHS
+				lib
+				/usr/lib
+				/usr/local/lib
+				/opt/local/lib
+				/sw/lib
+)
 MARK_AS_ADVANCED(JACK_LIBRARY JACK_INCLUDE_DIR)
 
 # Per-recommendation

@@ -23,12 +23,31 @@ IF (ZLIB_INCLUDE_DIR)
   SET(ZLIB_FIND_QUIETLY TRUE)
 ENDIF (ZLIB_INCLUDE_DIR)
 
-FIND_PATH(ZLIB_INCLUDE_DIR zlib.h)
+FIND_PATH(ZLIB_INCLUDE_DIR 
+		NAMES
+				zlib.h
+		PATHS
+				include
+				/usr/include
+				/usr/local/include
+				/opt/local/include
+				/sw/include
+)
 
-SET(ZLIB_NAMES z zlib zdll)
-FIND_LIBRARY(ZLIB_LIBRARY NAMES ${ZLIB_NAMES} )
+FIND_LIBRARY(ZLIB_LIBRARY 
+		NAMES
+				z
+				zlib
+				zdll
+		PATHS
+				lib
+				/usr/lib
+				/usr/local/lib
+				/opt/local/lib
+				/sw/lib
+)
 MARK_AS_ADVANCED( ZLIB_LIBRARY ZLIB_INCLUDE_DIR )
-
+	
 # Per-recommendation
 SET(ZLIB_INCLUDE_DIRS "${ZLIB_INCLUDE_DIR}")
 SET(ZLIB_LIBRARIES    "${ZLIB_LIBRARY}")

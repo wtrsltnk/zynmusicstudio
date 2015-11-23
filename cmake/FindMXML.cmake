@@ -22,10 +22,29 @@ IF (MXML_INCLUDE_DIR)
   SET(MXML_FIND_QUIETLY TRUE)
 ENDIF (MXML_INCLUDE_DIR)
 
-FIND_PATH(MXML_INCLUDE_DIR mxml.h)
+FIND_PATH(MXML_INCLUDE_DIR 
+		NAMES
+				mxml.h
+		PATHS
+				include
+				/usr/include
+				/usr/local/include
+				/opt/local/include
+				/sw/include
+)
 
-SET(MXML_NAMES mxml mxml1.lib mxml1d.lib)
-FIND_LIBRARY(MXML_LIBRARY NAMES ${MXML_NAMES} )
+FIND_LIBRARY(MXML_LIBRARY 
+		NAMES
+				mxml
+				mxml1.lib
+				mxml1d.lib
+		PATHS
+				lib
+				/usr/lib
+				/usr/local/lib
+				/opt/local/lib
+				/sw/lib
+)
 MARK_AS_ADVANCED( MXML_LIBRARY MXML_INCLUDE_DIR )
 
 # Per-recommendation

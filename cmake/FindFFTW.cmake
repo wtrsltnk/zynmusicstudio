@@ -18,15 +18,31 @@
 # (To distributed this file outside of CMake, substitute the full
 #  License text for the above reference.)
 
-IF (FFTW_INCLUDE_DIR)
-  # Already in cache, be silent
-  SET(FFTW_FIND_QUIETLY TRUE)
-ENDIF (FFTW_INCLUDE_DIR)
+FIND_PATH(FFTW_INCLUDE_DIR
+		NAMES
+				fftw3.h
+		PATHS
+				include
+				/usr/include
+				/usr/local/include
+				/opt/local/include
+				/sw/include
+)
 
-FIND_PATH(FFTW_INCLUDE_DIR fftw3.h)
-
-SET(FFTW_NAMES fftw3 libfftw fftw.lib fftwd.lib libfftw3-3.lib)
-FIND_LIBRARY(FFTW_LIBRARY NAMES ${FFTW_NAMES} )
+FIND_LIBRARY(FFTW_LIBRARY 
+		NAMES 
+				fftw3
+				libfftw
+				fftw.lib
+				fftwd.lib
+				libfftw3-3.lib
+		PATHS
+				lib
+				/usr/lib
+				/usr/local/lib
+				/opt/local/lib
+				/sw/lib
+)
 MARK_AS_ADVANCED( FFTW_LIBRARY FFTW_INCLUDE_DIR )
 
 # Per-recommendation

@@ -23,10 +23,28 @@ IF (PTHREAD_INCLUDE_DIR)
   SET(PTHREAD_FIND_QUIETLY TRUE)
 ENDIF (PTHREAD_INCLUDE_DIR)
 
-FIND_PATH(PTHREAD_INCLUDE_DIR pthread.h)
+FIND_PATH(PTHREAD_INCLUDE_DIR 
+		NAMES
+				pthread.h
+		PATHS
+				include
+				/usr/include
+				/usr/local/include
+				/opt/local/include
+				/sw/include
+)
 
 SET(PTHREAD_NAMES pthread pthreadVC2)
-FIND_LIBRARY(PTHREAD_LIBRARY NAMES ${PTHREAD_NAMES} )
+FIND_LIBRARY(PTHREAD_LIBRARY 
+		NAMES 
+				${PTHREAD_NAMES} 
+		PATHS
+				lib
+				/usr/lib
+				/usr/local/lib
+				/opt/local/lib
+				/sw/lib
+)
 MARK_AS_ADVANCED( PTHREAD_LIBRARY PTHREAD_INCLUDE_DIR )
 
 # Per-recommendation

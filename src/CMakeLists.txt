@@ -2,9 +2,9 @@ message(STATUS "Checking Include Path" $ENV{CMAKE_INCLUDE_PATH} ${CMAKE_INCLUDE_
 message(STATUS "Checking Library Path" $ENV{CMAKE_LIBRARY_PATH} ${CMAKE_LIBRARY_PATH})
 message(STATUS "Building on a '${CMAKE_SYSTEM_NAME} v${CMAKE_SYSTEM_VERSION}' System and an '${CMAKE_SYSTEM_PROCESSOR}' CPU")
 
-find_package(FFTW REQUIRED)
 find_package(MXML REQUIRED)
 find_package(PTHREAD REQUIRED)
+find_package(FFTW REQUIRED)
 
 link_directories(
     ${FFTW_LIBRARY_DIRS}

@@ -23,7 +23,16 @@ IF (PORTAUDIO_INCLUDE_DIR)
   SET(PORTAUDIO_FIND_QUIETLY TRUE)
 ENDIF (PORTAUDIO_INCLUDE_DIR)
 
-FIND_PATH(PORTAUDIO_INCLUDE_DIR portaudio.h)
+FIND_PATH(PORTAUDIO_INCLUDE_DIR 
+		NAMES
+				portaudio.h
+		PATHS
+				include
+				/usr/include
+				/usr/local/include
+				/opt/local/include
+				/sw/include
+)
 
 IF (CMAKE_CL_64)
     SET(PORTAUDIO_NAMES portaudio_x64)
@@ -31,7 +40,16 @@ ELSE()
     SET(PORTAUDIO_NAMES portaudio_x86)
 ENDIF()
 
-FIND_LIBRARY(PORTAUDIO_LIBRARY NAMES ${PORTAUDIO_NAMES} )
+FIND_LIBRARY(PORTAUDIO_LIBRARY 
+		NAMES
+				${PORTAUDIO_NAMES}
+		PATHS
+				lib
+				/usr/lib
+				/usr/local/lib
+				/opt/local/lib
+				/sw/lib
+)
 MARK_AS_ADVANCED( PORTAUDIO_LIBRARY PORTAUDIO_INCLUDE_DIR )
 
 # Per-recommendation
